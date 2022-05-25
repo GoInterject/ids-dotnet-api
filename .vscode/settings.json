@@ -1,0 +1,11 @@
+{
+    "zenMode.hideLineNumbers": false,
+    "zenMode.hideTabs": false,
+    "[csharp]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp"
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.formatOnSaveMode": "file"
+}
