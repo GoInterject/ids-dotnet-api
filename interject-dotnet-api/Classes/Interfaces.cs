@@ -10,6 +10,8 @@ namespace Interject.Classes
 
     public interface IDataConnection
     {
+        public void FetchData(InterjectRequestHandler handler);
+
         public Task FetchDataAsync(InterjectRequestHandler handler);
     }
 

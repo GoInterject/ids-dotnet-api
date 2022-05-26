@@ -8,7 +8,7 @@ namespace Interject.Classes
     public class InterjectRequest
     {
         public string DataPortalName { get; set; }
-        public List<RequestParameter> RequestParameters { get; set; }
+        public List<RequestParameter> RequestParameterList { get; set; }
         public PassThroughCommand PassThroughCommand { get; set; }
 
         public InterjectRequest() { }
@@ -68,19 +68,20 @@ namespace Interject.Classes
 
         public InterjectResponse(InterjectRequest request)
         {
-            this.RequestParameterList = request.RequestParameters != null ? request.RequestParameters : new();
+            this.RequestParameterList = request.RequestParameterList != null ? request.RequestParameterList : new();
         }
     }
 
     public class ReturnedData
     {
-        public InterjectTable Data { get; set; } = new();
-        public readonly int DataFormat = 2; // Hard code for reverse compatibility (DataFormat.JsonTableWithSchema)
-        public readonly int SchemaFormat = 1; // Hard code for reverse compatibility (SchemaFormat.Interject_Object)
+        public object Data { get; set; } = new();
+        public int DataFormat { get; set; } = 2; // Hard code for reverse compatibility (DataFormat.JsonTableWithSchema)
+        public int SchemaFormat { get; set; } = 1; // Hard code for reverse compatibility (SchemaFormat.Interject_Object)
+        public object Schema { get; set; } = new();
 
         public ReturnedData() { }
 
-        public ReturnedData(InterjectTable table)
+        public ReturnedData(object table)
         {
             this.Data = table;
         }
@@ -128,15 +129,17 @@ namespace Interject.Classes
         public string DateTimeMode { get; set; } = "UnspecifiedLocal";
         public string DefaultValue { get; set; } = null;
         public int MaxLength { get; set; } = -1;
-        public int Ordinal { get; set; }
+        public int Ordinal { get; set; } // This is set when adding it to an InterjectTable via InterjectTable.AddColumn()
         public bool ReadOnly { get; set; } = false;
         public bool Unique { get; set; } = false;
 
         public InterjectColumn() { }
 
-        public InterjectColumn(string columnName)
+        public InterjectColumn(string columnName, string dataType)
         {
+            this.Caption = columnName;
             this.ColumnName = columnName;
+            this.DataType = dataType;
         }
     }
 }

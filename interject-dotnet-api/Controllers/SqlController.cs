@@ -1,6 +1,7 @@
 using Interject.Classes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Interject.API
 {
-    // [Authorize]
+    // [Authorize] //security is currently out of scope of the project. This will be added at a later phase prior to production use.
     [ApiController]
     [Route("api/v1/[controller]")]
     public class SQLController : ControllerBase
@@ -34,14 +35,14 @@ namespace Interject.API
             _requestHandler.ConvertParameters(new SQLParameterConverter());
             await _requestHandler.FetchDataAsync(new SqlDataConnection());
             _requestHandler.ConvertResponseData(new SqlResponseConverter());
-            return _requestHandler.IdsResponse;
+            return _requestHandler.PackagedResponse;
         }
 
         public class SQLParameterConverter : IParameterConverter
         {
             public void Convert(InterjectRequestHandler handler)
             {
-                handler.IdsRequest.RequestParameters.ForEach((reqParam) =>
+                handler.IdsRequest.RequestParameterList.ForEach((reqParam) =>
                 {
                     var p = Convert(reqParam);
                     handler.ConvertedParameters.Add(new ParamPair(p, reqParam));
@@ -203,11 +204,19 @@ namespace Interject.API
         {
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
+                Validate(handler.IdsRequest);
                 this._connection = new Microsoft.Data.SqlClient.SqlConnection(handler.ConnectionString);
                 ConfigureCommand(handler.IdsRequest.PassThroughCommand);
                 AttachParameters(handler);
                 await CallStoredProcedure(handler);
                 UpdateOutputParameters(handler);
+            }
+
+            private void Validate(InterjectRequest request)
+            {
+                if (request.PassThroughCommand == null) throw new UserException("PassThroughCommand is required.");
+                if (string.IsNullOrEmpty(request.PassThroughCommand.ConnectionStringName)) throw new UserException("PassThroughCommand.ConnectionStringName is required.");
+                if (request.RequestParameterList == null) request.RequestParameterList = new();
             }
 
             private Microsoft.Data.SqlClient.SqlCommand _command { get; set; }
@@ -252,6 +261,11 @@ namespace Interject.API
                     rps.Add(pair.RequestParameter);
                 });
                 handler.IdsResponse.RequestParameterList = rps;
+            }
+
+            public void FetchData(InterjectRequestHandler handler)
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -318,7 +332,7 @@ namespace Interject.API
                 result.AutoIncrementSeed = column.AutoIncrementSeed;
                 result.Caption = column.Caption;
                 result.ColumnName = column.ColumnName;
-                result.DataType = nameof(column.DataType);
+                result.DataType = column.DataType.Name;
                 var i = (int)column.DateTimeMode;
                 result.DateTimeMode = i.ToString();
                 result.DefaultValue = column.DefaultValue.ToString();

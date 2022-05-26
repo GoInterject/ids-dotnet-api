@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Interject.Classes
 {
@@ -20,7 +21,18 @@ namespace Interject.Classes
 
         public InterjectRequestHandler(ConnectionStringOptions connectionStringOptions)
         {
-            _connectionStrings = connectionStringOptions.ConnectionStrings;
+            if (connectionStringOptions == null)
+            {
+                _connectionStrings = new();
+            }
+            else if (connectionStringOptions.ConnectionStrings == null)
+            {
+                _connectionStrings = new();
+            }
+            else
+            {
+                _connectionStrings = connectionStringOptions.ConnectionStrings;
+            }
         }
 
         /// <summary>
@@ -30,24 +42,18 @@ namespace Interject.Classes
         /// <param name="request">The request passed from the Interject Addin to the Api endpoint.</param>
         public void Init(InterjectRequest request)
         {
-            Validate(request);
             this.IdsRequest = request;
+            if (request.RequestParameterList == null) request.RequestParameterList = new();
             this.IdsResponse = new InterjectResponse(request);
             ResolveConnectionString();
         }
 
-        private void Validate(InterjectRequest request)
-        {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            if (request.PassThroughCommand == null) throw new ArgumentException("PassThroughCommand is required.");
-            if (string.IsNullOrEmpty(request.PassThroughCommand.ConnectionStringName)) throw new ArgumentException("PassThroughCommand.ConnectionStringName is required.");
-        }
-
         private void ResolveConnectionString()
         {
-            var conStr = _connectionStrings.FirstOrDefault(cs => cs.Name == this.IdsRequest.PassThroughCommand.ConnectionStringName)?.ConnectionString;
+            if (IdsRequest.PassThroughCommand == null) IdsRequest.PassThroughCommand = new();
+            var conStrDesc = _connectionStrings.FirstOrDefault(cs => cs.Name == this.IdsRequest.PassThroughCommand.ConnectionStringName);
 
-            if (string.IsNullOrEmpty(conStr))
+            if (conStrDesc == null)
             {
                 // IdsRequest.PassThroughCommand.ConnectionStringName 
                 // may be the connection string itself.
@@ -55,7 +61,7 @@ namespace Interject.Classes
             }
             else
             {
-                this.ConnectionString = conStr;
+                this.ConnectionString = conStrDesc.ConnectionString;
             }
         }
 
@@ -68,7 +74,7 @@ namespace Interject.Classes
         {
             if (converter == null)
             {
-                this.IdsRequest.RequestParameters.ForEach((param) =>
+                this.IdsRequest.RequestParameterList.ForEach((param) =>
                 {
                     this.ConvertedParameters.Add(param);
                 });
@@ -84,15 +90,33 @@ namespace Interject.Classes
             await dataConnection.FetchDataAsync(this);
         }
 
+        public void FetchData(IDataConnection dataConnection)
+        {
+            dataConnection.FetchData(this);
+        }
+
         public void ConvertResponseData(IResponseConverter converter)
         {
             if (this.ReturnData == null)
             {
-                throw new Exception("The returned data was null. Be sure InterjectRequestHandler.FetchData was called and that the IDataConnection.FetchDataAsync passed in returns data.");
+                throw new UserException("The returned data was null. Be sure InterjectRequestHandler.FetchData was called and that the IDataConnection.FetchDataAsync passed in returns data.");
             }
             else
             {
                 converter.Convert(this);
+            }
+        }
+
+        public InterjectResponse PackagedResponse
+        {
+            get
+            {
+                this.IdsResponse.ReturnedDataList.ForEach((returnData) =>
+                {
+                    string json = JsonConvert.SerializeObject(returnData.Data);
+                    returnData.Data = json;
+                });
+                return this.IdsResponse;
             }
         }
     }

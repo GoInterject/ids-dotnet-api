@@ -6,7 +6,7 @@ namespace Interject
     {
         public const string Connections = "Connections";
 
-        public List<ConnectionDescriptor> ConnectionStrings { get; set; }
+        public List<ConnectionDescriptor> ConnectionStrings { get; set; } = new();
     }
 
     public class ConnectionDescriptor

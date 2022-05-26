@@ -49,16 +49,18 @@ namespace Interject
 
             services.AddCors();
 
-            services.AddSingleton<ConnectionStringOptions>();
+            // services.AddSingleton<ConnectionStringOptions>();
 
-            // ConnectionStringOptions connections = new();
-            // Configuration.GetSection(ConnectionStringOptions.Connections).Bind(connections);
-            services.AddTransient<InterjectRequestHandler>();
+            ConnectionStringOptions connections = new();
+            Configuration.GetSection(ConnectionStringOptions.Connections).Bind(connections);
+            services.AddTransient<InterjectRequestHandler>(_ => new(connections));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<ErrorMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
