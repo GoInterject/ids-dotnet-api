@@ -49,7 +49,9 @@ namespace Interject
 
             services.AddCors();
 
-            // services.AddSingleton<ConnectionStringOptions>();
+            ApplicationOptions appOptions = new();
+            Configuration.GetSection(ApplicationOptions.Application).Bind(appOptions);
+            services.AddSingleton<ApplicationOptions>(_ => new(appOptions));
 
             ConnectionStringOptions connections = new();
             Configuration.GetSection(ConnectionStringOptions.Connections).Bind(connections);
