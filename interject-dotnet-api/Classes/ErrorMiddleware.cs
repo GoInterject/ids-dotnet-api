@@ -6,6 +6,13 @@ using Interject.Classes;
 
 namespace Interject
 {
+    /// <summary>
+    /// Wraps the request in the request pipeline and intercepts errors.<br/>
+    /// All responses are returned as standard <see cref="InterjectResponse"/>
+    /// objects. <see cref="UserException"/> will pass the message as the
+    /// <see cref="InterjectResponse.ErrorMessage"/>. Any othe exceptions thrown
+    /// are obfuscated by hard coding the message to a generic response.
+    /// </summary>
     public class ErrorMiddleware
     {
         private readonly RequestDelegate _next;
