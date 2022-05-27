@@ -204,19 +204,12 @@ namespace Interject.API
         {
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
-                Validate(handler.IdsRequest);
+                if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new UserException("PassThroughCommand.ConnectionStringName is required.");
                 this._connection = new Microsoft.Data.SqlClient.SqlConnection(handler.ConnectionString);
                 ConfigureCommand(handler.IdsRequest.PassThroughCommand);
                 AttachParameters(handler);
                 await CallStoredProcedure(handler);
                 UpdateOutputParameters(handler);
-            }
-
-            private void Validate(InterjectRequest request)
-            {
-                if (request.PassThroughCommand == null) throw new UserException("PassThroughCommand is required.");
-                if (string.IsNullOrEmpty(request.PassThroughCommand.ConnectionStringName)) throw new UserException("PassThroughCommand.ConnectionStringName is required.");
-                if (request.RequestParameterList == null) request.RequestParameterList = new();
             }
 
             private Microsoft.Data.SqlClient.SqlCommand _command { get; set; }

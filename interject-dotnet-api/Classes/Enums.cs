@@ -8,15 +8,6 @@ namespace Interject.Classes
         Text = 3
     }
 
-    // public enum DataFormat
-    // {
-    //     None = 0,
-    //     XmlString = 1,
-    //     JsonTableWithSchema = 2,
-    //     JsonTable = 3,
-    //     DataSet = 4
-    // }
-
     public enum ParameterDataType
     {
         none = 0,
