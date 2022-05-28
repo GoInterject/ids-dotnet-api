@@ -1,7 +1,6 @@
 using Interject.Classes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
