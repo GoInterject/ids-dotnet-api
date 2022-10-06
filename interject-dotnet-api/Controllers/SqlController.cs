@@ -14,10 +14,10 @@ namespace Interject.API
     [Route("api/v1/[controller]")]
     public class SQLController : ControllerBase
     {
-        private readonly InterjectRequestHandler _requestHandler;
-        public SQLController(InterjectRequestHandler requestHandler)
+        private readonly ConnectionStringOptions _connectionStringOptions;
+        public SQLController(ConnectionStringOptions options)
         {
-            _requestHandler = requestHandler;
+            _connectionStringOptions = options;
         }
 
         /// <summary>
@@ -30,11 +30,16 @@ namespace Interject.API
         [ProducesResponseType(typeof(InterjectResponse), 200)]
         public async Task<InterjectResponse> Post([FromBody] InterjectRequest interjectRequest)
         {
-            _requestHandler.Init(interjectRequest);
-            _requestHandler.ConvertParameters(new SQLParameterConverter());
-            await _requestHandler.FetchDataAsync(new SqlDataConnection());
-            _requestHandler.ConvertResponseData(new SqlResponseConverter());
-            return _requestHandler.PackagedResponse;
+            InterjectRequestHandler handler = new(interjectRequest);
+            handler.ParameterConverter = new SQLParameterConverter();
+            handler.DataConnection = new SqlDataConnection(interjectRequest, _connectionStringOptions);
+            handler.ResponseConverter = new SqlResponseConverter();
+            return handler.PackagedResponse;
+
+            // handler.ConvertParameters(new SQLParameterConverter());
+            // await handler.FetchDataAsync(new SqlDataConnection(interjectRequest, _connectionStringOptions));
+            // handler.ConvertResponseData(new SqlResponseConverter());
+            // return handler.PackagedResponse;
         }
 
         public class SQLParameterConverter : IParameterConverter
@@ -201,6 +206,57 @@ namespace Interject.API
 
         public class SqlDataConnection : IDataConnection
         {
+            private PassThroughCommand passThroughCommand { get; set; }
+            /// <summary>
+            /// A backward compatiblity feature for supporting a passthrough of a connection string
+            /// name for lookup in the appsettings.json or the connection string itself.
+            /// </summary>
+            public string ConnectionString { get; set; }
+
+            /// <summary>
+            /// Provided by dependancy injection during the application startup. This is coming
+            /// from the appSettings.json "Connections" collection property.
+            /// </summary>
+            private List<ConnectionDescriptor> _connectionStrings;
+
+            /// <summary>
+            /// Create an instance of <see cref="InterjectRequestHandler"/>
+            /// </summary>
+            /// <param name="connectionStringOptions"></param>
+            public SqlDataConnection(InterjectRequest request, ConnectionStringOptions connectionStringOptions)
+            {
+                if (connectionStringOptions == null)
+                {
+                    _connectionStrings = new();
+                }
+                else if (connectionStringOptions.ConnectionStrings == null)
+                {
+                    _connectionStrings = new();
+                }
+                else
+                {
+                    _connectionStrings = connectionStringOptions.ConnectionStrings;
+                }
+                ResolveConnectionString(request);
+            }
+
+            private void ResolveConnectionString(InterjectRequest request)
+            {
+                if (request.PassThroughCommand == null) request.PassThroughCommand = new();
+                var conStrDesc = _connectionStrings.FirstOrDefault(cs => cs.Name == request.PassThroughCommand.ConnectionStringName);
+
+                if (conStrDesc == null)
+                {
+                    // IdsRequest.PassThroughCommand.ConnectionStringName 
+                    // may be the connection string itself.
+                    this.ConnectionString = request.PassThroughCommand.ConnectionStringName;
+                }
+                else
+                {
+                    this.ConnectionString = conStrDesc.ConnectionString;
+                }
+            }
+
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
                 if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new UserException("PassThroughCommand.ConnectionStringName is required.");

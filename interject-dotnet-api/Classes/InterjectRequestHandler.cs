@@ -10,18 +10,33 @@ namespace Interject.Classes
     /// </summary>
     public class InterjectRequestHandler
     {
+        #region Pipeline processing members
+
+        /// <summary>
+        /// An implementation of the <see cref="IParameterConverter"/> interface.
+        /// </summary>
+        public IParameterConverter ParameterConverter { get; set; }
+
+        /// <summary>
+        /// An implementation of the <see cref="IDataConnection"/> interface.
+        /// </summary>
+        public IDataConnection DataConnection { get; set; }
+
+        /// <summary>
+        /// An implementation of the <see cref="IResponseConverter"/> interface.
+        /// </summary>
+        public IResponseConverter ResponseConverter { get; set; }
+
+        #endregion
+
+        #region Pipeline data storage members
+
         /// <summary>
         /// A container for storing request parameter data after processing them in the
         /// <see cref="IParameterConverter"/>. This is useful for tracking the incomming
         /// request throughout the pipeline.
         /// </summary>
         public List<object> ConvertedParameters { get; set; } = new();
-
-        /// <summary>
-        /// A backward compatiblity feature for supporting a passthrough of a connection string
-        /// name for lookup in the appsettings.json or the connection string itself.
-        /// </summary>
-        public string ConnectionString { get; set; }
 
         /// <summary>
         /// The request coming from the client call.
@@ -42,60 +57,23 @@ namespace Interject.Classes
         /// </summary>
         public object ReturnData { get; set; }
 
-        /// <summary>
-        /// Provided by dependancy injection during the application startup. This is coming
-        /// from the appSettings.json "Connections" collection property.
-        /// </summary>
-        private List<ConnectionDescriptor> _connectionStrings;
+        #endregion
 
-        /// <summary>
-        /// Create an instance of <see cref="InterjectRequestHandler"/>
-        /// </summary>
-        /// <param name="connectionStringOptions"></param>
-        public InterjectRequestHandler(ConnectionStringOptions connectionStringOptions)
-        {
-            if (connectionStringOptions == null)
-            {
-                _connectionStrings = new();
-            }
-            else if (connectionStringOptions.ConnectionStrings == null)
-            {
-                _connectionStrings = new();
-            }
-            else
-            {
-                _connectionStrings = connectionStringOptions.ConnectionStrings;
-            }
-        }
-
-        /// <summary>
-        /// The first step in the request pipeline. This validates the incomming request and
-        /// initializes the output response object.
-        /// </summary>
-        /// <param name="request">The request passed from the Interject Addin to the Api endpoint.</param>
-        public void Init(InterjectRequest request)
+        public InterjectRequestHandler(InterjectRequest request)
         {
             this.IdsRequest = request;
             if (request.RequestParameterList == null) request.RequestParameterList = new();
             this.IdsResponse = new InterjectResponse(request);
-            ResolveConnectionString();
         }
 
-        private void ResolveConnectionString()
+        public InterjectResponse ReturnResponse()
         {
-            if (IdsRequest.PassThroughCommand == null) IdsRequest.PassThroughCommand = new();
-            var conStrDesc = _connectionStrings.FirstOrDefault(cs => cs.Name == this.IdsRequest.PassThroughCommand.ConnectionStringName);
 
-            if (conStrDesc == null)
-            {
-                // IdsRequest.PassThroughCommand.ConnectionStringName 
-                // may be the connection string itself.
-                this.ConnectionString = this.IdsRequest.PassThroughCommand.ConnectionStringName;
-            }
-            else
-            {
-                this.ConnectionString = conStrDesc.ConnectionString;
-            }
+        }
+
+        public async Task<InterjectResponse> ReturnResponseAsync()
+        {
+
         }
 
         /// <summary>
@@ -103,19 +81,23 @@ namespace Interject.Classes
         /// </summary>
         /// <param name="converter">The instance of the <see cref="IParameterConverter"/> derived class used to convert
         /// <see cref="RequestParameter"/> to the type required for the data connection type to consume.</param>
-        public void ConvertParameters(IParameterConverter converter = null)
+        private void ConvertParameters()
         {
-            if (converter == null)
+            this.IdsRequest.RequestParameterList.ForEach((param) =>
             {
-                this.IdsRequest.RequestParameterList.ForEach((param) =>
-                {
-                    this.ConvertedParameters.Add(param);
-                });
-            }
-            else
-            {
-                converter.Convert(this);
-            }
+                this.ConvertedParameters.Add(this.ParameterConverter.Convert(param));
+            });
+            // if (converter == null)
+            // {
+            //     this.IdsRequest.RequestParameterList.ForEach((param) =>
+            //     {
+            //         this.ConvertedParameters.Add(param);
+            //     });
+            // }
+            // else
+            // {
+            //     converter.Convert(this);
+            // }
         }
 
         /// <summary>
@@ -162,7 +144,7 @@ namespace Interject.Classes
         }
 
         /// <summary>
-        /// GETTER: Performs final serialization required for the addin to consume the response.
+        /// Performs final serialization required for the addin to consume the response.
         /// </summary>
         public InterjectResponse PackagedResponse
         {
