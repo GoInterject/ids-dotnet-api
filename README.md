@@ -31,7 +31,7 @@ Steps: _using Visual Studio Code_
 
 # <a name="new-controller">How to add a new controller</a>
 
-Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for oa series of reports. Each endpoint should follow the basic pipeline flow for handling a request. See [Working with the request pipeline](#request-pipeline) for more details.
+Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. Each endpoint should follow the basic pipeline flow for handling a request. See [Working with the request pipeline](#request-pipeline) for more details.
 
 Using the first example there is an SQLController included in this project already. Here is how to create a new controller template. This will create the controller with one endpoint, and three classes; one for each of the required interfaces.
 
