@@ -56,7 +56,7 @@ namespace Interject.Classes
             }
         }
 
-        internal class DefaultResponseConverter : IResponseConverter
+        private class DefaultResponseConverter : IResponseConverter
         {
             public void Convert(InterjectRequestHandler handler) { } // Do nothing
         }
