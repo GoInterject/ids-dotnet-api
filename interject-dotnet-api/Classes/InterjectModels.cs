@@ -74,7 +74,7 @@ namespace Interject.Classes
 
     public class ReturnedData
     {
-        public object Data { get; set; } = new();
+        public object Data { get; set; } = new InterjectTable();
         public int DataFormat { get; set; } = 2; // Hard code for reverse compatibility (DataFormat.JsonTableWithSchema)
         public int SchemaFormat { get; set; } = 1; // Hard code for reverse compatibility (SchemaFormat.Interject_Object)
         public object Schema { get; set; } = new();
@@ -89,7 +89,7 @@ namespace Interject.Classes
 
     public class InterjectTable
     {
-        public string TableName { get; set; }
+        public string TableName { get; set; } = string.Empty;
         public List<InterjectColumn> Columns { get; private set; } = new();
         public List<List<object>> Rows { get; set; } = new();
 
@@ -123,9 +123,9 @@ namespace Interject.Classes
         public bool AutoIncrement { get; set; } = false;
         public long AutoIncrementSeed { get; set; } = 0;
         public int AutoIncrementStep { get; set; } = 1;
-        public string Caption { get; set; }
-        public string ColumnName { get; set; }
-        public string DataType { get; set; }
+        public string Caption { get; set; } = string.Empty;
+        public string ColumnName { get; set; } = string.Empty;
+        public string DataType { get; set; } = "string";
         public string DateTimeMode { get; set; } = "UnspecifiedLocal";
         public string DefaultValue { get; set; } = null;
         public int MaxLength { get; set; } = -1;

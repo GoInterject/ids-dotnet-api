@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Interject.API
 {
-    // [Authorize] //security is currently out of scope of the project. This will be added at a later phase prior to production use.
     [ApiController]
     [Route("api/v1/[controller]")]
     public class SQLController : ControllerBase
@@ -32,24 +31,19 @@ namespace Interject.API
         {
             InterjectRequestHandler handler = new(interjectRequest);
             handler.ParameterConverter = new SQLParameterConverter();
-            handler.DataConnection = new SqlDataConnection(interjectRequest, _connectionStringOptions);
+            handler.DataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStringOptions);
             handler.ResponseConverter = new SqlResponseConverter();
-            return handler.PackagedResponse;
-
-            // handler.ConvertParameters(new SQLParameterConverter());
-            // await handler.FetchDataAsync(new SqlDataConnection(interjectRequest, _connectionStringOptions));
-            // handler.ConvertResponseData(new SqlResponseConverter());
-            // return handler.PackagedResponse;
+            return await handler.ReturnResponseAsync();
         }
 
-        public class SQLParameterConverter : IParameterConverter
+        internal class SQLParameterConverter : IParameterConverter
         {
-            public void Convert(InterjectRequestHandler handler)
+            public void Convert(List<RequestParameter> inputParameters, List<object> outputParameters)
             {
-                handler.IdsRequest.RequestParameterList.ForEach((reqParam) =>
+                inputParameters.ForEach((reqParam) =>
                 {
                     var p = Convert(reqParam);
-                    handler.ConvertedParameters.Add(new ParamPair(p, reqParam));
+                    outputParameters.Add(new ParamPair(p, reqParam));
                 });
             }
 
@@ -204,120 +198,108 @@ namespace Interject.API
             }
         }
 
-        public class SqlDataConnection : IDataConnection
+        internal class SqlDataConnectionAsync : IDataConnectionAsync
         {
-            private PassThroughCommand passThroughCommand { get; set; }
             /// <summary>
             /// A backward compatiblity feature for supporting a passthrough of a connection string
             /// name for lookup in the appsettings.json or the connection string itself.
             /// </summary>
-            public string ConnectionString { get; set; }
+            private string _connectionString { get; set; }
 
             /// <summary>
-            /// Provided by dependancy injection during the application startup. This is coming
-            /// from the appSettings.json "Connections" collection property.
+            /// Create an instance of <see cref="SqlDataConnectionAsync"/>
             /// </summary>
-            private List<ConnectionDescriptor> _connectionStrings;
+            /// <param name="request">The <see cref="InterjectRequest"/> from the http request.</param>
+            /// <param name="connectionStringOptions">The <see cref="ConnectionStringOptions"/></param>
+            public SqlDataConnectionAsync(InterjectRequest request, ConnectionStringOptions connectionStringOptions)
+            {
+                CleanConnectionStringOptions(connectionStringOptions);
+                ResolveConnectionString(request, connectionStringOptions.ConnectionStrings);
+            }
 
-            /// <summary>
-            /// Create an instance of <see cref="InterjectRequestHandler"/>
-            /// </summary>
-            /// <param name="connectionStringOptions"></param>
-            public SqlDataConnection(InterjectRequest request, ConnectionStringOptions connectionStringOptions)
+            private void CleanConnectionStringOptions(ConnectionStringOptions connectionStringOptions)
             {
                 if (connectionStringOptions == null)
                 {
-                    _connectionStrings = new();
+                    connectionStringOptions = new();
                 }
                 else if (connectionStringOptions.ConnectionStrings == null)
                 {
-                    _connectionStrings = new();
+                    connectionStringOptions = new();
                 }
-                else
-                {
-                    _connectionStrings = connectionStringOptions.ConnectionStrings;
-                }
-                ResolveConnectionString(request);
             }
 
-            private void ResolveConnectionString(InterjectRequest request)
+            private void ResolveConnectionString(InterjectRequest request, List<ConnectionDescriptor> connectionStrings)
             {
-                if (request.PassThroughCommand == null) request.PassThroughCommand = new();
-                var conStrDesc = _connectionStrings.FirstOrDefault(cs => cs.Name == request.PassThroughCommand.ConnectionStringName);
+                request.PassThroughCommand = request.PassThroughCommand == null ? new() : request.PassThroughCommand;
+                var conStrDesc = connectionStrings.FirstOrDefault(cs => cs.Name == request.PassThroughCommand.ConnectionStringName);
 
                 if (conStrDesc == null)
                 {
-                    // IdsRequest.PassThroughCommand.ConnectionStringName 
-                    // may be the connection string itself.
-                    this.ConnectionString = request.PassThroughCommand.ConnectionStringName;
+                    // IdsRequest.PassThroughCommand.ConnectionStringName may be the connection string itself.
+                    this._connectionString = request.PassThroughCommand.ConnectionStringName;
                 }
                 else
                 {
-                    this.ConnectionString = conStrDesc.ConnectionString;
+                    this._connectionString = conStrDesc.ConnectionString;
                 }
             }
 
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
                 if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new UserException("PassThroughCommand.ConnectionStringName is required.");
-                this._connection = new Microsoft.Data.SqlClient.SqlConnection(handler.ConnectionString);
-                ConfigureCommand(handler.IdsRequest.PassThroughCommand);
-                AttachParameters(handler);
-                await CallStoredProcedure(handler);
-                UpdateOutputParameters(handler);
+                this._connection = new Microsoft.Data.SqlClient.SqlConnection(this._connectionString);
+                ConfigureCommand(handler);
+                AttachParameters(handler.ConvertedParameters);
+                handler.ReturnData = await CallStoredProcedure();
+                UpdateOutputParameters(handler.ConvertedParameters, handler.IdsResponse.RequestParameterList);
             }
 
             private Microsoft.Data.SqlClient.SqlCommand _command { get; set; }
             private SqlConnection _connection { get; set; }
 
-            private void ConfigureCommand(PassThroughCommand passThroughCommand)
+            private void ConfigureCommand(InterjectRequestHandler handler)
             {
                 this._command = this._connection.CreateCommand();
-                this._command.CommandText = passThroughCommand.CommandText;
-                this._command.CommandTimeout = passThroughCommand.CommandTimeout;
-                this._command.CommandType = passThroughCommand.GetCommandType();
+                this._command.CommandText = handler.IdsRequest.PassThroughCommand.CommandText;
+                this._command.CommandTimeout = handler.IdsRequest.PassThroughCommand.CommandTimeout;
+                this._command.CommandType = handler.IdsRequest.PassThroughCommand.GetCommandType();
             }
 
-            private void AttachParameters(InterjectRequestHandler handler)
+            private void AttachParameters(List<object> convertedParameters)
             {
-                handler.ConvertedParameters.ForEach((param) =>
+                convertedParameters.ForEach((param) =>
                 {
                     var pair = (ParamPair)param;
-                    this._command.Parameters.Add(pair.SqlParam);
+                    _command.Parameters.Add(pair.SqlParam);
                 });
             }
 
-            private async Task CallStoredProcedure(InterjectRequestHandler handler)
+            private async Task<DataSet> CallStoredProcedure()
             {
-                DataSet ds = new();
-                using (this._connection)
+                DataSet result = new();
+                using (_connection)
                 {
-                    this._command.Connection = this._connection;
-                    await this._connection.OpenAsync();
-                    var adapter = new Microsoft.Data.SqlClient.SqlDataAdapter(this._command);
-                    adapter.Fill(ds);
+                    _command.Connection = _connection;
+                    await _connection.OpenAsync();
+                    var adapter = new Microsoft.Data.SqlClient.SqlDataAdapter(_command);
+                    adapter.Fill(result);
                 }
-                handler.ReturnData = ds;
+                return result;
             }
 
-            private void UpdateOutputParameters(InterjectRequestHandler handler)
+            private void UpdateOutputParameters(List<object> convertedParameters, List<RequestParameter> returnParameters)
             {
-                List<RequestParameter> rps = new();
-                handler.ConvertedParameters.ForEach((obj) =>
+                returnParameters = new();
+                convertedParameters.ForEach((obj) =>
                 {
                     var pair = (ParamPair)obj;
-                    rps.Add(pair.RequestParameter);
+                    returnParameters.Add(pair.RequestParameter);
                 });
-                handler.IdsResponse.RequestParameterList = rps;
-            }
-
-            public void FetchData(InterjectRequestHandler handler)
-            {
-                throw new NotImplementedException();
             }
         }
 
-        public class ParamPair
+        internal class ParamPair
         {
             public SqlParameter SqlParam { get; set; }
             private RequestParameter _baseParam { get; set; }
@@ -341,7 +323,7 @@ namespace Interject.API
             }
         }
 
-        public class SqlResponseConverter : IResponseConverter
+        internal class SqlResponseConverter : IResponseConverter
         {
             public void Convert(InterjectRequestHandler handler)
             {
