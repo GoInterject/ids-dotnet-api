@@ -22,7 +22,7 @@ namespace Interject.Classes
         public IDataConnection DataConnection { get; set; } = new DefaultDataConnection();
 
         /// <summary>
-        /// An implementation of the <see cref="IDataConnection"/> interface.
+        /// An implementation of the <see cref="IDataConnectionAsync"/> interface.
         /// </summary>
         public IDataConnectionAsync DataConnectionAsync { get; set; } = new DefaultDataConnectionAsync();
 
