@@ -38,6 +38,10 @@ Using the first example there is an SQLController included in this project alrea
 1. Create a new file in the Controllers directory using the naming convention {Name}Controller.cs.
 2. Use code snippets to scaffold the controller. The prefix is 'contr'.
    > contr > TAB
+3. Type the {Name} of the controller as prompted by the snippet and press TAB
+4. You can now begin to customize your Pipeline interface implementations.
+
+<br/><br/>
 
 # <a name="request-pipeline">Working with the request pipeline</a>
 
@@ -51,7 +55,7 @@ The _**InterjectRequestHandler**_ creates a pipeline for processing the _**Inter
 
 ## 1) **Initialize the InterjectRequestHandler**
 
-Pass the _**InterjectRequest**_ to the _**InterjectRequestHandler.Init()**_ method where it will instantiate a new _**InterjectResponse**_ object. It will store the _**InterjectRequst**_, _**InterjectResponse**_, and a few other properties described below for use in the rest of the pipeline. The inital _**InterjectRequset.RequestParameterList**_ is also transferd to the _**InterjectResponse.RequestParameterList**_ to ensure the Addin at least recieves the original parameters in the response. It is also possible to replace or manipulate those returned parameters during the pipeline if needed.
+Create an instance of the **InterjectRequestHandler** passing the InterjectRequest into the constructor. This will instantiate a new _**InterjectResponse**_ object and store the _**InterjectRequst**_. The constructor will also instantiate a couple other data storage properties described below for use in the rest of the pipeline. The inital _**InterjectRequset.RequestParameterList**_ is also transferd to the _**InterjectResponse.RequestParameterList**_ to ensure the Addin at least recieves the original parameters in the response. It is also possible to replace or manipulate those returned parameters during the pipeline if needed.
 
 ## 2) **Convert the RequestParameters** _(IParameterConverter)_
 
