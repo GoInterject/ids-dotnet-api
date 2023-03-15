@@ -33,17 +33,18 @@ namespace Interject
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.Authority = "TODO: Add auth";
-                options.Audience = "TODO: Add auth";
-                options.RequireHttpsMetadata = false;
-            });
+            // Uncomment this to add security
+            // services.AddAuthentication(options =>
+            // {
+            //     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            // })
+            // .AddJwtBearer(options =>
+            // {
+            //     options.Authority = "https://interject-authapi.azurewebsites.net"; //Interject's auth provider
+            //     options.Audience = ""; //TODO Add audience
+            //     options.RequireHttpsMetadata = false;
+            // });
 
             services.AddAuthorization();
 
