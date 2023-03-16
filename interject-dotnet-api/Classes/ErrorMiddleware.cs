@@ -8,9 +8,9 @@ namespace Interject
 {
     /// <summary>
     /// Wraps the request in the request pipeline and intercepts errors.<br/>
-    /// All responses are returned as standard <see cref="InterjectResponse"/>
+    /// All responses are returned as standard <see cref="InterjectResponseDTO"/>
     /// objects. <see cref="UserException"/> will pass the message as the
-    /// <see cref="InterjectResponse.ErrorMessage"/>. Any othe exceptions thrown
+    /// <see cref="InterjectResponseDTO.ErrorMessage"/>. Any othe exceptions thrown
     /// are obfuscated by hard coding the message to a generic response.
     /// </summary>
     public class ErrorMiddleware
@@ -30,7 +30,7 @@ namespace Interject
             }
             catch (Exception error)
             {
-                InterjectResponse responseContent;
+                InterjectResponseDTO responseContent;
 
                 var response = context.Response;
                 response.ContentType = "application/json";
