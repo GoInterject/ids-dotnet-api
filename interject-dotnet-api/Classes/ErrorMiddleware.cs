@@ -1,8 +1,8 @@
-using System;
-using System.Threading.Tasks;
+using Interject.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Interject.Classes;
+using System;
+using System.Threading.Tasks;
 
 namespace Interject
 {
