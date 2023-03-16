@@ -1,12 +1,21 @@
+using System.ComponentModel.DataAnnotations;
 using Interject.Classes;
 
 namespace Interject.Models
 {
     public class PassThroughCommand
     {
+        [Required]
         public string ConnectionStringName { get; set; }
+
+        /// <summary>
+        /// This property is not used.
+        /// </summary>
         public CommandType CommandType { get; set; }
+
+        [Required]
         public string CommandText { get; set; }
+
         public int CommandTimeout { get; set; }
 
         public System.Data.CommandType GetCommandType()
