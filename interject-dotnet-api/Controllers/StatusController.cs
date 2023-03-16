@@ -1,3 +1,6 @@
+using System;
+using System.Reflection;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Interject.API
@@ -28,9 +31,31 @@ namespace Interject.API
         /// <param name="opt">[name|version]</param>
         /// <returns></returns>
         [HttpGet("info")]
-        public ApplicationOptions GetInfo([FromRoute] string opt = null)
+        public string GetInfo([FromQuery] string opt = null)
         {
-            return _options;
+            var result = string.Empty;
+            if (string.IsNullOrEmpty(opt))
+            {
+                result = JsonSerializer.Serialize(_options);
+            }
+            else
+            {
+                try
+                {
+                    foreach (PropertyInfo prop in _options.GetType().GetProperties())
+                    {
+                        if (prop.Name.Equals(opt, System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            result = prop.GetValue(_options)?.ToString();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
+            return result;
         }
     }
 }
