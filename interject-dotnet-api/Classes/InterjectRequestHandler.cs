@@ -1,12 +1,46 @@
+using Interject.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Interject.Classes
 {
+    #region Interfaces
+
+    public interface IParameterConverter
+    {
+        /// <summary>
+        /// Process the incomming <see cref="RequestParameter"/> collection in the <see cref="InterjectRequestDTO"/>.
+        /// </summary>
+        /// <param name="inputParameters">The list of parameters from the original request.</param>
+        /// <param name="outputParameters">Output parameters that can be used by the <see cref="IDataConnection"/> implementation.</param>
+        public void Convert(List<RequestParameter> inputParameters, List<object> outputParameters);
+    }
+
+    public interface IDataConnection
+    {
+        public void FetchData(InterjectRequestHandler handler);
+    }
+
+    public interface IDataConnectionAsync
+    {
+        public Task FetchDataAsync(InterjectRequestHandler handler);
+    }
+
+    public interface IResponseConverter
+    {
+        public void Convert(InterjectRequestHandler handler);
+    }
+
+    #endregion
+
     /// <summary>
-    /// This is a container for the pipeline logic where Interject Requests are processed.<br/>
+    /// This is the container for the pipeline logic where Interject Requests are processed.<br/>
     /// </summary>
+    /// <remarks>
+    /// Use this method when all the parameters from the<see cref="InterjectRequestDTO"/>can be
+    /// processed with the same pipeline logic.
+    /// </remarks>
     public class InterjectRequestHandler
     {
         #region Interface members
@@ -75,32 +109,32 @@ namespace Interject.Classes
         /// <summary>
         /// The request coming from the client call.
         /// </summary>
-        public InterjectRequest IdsRequest { get; set; }
+        public InterjectRequestDTO IdsRequest { get; set; }
 
         /// <summary>
         /// The response object is configured during the Init method to include the original
         /// request's list of request parameters.
         /// </summary>
-        public InterjectResponse IdsResponse { get; set; }
+        public InterjectResponseDTO IdsResponse { get; set; }
 
         /// <summary>
         /// A place to store data returned from the fetch phase of the pipeline. This is intended
         /// to be accessed again during the convert phase of the pipeline when the data returned
         /// is transformed into standard<see cref="InterjectTable"/>data within the
-        /// <see cref="InterjectResponse.ReturnedDataList"/> collection.
+        /// <see cref="InterjectResponseDTO.ReturnedDataList"/> collection.
         /// </summary>
         public object ReturnData { get; set; }
 
         #endregion
 
-        public InterjectRequestHandler(InterjectRequest request)
+        public InterjectRequestHandler(InterjectRequestDTO request)
         {
             this.IdsRequest = request;
             if (request.RequestParameterList == null) request.RequestParameterList = new();
             this.IdsResponse = new(request);
         }
 
-        public InterjectResponse ReturnResponse()
+        public InterjectResponseDTO ReturnResponse()
         {
             this.ParameterConverter.Convert(this.IdsRequest.RequestParameterList, this.ConvertedParameters);
             this.DataConnection.FetchData(this);
@@ -108,7 +142,7 @@ namespace Interject.Classes
             return this.PackagedResponse;
         }
 
-        public async Task<InterjectResponse> ReturnResponseAsync()
+        public async Task<InterjectResponseDTO> ReturnResponseAsync()
         {
             this.ParameterConverter.Convert(this.IdsRequest.RequestParameterList, this.ConvertedParameters);
             await this.DataConnectionAsync.FetchDataAsync(this);
@@ -119,7 +153,7 @@ namespace Interject.Classes
         /// <summary>
         /// Performs final serialization required for the addin to consume the response.
         /// </summary>
-        private InterjectResponse PackagedResponse
+        private InterjectResponseDTO PackagedResponse
         {
             get
             {

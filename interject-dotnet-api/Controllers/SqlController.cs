@@ -1,4 +1,5 @@
 using Interject.Classes;
+using Interject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System;
@@ -24,11 +25,11 @@ namespace Interject.API
         /// The principal method of processing an action in the Interject Addin. E.G. Pull, Save, Drill
         /// </summary>
         /// <param name="interjectRequest">
-        /// The <see cref="InterjectRequest"/> object to process.
+        /// The <see cref="InterjectRequestDTO"/> object to process.
         /// </param>
         [HttpPost]
-        [ProducesResponseType(typeof(InterjectResponse), 200)]
-        public async Task<InterjectResponse> Post([FromBody] InterjectRequest interjectRequest)
+        [ProducesResponseType(typeof(InterjectResponseDTO), 200)]
+        public async Task<InterjectResponseDTO> Post([FromBody] InterjectRequestDTO interjectRequest)
         {
             InterjectRequestHandler handler = new(interjectRequest);
             handler.ParameterConverter = new SQLParameterConverter();
@@ -210,9 +211,9 @@ namespace Interject.API
             /// <summary>
             /// Create an instance of <see cref="SqlDataConnectionAsync"/>
             /// </summary>
-            /// <param name="request">The <see cref="InterjectRequest"/> from the http request.</param>
+            /// <param name="request">The <see cref="InterjectRequestDTO"/> from the http request.</param>
             /// <param name="connectionStringOptions">The <see cref="ConnectionStringOptions"/></param>
-            public SqlDataConnectionAsync(InterjectRequest request, ConnectionStringOptions connectionStringOptions)
+            public SqlDataConnectionAsync(InterjectRequestDTO request, ConnectionStringOptions connectionStringOptions)
             {
                 CleanConnectionStringOptions(connectionStringOptions);
                 ResolveConnectionString(request, connectionStringOptions.ConnectionStrings);
@@ -230,7 +231,7 @@ namespace Interject.API
                 }
             }
 
-            private void ResolveConnectionString(InterjectRequest request, List<ConnectionDescriptor> connectionStrings)
+            private void ResolveConnectionString(InterjectRequestDTO request, List<ConnectionDescriptor> connectionStrings)
             {
                 request.PassThroughCommand = request.PassThroughCommand == null ? new() : request.PassThroughCommand;
                 var conStrDesc = connectionStrings.FirstOrDefault(cs => cs.Name == request.PassThroughCommand.ConnectionStringName);
