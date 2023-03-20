@@ -26,6 +26,7 @@ namespace Interject
 
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -44,26 +45,16 @@ namespace Interject
             })
             .AddJwtBearer(options =>
             {
-                // options.Authority = "https://test-interject-authapi.azurewebsites.net"; //Interject's auth provider
-                // options.Audience = "https://test-interject-authapi.azurewebsites.net/resources"; //Interject's auth provider
+                options.Authority = Configuration["Authority"];//Interject's auth provider
+                options.Audience = $"{Configuration["Authority"]}/resources"; //Interject's auth provider
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = "https://test-interject-authapi.azurewebsites.net", //Interject's auth provider
-                    ValidAudience = "https://test-interject-authapi.azurewebsites.net/resources",
-                    ValidateIssuerSigningKey = true,
-                    // IssuerSigningKey = new SymmetricSecurityKey("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()),
+                    ValidIssuer = Configuration["Authority"],//Interject's auth provider
+                    ValidAudience = $"{Configuration["Authority"]}/resources", //Interject's auth provider
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = false
-                };
-                options.Events = new JwtBearerEvents
-                {
-                    OnAuthenticationFailed = async ctx =>
-                     {
-                         var putBreakpointHere = true;
-                         var exceptionMessage = ctx.Exception;
-                     },
                 };
             });
 
