@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Interject.API
@@ -28,6 +29,7 @@ namespace Interject.API
         /// <param name="opt">[name|version]</param>
         /// <returns></returns>
         [HttpGet("info")]
+        [Authorize]
         public ApplicationOptions GetInfo([FromRoute] string opt = null)
         {
             return _options;

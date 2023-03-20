@@ -44,14 +44,16 @@ namespace Interject
             })
             .AddJwtBearer(options =>
             {
-                // options.Authority = "https://test-interject-authapi.azurewebsites.net"; //Interject's auth provider
-                // options.Audience = "https://test-interject-authapi.azurewebsites.net/resources"; //Interject's auth provider
+                var identityBaseUrl = "https://localhost:5001";
+
+                options.Authority = identityBaseUrl; //Interject's auth provider
+                options.Audience = $"{identityBaseUrl}/resources"; //Interject's auth provider
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = "https://test-interject-authapi.azurewebsites.net", //Interject's auth provider
-                    ValidAudience = "https://test-interject-authapi.azurewebsites.net/resources",
-                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = identityBaseUrl, //Interject's auth provider
+                    ValidAudience = $"{identityBaseUrl}/resources",
+                    //ValidateIssuerSigningKey = true,
                     // IssuerSigningKey = new SymmetricSecurityKey("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()),
                     ValidateIssuer = true,
                     ValidateAudience = true,
