@@ -10,6 +10,7 @@ using System.Reflection;
 using System.IO;
 using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Interject
 {
@@ -21,6 +22,7 @@ namespace Interject
         }
 
         public IConfiguration Configuration { get; }
+
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -34,17 +36,36 @@ namespace Interject
             });
 
             // Uncomment this to add security
-            // services.AddAuthentication(options =>
-            // {
-            //     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            // })
-            // .AddJwtBearer(options =>
-            // {
-            //     options.Authority = "https://interject-authapi.azurewebsites.net"; //Interject's auth provider
-            //     options.Audience = ""; //TODO Add audience
-            //     options.RequireHttpsMetadata = false;
-            // });
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                // options.Authority = "https://test-interject-authapi.azurewebsites.net"; //Interject's auth provider
+                // options.Audience = "https://test-interject-authapi.azurewebsites.net/resources"; //Interject's auth provider
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = "https://test-interject-authapi.azurewebsites.net", //Interject's auth provider
+                    ValidAudience = "https://test-interject-authapi.azurewebsites.net/resources",
+                    ValidateIssuerSigningKey = true,
+                    // IssuerSigningKey = new SymmetricSecurityKey("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = false
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = async ctx =>
+                     {
+                         var putBreakpointHere = true;
+                         var exceptionMessage = ctx.Exception;
+                     },
+                };
+            });
 
             services.AddAuthorization();
 

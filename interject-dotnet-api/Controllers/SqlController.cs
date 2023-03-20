@@ -7,10 +7,12 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Interject.API
 {
     [ApiController]
+    [Authorize]
     [Route("api/v1/[controller]")]
     public class SQLController : ControllerBase
     {
