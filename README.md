@@ -1,11 +1,12 @@
-# Interject Dotnet Data Api
+# Interject Data API (Dotnet Edition)
 
-### A Dotnet version of the Data Api used to connect Interject to your data sources. This can be deployed within a client's network behind a firewall. Or it can be made public as client needs vary.
+### The Interject Data API for Dotnet. This API fetches data from custom sources allowing Interject to integrate data from more locations.
 
 ---
 
 - ### **[How to setup the API for development](#setup-for-dev)**
-- ### **[How to add a new controller](#new-controller)**
+- ### **[How to add a new controller with request parameters (recommended)](#new-controller-parameters)**
+- ### **[How to add a new controller with the request pipeline](#new-controller-pipeline)**
 - ### **[Working with the request pipeline](#request-pipeline)**
 - ### **[Status controller](#status-controller)**
 - ### **[App Settings](#app-settings)**
@@ -26,18 +27,20 @@ Steps: _using Visual Studio Code_
    - To run Without debugging Pres F5 or enter the command:
      > dotnet run
 
-6. This should use Kestrel to serve the application locally at http://localhost:5000
+6. This uses Kestrel to serve the application locally at http://localhost:5000. You can configure the starting port by modifying the file: __interject-dotnet-api/Properties/launchsettings.json__
 7. You can test by sending a request to the status controller http://localhost:5000/api/v1/status
 
-# <a name="new-controller">How to add a new controller</a>
+# <a name="new-controller-parameters">How to add a new controller with request parameters (recommended)</a>
+
+# <a name="new-controller-pipeline">How to add a new controller with the request pipeline</a>
 
 Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. Each endpoint should follow the basic pipeline flow for handling a request. See [Working with the request pipeline](#request-pipeline) for more details.
 
 Using the first example there is an SQLController included in this project already. Here is how to create a new controller template. This will create the controller with one endpoint, and three classes; one for each of the required interfaces.
 
 1. Create a new file in the Controllers directory using the naming convention {Name}Controller.cs.
-2. Use code snippets to scaffold the controller. The prefix is 'contr'.
-   > contr > TAB
+2. Use code snippets to scaffold the controller. The prefix is 'c-pipe'.
+   > c-pipe > TAB
 3. Type the {Name} of the controller as prompted by the snippet and press TAB
 4. You can now begin to customize your Pipeline interface implementations.
 
@@ -79,9 +82,7 @@ For reverse compatiblilty reasons, the _**ReturnedData.Data**_ property must be 
 
 # <a name="status-controller">Status Controller</a>
 
-As an additional tool for testing and to assist in future troubleshooting of client APIs, a status controller is available. There are two endpoints. One is just to check if the api is running and can be reached at {base url}/api/v1/status. The other is to check the installed version and obtain any other information stored in the appsettings.json > app property. This one can be reached at {base url}/api/v1/status/info.
-
-Neither of these endpoints are secured.
+As an additional tool for testing and to assist in future troubleshooting of client APIs, a status controller is available. There are two endpoints. One is just to check if the api is running and can be reached at {base url}/api/v1/status. The other is to check the installed version and obtain any other information you wish to expose stored in the _**ApplicationOptions**_. This one can be reached at {base url}/api/v1/status/info.
 
 # <a name="app-settings">App Settings</a>
 
