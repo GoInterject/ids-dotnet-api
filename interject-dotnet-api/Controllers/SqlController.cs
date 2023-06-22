@@ -1,4 +1,7 @@
 using Interject.Classes;
+using Interject.Config;
+using Interject.Enums;
+using Interject.Exceptions;
 using Interject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -7,7 +10,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text.Json;
 
 namespace Interject.API
 {
@@ -22,7 +24,8 @@ namespace Interject.API
         }
 
         /// <summary>
-        /// The principal method of processing an action in the Interject Addin. E.G. Pull, Save, Drill
+        /// Assumes all incomming paramters in the <see cref="InterjectRequestDTO.RequestParameterList"/> are
+        /// intended to be passed to a stored procedure.
         /// </summary>
         /// <param name="interjectRequest">
         /// The <see cref="InterjectRequestDTO"/> object to process.
@@ -249,7 +252,7 @@ namespace Interject.API
 
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
-                if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new UserException("PassThroughCommand.ConnectionStringName is required.");
+                if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new InterjectException("PassThroughCommand.ConnectionStringName is required.");
                 this._connection = new Microsoft.Data.SqlClient.SqlConnection(this._connectionString);
                 ConfigureCommand(handler);
                 AttachParameters(handler.ConvertedParameters);
@@ -350,7 +353,12 @@ namespace Interject.API
                 {
                     if (row.RowState != DataRowState.Deleted && row.RowState != DataRowState.Detached)
                     {
-                        result.Rows.Add(row.ItemArray.ToList());
+                        List<string> r = new();
+                        foreach (object o in row.ItemArray)
+                        {
+                            r.Add(o.ToString());
+                        }
+                        result.Rows.Add(r);
                     }
                 }
                 return result;

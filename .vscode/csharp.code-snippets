@@ -1,6 +1,6 @@
 {
-    "New Controller": {
-        "prefix": "contr",
+    "New controller using Inteject Request Handler": {
+        "prefix": "c-pipe",
         "body": [
             "using Interject.Classes;",
             "using Microsoft.AspNetCore.Mvc;",
@@ -13,7 +13,6 @@
             "",
             "namespace Interject.API",
             "{",
-            "    // [Authorize] //security is currently out of scope of the project. This will be added at a later phase prior to production use.",
             "    [ApiController]",
             "    [Route(\"api/v1/[controller]\")]",
             "    public class ${1}Controller : ControllerBase",
@@ -76,6 +75,45 @@
             "    }",
             "}"
         ],
-        "description": "Adds the scaffolding of a controller with the Interject Request Pipeline",
+        "description": "Adds the scaffolding of a controller with the Interject Request Pipeline.",
+    },
+    "New controller using Interject Request Parameters": {
+        "prefix": "c-param",
+        "body": [
+            "using Interject.Classes;",
+            "using Microsoft.AspNetCore.Mvc;",
+            "using Microsoft.Data.SqlClient;",
+            "using System;",
+            "using System.Collections.Generic;",
+            "using System.Data;",
+            "using System.Linq;",
+            "using System.Threading.Tasks;",
+            "",
+            "namespace Interject.API",
+            "{",
+            "    [ApiController]",
+            "    [Route(\"api/v1/[controller]\")]",
+            "    public class ${1}Controller : ControllerBase",
+            "    {",
+            "        private readonly InterjectRequestHandler _requestHandler;",
+            "        public ${1}Controller()",
+            "        {",
+            "        }",
+            "",
+            "        /// <summary>",
+            "        /// ",
+            "        /// </summary>",
+            "        /// <param name=\"interjectRequest\">",
+            "        /// The <see cref=\"InterjectRequest\"/> object to process.",
+            "        /// </param>",
+            "        [HttpPost]",
+            "        [ProducesResponseType(typeof(InterjectResponse), 200)]",
+            "        public async Task<InterjectResponse> Post([FromBody] InterjectRequest interjectRequest)",
+            "        {",
+            "            ",
+            "        }",
+            "}",
+        ],
+        "description": "Adds the scaffolding of a controller directly accessing Interject Request Parameters."
     }
 }

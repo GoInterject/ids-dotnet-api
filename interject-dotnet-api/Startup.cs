@@ -1,5 +1,5 @@
-using Interject.Classes;
-using Microsoft.AspNetCore.Authentication;
+using Interject.Config;
+using Interject.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,6 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
 using System;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Interject
 {
@@ -62,7 +61,7 @@ namespace Interject
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<ErrorMiddleware>();
+            app.UseMiddleware<ExceptionMiddleware>();
 
             if (env.IsDevelopment())
             {

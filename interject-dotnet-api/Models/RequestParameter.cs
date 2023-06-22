@@ -1,4 +1,4 @@
-using Interject.Classes;
+using Interject.Enums;
 
 namespace Interject.Models
 {

@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using Interject.Classes;
+using Interject.Enums;
 
 namespace Interject.Models
 {
     public class PassThroughCommand
     {
-        [Required]
         public string ConnectionStringName { get; set; }
 
         /// <summary>
@@ -13,7 +13,6 @@ namespace Interject.Models
         /// </summary>
         public CommandType CommandType { get; set; }
 
-        [Required]
         public string CommandText { get; set; }
 
         public int CommandTimeout { get; set; }

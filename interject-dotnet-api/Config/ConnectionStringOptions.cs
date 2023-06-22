@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Interject
+namespace Interject.Config
 {
     public class ConnectionStringOptions
     {
@@ -14,11 +14,5 @@ namespace Interject
         {
             ConnectionStrings = options.ConnectionStrings;
         }
-    }
-
-    public class ConnectionDescriptor
-    {
-        public string Name { get; set; }
-        public string ConnectionString { get; set; }
     }
 }

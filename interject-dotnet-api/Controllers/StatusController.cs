@@ -44,7 +44,7 @@ namespace Interject.API
                 {
                     foreach (PropertyInfo prop in _options.GetType().GetProperties())
                     {
-                        if (prop.Name.Equals(opt, System.StringComparison.OrdinalIgnoreCase))
+                        if (prop.Name.Equals(opt, StringComparison.OrdinalIgnoreCase))
                         {
                             result = prop.GetValue(_options)?.ToString();
                         }
@@ -52,7 +52,7 @@ namespace Interject.API
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    Console.WriteLine(e.Message);
                 }
             }
             return result;
