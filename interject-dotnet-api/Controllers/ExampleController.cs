@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace Interject.API
 {
-    // [Authorize] //security is currently out of scope of the project. This will be added at a later phase prior to production use.
     [ApiController]
     [Route("api/v1/[controller]")]
     public class ExampleController : ControllerBase
