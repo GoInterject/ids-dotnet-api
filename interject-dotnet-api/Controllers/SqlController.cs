@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Interject.API
@@ -43,6 +44,11 @@ namespace Interject.API
 
         internal class SQLParameterConverter : IParameterConverter
         {
+            /// <summary>
+            /// Converts a list of parameters (data type and value) to Microsoft.Data.SqlClient types.
+            /// </summary>
+            /// <param name="inputParameters"></param>
+            /// <param name="outputParameters"></param>
             public void Convert(List<RequestParameter> inputParameters, List<object> outputParameters)
             {
                 inputParameters.ForEach((reqParam) =>
@@ -52,6 +58,12 @@ namespace Interject.API
                 });
             }
 
+            /// <summary>
+            /// Converts the Interject Parameter Data Type to Microsoft.Data.SqlClient Data Type.
+            /// Converts the value by parsing if necessary.
+            /// </summary>
+            /// <param name="param"></param>
+            /// <returns></returns>
             private SqlParameter Convert(RequestParameter param)
             {
                 Microsoft.Data.SqlClient.SqlParameter result = new();
@@ -222,6 +234,9 @@ namespace Interject.API
                 ResolveConnectionString(request, connectionStringOptions.ConnectionStrings);
             }
 
+            /// <summary>
+            /// Inits the connection string if it is not currently initialized.
+            /// </summary>
             private void CleanConnectionStringOptions(ConnectionStringOptions connectionStringOptions)
             {
                 if (connectionStringOptions == null)
@@ -234,6 +249,10 @@ namespace Interject.API
                 }
             }
 
+            /// <summary>
+            /// Sets the PassThroughCommand and the connection string. Fetches the connection string in configurations matching its name 
+            /// from the PassThroughCommand.ConnectionStringName.
+            /// </summary>
             private void ResolveConnectionString(InterjectRequestDTO request, List<ConnectionDescriptor> connectionStrings)
             {
                 request.PassThroughCommand = request.PassThroughCommand == null ? new() : request.PassThroughCommand;
@@ -250,6 +269,9 @@ namespace Interject.API
                 }
             }
 
+            /// <summary>
+            /// Uses the InterjectRequestHandler pipeline to fetch data asynchronously.
+            /// </summary>
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
                 if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new InterjectException("PassThroughCommand.ConnectionStringName is required.");
@@ -263,6 +285,10 @@ namespace Interject.API
             private Microsoft.Data.SqlClient.SqlCommand _command { get; set; }
             private SqlConnection _connection { get; set; }
 
+            /// <summary>
+            /// Sets this handler's command parameters using the Interject Request.
+            /// </summary>
+            /// <param name="handler"></param>
             private void ConfigureCommand(InterjectRequestHandler handler)
             {
                 this._command = this._connection.CreateCommand();
@@ -304,6 +330,9 @@ namespace Interject.API
             }
         }
 
+        /// <summary>
+        /// Class for holding a pair of parameters, one from the Interject request and its converted SQL parameter
+        /// </summary>
         internal class ParamPair
         {
             public SqlParameter SqlParam { get; set; }
@@ -372,12 +401,12 @@ namespace Interject.API
                 result.AutoIncrementSeed = column.AutoIncrementSeed;
                 result.Caption = column.Caption;
                 result.ColumnName = column.ColumnName;
-                result.DataType = column.DataType.Name;
+                //result.DataType = column.DataType.Name; // Commented out - Interject works with strings
                 var i = (int)column.DateTimeMode;
                 result.DateTimeMode = i.ToString();
                 result.DefaultValue = column.DefaultValue.ToString();
                 result.MaxLength = column.MaxLength;
-                //result.Ordinal ~~ This is set when added to the table
+                //result.Ordinal // Commented out - This is set when added to the table
                 result.ReadOnly = column.ReadOnly;
                 result.Unique = column.Unique;
                 return result;

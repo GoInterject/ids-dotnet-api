@@ -27,31 +27,6 @@ namespace Interject.Exceptions
         {
             try
             {
-                // // For debugging:
-                // // This allows reading of the post body as a string from the
-                // // reqCxt variable below.
-                // var request = context.Request;
-                // if (request.Method == HttpMethods.Post && request.ContentLength > 0)
-                // {
-                //     request.EnableBuffering();
-                //     var buffer = new byte[Convert.ToInt32(request.ContentLength)];
-                //     await request.Body.ReadAsync(buffer, 0, buffer.Length);
-                //     var reqCxt = Encoding.UTF8.GetString(buffer);
-
-                //     // Make it a bit easier to read.
-                //     reqCxt = reqCxt.Replace("\\r", "");
-                //     reqCxt = reqCxt.Replace("\\n ", "");
-                //     reqCxt = reqCxt.Replace("\\n<", "<");
-                //     reqCxt = reqCxt.Replace("\\", "");
-
-                //     request.Body.Position = 0;
-                // }
-
-                if (context.Request.Method == HttpMethods.Post && context.Request.ContentLength > 0)
-                {
-                    throw new InterjectException("testing 401", 401);
-                }
-
                 await _next(context);
             }
             catch (Exception error)

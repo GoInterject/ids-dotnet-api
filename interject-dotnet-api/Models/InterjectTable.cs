@@ -53,6 +53,10 @@ namespace Interject.Models
             this.Rows.Insert(this.Rows.Count, row);
         }
 
+        /// <summary>
+        /// Conforms a row's length to match the number of columns in the table
+        /// </summary>
+        /// <param name="row"></param>
         private void RightSizeNewRow(List<string> row)
         {
             while (row.Count < this.Columns.Count)
@@ -119,6 +123,24 @@ namespace Interject.Models
             }
         }
 
+        /// <param name="columnName">The name of the column to return.</param>
+        /// <returns>A list of strings representing the column of data. Returns null if column is not found.</returns>
+        public List<string> GetColumnValues(string columnName)
+        {
+            int colIndex = GetColumnIndex(columnName);
+            if(colIndex < 0)
+            {
+                return null;
+            }
+            List<string> list = new();
+
+            foreach(var row in this.Rows)
+            {
+                list.Add(row[colIndex]);
+            }
+            return list;
+        }
+
         /// <param name="name">The name of the column to search for.</param>
         /// <returns>The index of the column if found, -1 if no match is found.</returns>
         public int GetColumnIndex(string name)
@@ -166,6 +188,11 @@ namespace Interject.Models
                 tableSb.AppendLine(rowSb.ToString());
             });
             return tableSb.ToString();
+        }
+
+        public void Print()
+        {
+            Console.Write(this.ToString());
         }
     }
 }

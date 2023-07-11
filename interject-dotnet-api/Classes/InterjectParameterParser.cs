@@ -8,6 +8,13 @@ namespace Interject.Classes
 {
     public static class InterjectParameterParser
     {
+        /// <summary>
+        /// Parses the string parameter "Interject_RequestContext"
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns>
+        /// InterjectRequestContext object
+        /// </returns>
         public static InterjectRequestContext ParseRequestContext(string xml)
         {
             InterjectRequestContext requestContext = new();
@@ -76,7 +83,7 @@ namespace Interject.Classes
                 colDefItem.Column = element.GetAttributeInt("Column");
                 colDefItem.Value = element.GetChildValueString("Name");
                 colDefItem.RowDef = element.GetAttributeBool("RowDef");
-                colDefItem.ColumnName = element.GetAttribute("ColumnName", "");
+                colDefItem.ColumnName = element.GetChildValueString("Name");
                 colDefItem.Json = element.GetChildValueDictionary("Json");
 
                 result.Add(colDefItem);
@@ -84,20 +91,21 @@ namespace Interject.Classes
             return result;
         }
 
-        private static List<InterjectRowDefItem> ParseRowDefItems(XPathNavigator navigator)
+         private static List<InterjectRowDefItem> ParseRowDefItems(XPathNavigator navigator)
         {
             List<InterjectRowDefItem> result = new();
             XPathNodeIterator iterator = navigator.Select("Value");
             while (iterator.MoveNext())
             {
                 XPathNavigator element = iterator.Current;
+                XPathNavigator nodeColKey = element.SelectSingleNode("//ColKey");
                 InterjectRowDefItem rowDefItem = new();
 
                 rowDefItem.Row = element.GetAttributeInt("Row");
-                rowDefItem.Column = element.GetAttributeInt("Column");
+                rowDefItem.Column = nodeColKey.GetAttributeInt("Column");
                 rowDefItem.RowDefName = element.GetAttribute("RowDefName", "");
                 rowDefItem.ColKeyList = ParseColKeys(element);
-                rowDefItem.ColumnName = element.GetAttribute("ColumnName", "");
+                rowDefItem.ColumnName = nodeColKey.GetAttribute("Name", "");
                 rowDefItem.Json = element.GetChildValueDictionary("Json");
 
                 result.Add(rowDefItem);
@@ -231,17 +239,18 @@ namespace Interject.Classes
 
         private static int GetAttributeInt(this XPathNavigator navigator, string name)
         {
-            int outVal = 0;
-            int.TryParse(navigator.GetAttribute(name, ""), out outVal);
-            return outVal;
+            if (int.TryParse(navigator.GetAttribute(name, ""), out int outVal))
+            {
+                return outVal;
+            }
+            return 0;
         }
 
         private static bool? GetAttributeBool(this XPathNavigator navigator, string name)
         {
             string value = navigator.GetAttribute(name, "");
             if (string.IsNullOrEmpty(value)) return null;
-            bool result;
-            bool.TryParse(value, out result);
+            bool.TryParse(value, out bool result);
             return result;
         }
 

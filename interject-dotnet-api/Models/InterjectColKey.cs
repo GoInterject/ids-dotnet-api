@@ -6,12 +6,16 @@ namespace Interject.Models
 {
     public class InterjectColKey
     {
-        public int Order { get; set; }
-        public int Column { get; set; }
-        public string Value { get; set; }
-        public string Name { get; set; }
+        public int Order { get; set; } // The order of this ColKey in the list
+        public int Column { get; set; } // The column number index of this item from Excel Report
+        public string Value { get; set; } // The value of this ColKey
+        public string Name { get; set; } // The name of this ColKey
         public Dictionary<string, string> Json { get; set; }
 
+        /// <summary>
+        /// Returns the string representation of this item in XML form
+        /// </summary>
+        /// <returns></returns>
         public string ToXML()
         {
             StringBuilder sb = new();

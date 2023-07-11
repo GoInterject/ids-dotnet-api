@@ -112,7 +112,7 @@ namespace Interject.Models
         /// </summary>
         /// <remarks>
         /// NOTE: Interject prepends the prefix '@' to all parameters. This method will
-        /// account for that by prepending '@' to the name paramter as needed.
+        /// account for that by prepending '@' to the name parameter as needed.
         /// </remarks>
         /// <param name="name">
         /// The value of the<see cref="RequestParameter.Name"/>property.
