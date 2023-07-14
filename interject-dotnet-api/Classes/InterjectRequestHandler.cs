@@ -46,24 +46,24 @@ namespace Interject.Classes
         #region Interface members
 
         /// <summary>
-        /// An implementation of the <see cref="IParameterConverter"/> interface.
+        /// An implementation of the <see cref="Classes.IParameterConverter"/> interface.
         /// </summary>
-        public IParameterConverter ParameterConverter { get; set; } = new DefaultParameterConverter();
+        public IParameterConverter IParameterConverter { get; set; } = new DefaultParameterConverter();
 
         /// <summary>
-        /// An implementation of the <see cref="IDataConnection"/> interface.
+        /// An implementation of the <see cref="Classes.IDataConnection"/> interface.
         /// </summary>
-        public IDataConnection DataConnection { get; set; } = new DefaultDataConnection();
+        public IDataConnection IDataConnection { get; set; } = new DefaultDataConnection();
 
         /// <summary>
-        /// An implementation of the <see cref="IDataConnectionAsync"/> interface.
+        /// An implementation of the <see cref="Classes.IDataConnectionAsync"/> interface.
         /// </summary>
-        public IDataConnectionAsync DataConnectionAsync { get; set; } = new DefaultDataConnectionAsync();
+        public IDataConnectionAsync IDataConnectionAsync { get; set; } = new DefaultDataConnectionAsync();
 
         /// <summary>
-        /// An implementation of the <see cref="IResponseConverter"/> interface.
+        /// An implementation of the <see cref="Classes.IResponseConverter"/> interface.
         /// </summary>
-        public IResponseConverter ResponseConverter { get; set; } = new DefaultResponseConverter();
+        public IResponseConverter IResponseConverter { get; set; } = new DefaultResponseConverter();
 
         #endregion
 
@@ -101,7 +101,7 @@ namespace Interject.Classes
 
         /// <summary>
         /// A container for storing request parameter data after processing them in the
-        /// <see cref="IParameterConverter"/>. This is useful for tracking the incomming
+        /// <see cref="Classes.IParameterConverter"/>. This is useful for tracking the incomming
         /// request throughout the pipeline.
         /// </summary>
         public List<object> ConvertedParameters { get; set; } = new();
@@ -127,6 +127,14 @@ namespace Interject.Classes
 
         #endregion
 
+        /// <summary>
+        /// Creates a new instance of <see cref="InterjectRequestHandler"/>.<br/>
+        /// This stores the <see cref="InterjectRequestDTO"/>, ensures the
+        /// <see cref="InterjectRequestDTO.RequestParameterList"/> is not null
+        /// and instantiates a new <see cref="InterjectResponseDTO"/> for the
+        /// final return to the Interject add-in.
+        /// </summary>
+        /// <param name="request">The <see cref="InterjectRequestDTO"/> from the Interject add-in.</param>
         public InterjectRequestHandler(InterjectRequestDTO request)
         {
             this.IdsRequest = request;
@@ -134,19 +142,37 @@ namespace Interject.Classes
             this.IdsResponse = new(request);
         }
 
+        /// <summary>
+        /// Performs the pipeline operations in the following order:
+        /// <list>
+        /// <item>1: <see cref="IParameterConverter.Convert(List{RequestParameter}, List{object})"/></item>
+        /// <item>2: <see cref="IDataConnection.FetchData(InterjectRequestHandler)"/></item>
+        /// <item>3: <see cref="IResponseConverter.Convert(InterjectRequestHandler)"/></item>
+        /// </list>
+        /// </summary>
+        /// <returns><see cref="InterjectResponseDTO"/></returns>
         public InterjectResponseDTO ReturnResponse()
         {
-            this.ParameterConverter.Convert(this.IdsRequest.RequestParameterList, this.ConvertedParameters);
-            this.DataConnection.FetchData(this);
-            this.ResponseConverter.Convert(this);
+            this.IParameterConverter.Convert(this.IdsRequest.RequestParameterList, this.ConvertedParameters);
+            this.IDataConnection.FetchData(this);
+            this.IResponseConverter.Convert(this);
             return this.PackagedResponse;
         }
 
+        /// <summary>
+        /// Performs the pipeline operations in the following order:
+        /// <list>
+        /// <item>1: <see cref="IParameterConverter.Convert(List{RequestParameter}, List{object})"/></item>
+        /// <item>2: <see cref="IDataConnectionAsync.FetchDataAsync(InterjectRequestHandler)"/></item>
+        /// <item>3: <see cref="IResponseConverter.Convert(InterjectRequestHandler)"/></item>
+        /// </list>
+        /// </summary>
+        /// <returns><see cref="InterjectResponseDTO"/></returns>
         public async Task<InterjectResponseDTO> ReturnResponseAsync()
         {
-            this.ParameterConverter.Convert(this.IdsRequest.RequestParameterList, this.ConvertedParameters);
-            await this.DataConnectionAsync.FetchDataAsync(this);
-            this.ResponseConverter.Convert(this);
+            this.IParameterConverter.Convert(this.IdsRequest.RequestParameterList, this.ConvertedParameters);
+            await this.IDataConnectionAsync.FetchDataAsync(this);
+            this.IResponseConverter.Convert(this);
             return this.PackagedResponse;
         }
 

@@ -27,7 +27,7 @@ namespace Interject.Models
         /// <param name="request">The <see cref="InterjectRequestDTO"/> from the Interject Add-in.</param>
         public InterjectResponseDTO(InterjectRequestDTO request)
         {
-            this.RequestParameterList = request.RequestParameterList ?? (new());
+            this.RequestParameterList = request.RequestParameterList ?? new();
         }
 
         /// <summary>

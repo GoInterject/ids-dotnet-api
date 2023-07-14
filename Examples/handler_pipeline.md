@@ -1,6 +1,6 @@
 # Working with the Interject Request Handler Pipeline
 
-The `InterjectRequesthandler` class is used as a pipeline to connect with a data source using a connection string. Data can be fetched, converted, and transferred back to Interject via this class.
+The `InterjectRequesthandler` class is used as a pipeline to connect with a data in a flexible workflow. Data can be fetched, converted, and transferred back to Interject via this class.
 
 ---
 - ### **[Working With the Pipeline](#request-pipeline)**
@@ -24,7 +24,7 @@ The `InterjectRequestHandler` creates a pipeline for processing the `InterjectRe
 
 # <a name="connection-strings">Connection Strings</a>
 
-This API uses the `appsettings.json` to hold connections strings. On startup, the program will initialize these strings in Configurations. You can get the connection strings by passing a `ConnectionStringOptions` object to your controller. The `InterjectRequestDTO.PassThroughCommand` will contain the ConnectionStringName. You can establish a data connection by initializing the `DataConnection` or `DataConnectionAsync` object of the class `InterjectRequestHandler` with the connection strings. 
+For the purpose of the SqlController example, this API uses the `appsettings.json` to hold connections strings. On startup, the program will initialize these strings in Configurations. The connection strings are available via dependency injection by requiring a `ConnectionStringOptions` object in the controller's constructor. The `InterjectRequestDTO.PassThroughCommand` will contain the ConnectionStringName. The connection is established by initializing the `SqlDataConnectionAsync` object with the connection strings. 
 
 <br>
 
@@ -53,7 +53,7 @@ There are 4 internal classes in this example:
 
 Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. Each endpoint should follow the basic pipeline flow for handling a request. See [Working with the request pipeline](#request-pipeline) for more details.
 
-Using the first example there is an SQLController included in this project already. Here is how to create a new controller template. This will create the controller with one endpoint, and three classes; one for each of the required interfaces.
+Using the first example there is an SQLController included in this project already. Here is how to create a new controller template. This will create the controller with one endpoint, and four classes; one for each of the interfaces. Note that the **IDataConnectionAsync** and **IDataConnection** are interchangeable depending on your needs and only one can be used per endpoint.
 
 1. Create a new file in the Controllers directory using the naming convention {Name}Controller.cs.
 2. Use code snippets in VS Code to scaffold the controller. The prefix is 'c-pipe'.
@@ -63,19 +63,19 @@ Using the first example there is an SQLController included in this project alrea
 
 <br/>
 
-## 1) **Initialize the InterjectRequestHandler**
+## 1) **Instantiate the InterjectRequestHandler**
 
-Create an instance of the **InterjectRequestHandler** passing the InterjectRequest into the constructor. This will instantiate a new `InterjectResponse` object and store the `InterjectRequest`. The constructor will also instantiate a couple other data storage properties described below for use in the rest of the pipeline. The inital `InterjectRequset.RequestParameterList` is also transferd to the `InterjectResponse.RequestParameterList` to ensure the Addin at least recieves the original parameters in the response. It is also possible to replace or manipulate those returned parameters during the pipeline if needed.
+Create an instance of the **InterjectRequestHandler** passing the InterjectRequest into the constructor. This will instantiate a new `InterjectResponse` object and store the `InterjectRequest`. The constructor will also instantiate a couple other data storage properties described below for use in the rest of the pipeline. The inital `InterjectRequset.RequestParameterList` is also transferd to the `InterjectResponse.RequestParameterList` to ensure the Interject add-in at least recieves the original parameters in the response. It is also possible to replace or manipulate those returned parameters during the pipeline if needed.
 
 ## 2) **Convert the RequestParameters** _(IParameterConverter)_
 
-The data source you are creating the controller for will likely need the parameters passed in the request to be either converted to another class type or be otherwise processed before they can be used to fetch the data.
+The data source you are creating the controller for will likely need the parameters passed in the request to be either converted to another class type or to be otherwise processed before they can be used to fetch the data.
 
 The `InterjectRequestHandler.ConvertedParameters` property is a collection of generic object type intended for storing the processed parameters to be used in the next phase. Since the collection is a list of generic object you can place a collection of any type needed.
 
-## 3) **Fetch the data** _(IDataConnection)_
+## 3) **Fetch the data** _(IDataConnection)_ OR _(IDataConnectionAsync)_
 
-The Interface requires an implementation of both a sync and async fetch method. However, which you choose to use in the controller's endpoint is up to you.
+The Interface can use an implementation of either a sync or async fetch method. However, only one implementation can be used per endpoint. Note that the `InterjectRequestHandler.ReturnResponse()` and `InterjectRequestHandler.ReturnResponseAsync()` use those implementations respectively.
 
 The data returned is intended to be stored in the `InterjectRequestHandler.ReturnData` property until the `IResponseConverter` derived class can transfom it to the collection of `ReturnedData` in the `InterjectRequestHandler.InterjectResponse`.
 
@@ -85,5 +85,7 @@ Once the data has been returned from the data source, it needs to be converted i
 
 ## 5) **Return the InterjectResponse object**
 
-For reverse compatiblilty reasons, the `ReturnedData.Data` property must be serialized prior to retuning the response to the caller. The `InterjectRequestHandler.PackagedResponse` property handles this to make it easier for development.
+Call the `InterjectRequestHandler.ReturnResponse()` or `InterjectRequestHandler.ReturnResponseAsync()` method depending on your implementation to complete the pipeline and return the `InterjectResponseDTO`
+
+Note: For reverse compatiblilty reasons, the `ReturnedData.Data` property must be serialized prior to retuning the response to the caller. The `InterjectRequestHandler.PackagedResponse` property handles this to make it easier for development.
 

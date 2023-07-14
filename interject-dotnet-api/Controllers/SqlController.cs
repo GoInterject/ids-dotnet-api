@@ -36,9 +36,9 @@ namespace Interject.API
         public async Task<InterjectResponseDTO> Post([FromBody] InterjectRequestDTO interjectRequest)
         {
             InterjectRequestHandler handler = new(interjectRequest);
-            handler.ParameterConverter = new SQLParameterConverter();
-            handler.DataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStringOptions);
-            handler.ResponseConverter = new SqlResponseConverter();
+            handler.IParameterConverter = new SQLParameterConverter();
+            handler.IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStringOptions);
+            handler.IResponseConverter = new SqlResponseConverter();
             return await handler.ReturnResponseAsync();
         }
 
