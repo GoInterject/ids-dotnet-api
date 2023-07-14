@@ -33,13 +33,13 @@ namespace Interject.Models
 
         public InterjectRequestDTO() { }
 
+        private InterjectRequestContext _requestContext { get; set; }
         /// <summary>
         /// The <see cref="InterjectRequestContext"/>.
         /// </summary>
         /// <remarks>
         /// Requires the Data Portal System Parameter: Interject_RequestContext
         /// </remarks>
-        private InterjectRequestContext _requestContext { get; set; }
         public InterjectRequestContext GetRequestContext()
         {
             if (_requestContext == null)
