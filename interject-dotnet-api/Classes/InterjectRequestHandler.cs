@@ -1,170 +1,185 @@
+using Interject.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Interject.Classes
 {
-    /// <summary>
-    /// This is a container for the pipeline logic where Interject Requests are processed.<br/>
-    /// </summary>
-    public class InterjectRequestHandler
+    #region Interfaces
+
+    public interface IParameterConverter
     {
         /// <summary>
+        /// Process the incomming <see cref="RequestParameter"/> collection in the <see cref="InterjectRequestDTO"/>.
+        /// </summary>
+        /// <param name="inputParameters">The list of parameters from the original request.</param>
+        /// <param name="outputParameters">Output parameters that can be used by the <see cref="IDataConnection"/> implementation.</param>
+        public void Convert(List<RequestParameter> inputParameters, List<object> outputParameters);
+    }
+
+    public interface IDataConnection
+    {
+        public void FetchData(InterjectRequestHandler handler);
+    }
+
+    public interface IDataConnectionAsync
+    {
+        public Task FetchDataAsync(InterjectRequestHandler handler);
+    }
+
+    public interface IResponseConverter
+    {
+        public void Convert(InterjectRequestHandler handler);
+    }
+
+    #endregion
+
+    /// <summary>
+    /// This is the container for the pipeline logic where Interject Requests are processed.<br/>
+    /// </summary>
+    /// <remarks>
+    /// Use this method when all the parameters from the<see cref="InterjectRequestDTO"/>can be
+    /// processed with the same pipeline logic.
+    /// </remarks>
+    public class InterjectRequestHandler
+    {
+        #region Interface members
+
+        /// <summary>
+        /// An implementation of the <see cref="Classes.IParameterConverter"/> interface.
+        /// </summary>
+        public IParameterConverter IParameterConverter { get; set; } = new DefaultParameterConverter();
+
+        /// <summary>
+        /// An implementation of the <see cref="Classes.IDataConnection"/> interface.
+        /// </summary>
+        public IDataConnection IDataConnection { get; set; } = new DefaultDataConnection();
+
+        /// <summary>
+        /// An implementation of the <see cref="Classes.IDataConnectionAsync"/> interface.
+        /// </summary>
+        public IDataConnectionAsync IDataConnectionAsync { get; set; } = new DefaultDataConnectionAsync();
+
+        /// <summary>
+        /// An implementation of the <see cref="Classes.IResponseConverter"/> interface.
+        /// </summary>
+        public IResponseConverter IResponseConverter { get; set; } = new DefaultResponseConverter();
+
+        #endregion
+
+        #region Default interface implementations
+
+        private class DefaultParameterConverter : IParameterConverter
+        {
+            public void Convert(List<RequestParameter> inputParameters, List<object> outputParameters)
+            {
+                inputParameters.ForEach((param) => { outputParameters.Add(param); });
+            }
+        }
+
+        private class DefaultDataConnection : IDataConnection
+        {
+            public void FetchData(InterjectRequestHandler handler) { } // Do nothing
+        }
+
+        private class DefaultDataConnectionAsync : IDataConnectionAsync
+        {
+            public async Task FetchDataAsync(InterjectRequestHandler handler)
+            {
+                await Task.Run(() => { });
+            }
+        }
+
+        private class DefaultResponseConverter : IResponseConverter
+        {
+            public void Convert(InterjectRequestHandler handler) { } // Do nothing
+        }
+
+        #endregion
+
+        #region Data storage members
+
+        /// <summary>
         /// A container for storing request parameter data after processing them in the
-        /// <see cref="IParameterConverter"/>. This is useful for tracking the incomming
+        /// <see cref="Classes.IParameterConverter"/>. This is useful for tracking the incomming
         /// request throughout the pipeline.
         /// </summary>
         public List<object> ConvertedParameters { get; set; } = new();
 
         /// <summary>
-        /// A backward compatiblity feature for supporting a passthrough of a connection string
-        /// name for lookup in the appsettings.json or the connection string itself.
-        /// </summary>
-        public string ConnectionString { get; set; }
-
-        /// <summary>
         /// The request coming from the client call.
         /// </summary>
-        public InterjectRequest IdsRequest { get; set; }
+        public InterjectRequestDTO IdsRequest { get; set; }
 
         /// <summary>
         /// The response object is configured during the Init method to include the original
         /// request's list of request parameters.
         /// </summary>
-        public InterjectResponse IdsResponse { get; set; }
+        public InterjectResponseDTO IdsResponse { get; set; }
 
         /// <summary>
         /// A place to store data returned from the fetch phase of the pipeline. This is intended
         /// to be accessed again during the convert phase of the pipeline when the data returned
         /// is transformed into standard<see cref="InterjectTable"/>data within the
-        /// <see cref="InterjectResponse.ReturnedDataList"/> collection.
+        /// <see cref="InterjectResponseDTO.ReturnedDataList"/> collection.
         /// </summary>
         public object ReturnData { get; set; }
 
-        /// <summary>
-        /// Provided by dependancy injection during the application startup. This is coming
-        /// from the appSettings.json "Connections" collection property.
-        /// </summary>
-        private List<ConnectionDescriptor> _connectionStrings;
+        #endregion
 
         /// <summary>
-        /// Create an instance of <see cref="InterjectRequestHandler"/>
+        /// Creates a new instance of <see cref="InterjectRequestHandler"/>.<br/>
+        /// This stores the <see cref="InterjectRequestDTO"/>, ensures the
+        /// <see cref="InterjectRequestDTO.RequestParameterList"/> is not null
+        /// and instantiates a new <see cref="InterjectResponseDTO"/> for the
+        /// final return to the Interject add-in.
         /// </summary>
-        /// <param name="connectionStringOptions"></param>
-        public InterjectRequestHandler(ConnectionStringOptions connectionStringOptions)
-        {
-            if (connectionStringOptions == null)
-            {
-                _connectionStrings = new();
-            }
-            else if (connectionStringOptions.ConnectionStrings == null)
-            {
-                _connectionStrings = new();
-            }
-            else
-            {
-                _connectionStrings = connectionStringOptions.ConnectionStrings;
-            }
-        }
-
-        /// <summary>
-        /// The first step in the request pipeline. This validates the incomming request and
-        /// initializes the output response object.
-        /// </summary>
-        /// <param name="request">The request passed from the Interject Addin to the Api endpoint.</param>
-        public void Init(InterjectRequest request)
+        /// <param name="request">The <see cref="InterjectRequestDTO"/> from the Interject add-in.</param>
+        public InterjectRequestHandler(InterjectRequestDTO request)
         {
             this.IdsRequest = request;
             if (request.RequestParameterList == null) request.RequestParameterList = new();
-            this.IdsResponse = new InterjectResponse(request);
-            ResolveConnectionString();
-        }
-
-        private void ResolveConnectionString()
-        {
-            if (IdsRequest.PassThroughCommand == null) IdsRequest.PassThroughCommand = new();
-            var conStrDesc = _connectionStrings.FirstOrDefault(cs => cs.Name == this.IdsRequest.PassThroughCommand.ConnectionStringName);
-
-            if (conStrDesc == null)
-            {
-                // IdsRequest.PassThroughCommand.ConnectionStringName 
-                // may be the connection string itself.
-                this.ConnectionString = this.IdsRequest.PassThroughCommand.ConnectionStringName;
-            }
-            else
-            {
-                this.ConnectionString = conStrDesc.ConnectionString;
-            }
+            this.IdsResponse = new(request);
         }
 
         /// <summary>
-        /// Converts the request parameters into the type needed for the data handler's data integration.
+        /// Performs the pipeline operations in the following order:
+        /// <list>
+        /// <item>1: <see cref="IParameterConverter.Convert(List{RequestParameter}, List{object})"/></item>
+        /// <item>2: <see cref="IDataConnection.FetchData(InterjectRequestHandler)"/></item>
+        /// <item>3: <see cref="IResponseConverter.Convert(InterjectRequestHandler)"/></item>
+        /// </list>
         /// </summary>
-        /// <param name="converter">The instance of the <see cref="IParameterConverter"/> derived class used to convert
-        /// <see cref="RequestParameter"/> to the type required for the data connection type to consume.</param>
-        public void ConvertParameters(IParameterConverter converter = null)
+        /// <returns><see cref="InterjectResponseDTO"/></returns>
+        public InterjectResponseDTO ReturnResponse()
         {
-            if (converter == null)
-            {
-                this.IdsRequest.RequestParameterList.ForEach((param) =>
-                {
-                    this.ConvertedParameters.Add(param);
-                });
-            }
-            else
-            {
-                converter.Convert(this);
-            }
+            this.IParameterConverter.Convert(this.IdsRequest.RequestParameterList, this.ConvertedParameters);
+            this.IDataConnection.FetchData(this);
+            this.IResponseConverter.Convert(this);
+            return this.PackagedResponse;
         }
 
         /// <summary>
-        /// An async option for collecting the data. This is intended to pass the collected data to the
-        /// <see cref="InterjectRequestHandler.ReturnData"/> member for later conversion.
+        /// Performs the pipeline operations in the following order:
+        /// <list>
+        /// <item>1: <see cref="IParameterConverter.Convert(List{RequestParameter}, List{object})"/></item>
+        /// <item>2: <see cref="IDataConnectionAsync.FetchDataAsync(InterjectRequestHandler)"/></item>
+        /// <item>3: <see cref="IResponseConverter.Convert(InterjectRequestHandler)"/></item>
+        /// </list>
         /// </summary>
-        /// <param name="dataConnection">The instance of the <see cref="IDataConnection"/> derived class used to
-        /// collect the data from the source.</param>
-        public async Task FetchDataAsync(IDataConnection dataConnection)
+        /// <returns><see cref="InterjectResponseDTO"/></returns>
+        public async Task<InterjectResponseDTO> ReturnResponseAsync()
         {
-            await dataConnection.FetchDataAsync(this);
+            this.IParameterConverter.Convert(this.IdsRequest.RequestParameterList, this.ConvertedParameters);
+            await this.IDataConnectionAsync.FetchDataAsync(this);
+            this.IResponseConverter.Convert(this);
+            return this.PackagedResponse;
         }
 
         /// <summary>
-        /// A synchronous option for collecting the data. This is intended to pass the collected data to the
-        /// <see cref="InterjectRequestHandler.ReturnData"/>property for later conversion.
+        /// Performs final serialization required for the addin to consume the response.
         /// </summary>
-        /// <param name="dataConnection">The instance of the <see cref="IDataConnection"/> derived class used to
-        /// collect the data from the source.</param>
-        public void FetchData(IDataConnection dataConnection)
-        {
-            dataConnection.FetchData(this);
-        }
-
-        /// <summary>
-        /// The final phase of the request pipeline. The data stored in the
-        /// <see cref="InterjectRequestHandler.ReturnData"/>property from one of the two Fetch methods is now
-        /// converted into the standard<see cref="ReturnedData"/>class and added to the 
-        /// <see cref="InterjectResponse.ReturnedDataList"/>collection of the 
-        /// <see cref="InterjectRequestHandler.IdsResponse"/> property.
-        /// </summary>
-        /// <param name="converter"></param>
-        /// <exception cref="UserException"></exception>
-        public void ConvertResponseData(IResponseConverter converter)
-        {
-            if (this.ReturnData == null)
-            {
-                throw new UserException("The returned data was null. Be sure InterjectRequestHandler.FetchData was called and that the IDataConnection.FetchDataAsync passed in returns data.");
-            }
-            else
-            {
-                converter.Convert(this);
-            }
-        }
-
-        /// <summary>
-        /// GETTER: Performs final serialization required for the addin to consume the response.
-        /// </summary>
-        public InterjectResponse PackagedResponse
+        private InterjectResponseDTO PackagedResponse
         {
             get
             {

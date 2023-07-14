@@ -1,5 +1,5 @@
-using Interject.Classes;
-using Microsoft.AspNetCore.Authentication;
+using Interject.Config;
+using Interject.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,6 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
 using System;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Interject
 {
@@ -33,17 +32,18 @@ namespace Interject
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.Authority = "TODO: Add auth";
-                options.Audience = "TODO: Add auth";
-                options.RequireHttpsMetadata = false;
-            });
+            // Uncomment this to add security
+            // services.AddAuthentication(options =>
+            // {
+            //     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            // })
+            // .AddJwtBearer(options =>
+            // {
+            //     options.Authority = "https://interject-authapi.azurewebsites.net"; //Interject's auth provider
+            //     options.Audience = ""; //TODO Add audience
+            //     options.RequireHttpsMetadata = false;
+            // });
 
             services.AddAuthorization();
 
@@ -55,13 +55,13 @@ namespace Interject
 
             ConnectionStringOptions connections = new();
             Configuration.GetSection(ConnectionStringOptions.Connections).Bind(connections);
-            services.AddTransient<InterjectRequestHandler>(_ => new(connections));
+            services.AddSingleton<ConnectionStringOptions>(_ => new(connections));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseMiddleware<ErrorMiddleware>();
+            app.UseMiddleware<ExceptionMiddleware>();
 
             if (env.IsDevelopment())
             {

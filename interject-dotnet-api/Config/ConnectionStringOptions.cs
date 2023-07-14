@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 
-namespace Interject
+namespace Interject.Config
 {
     public class ConnectionStringOptions
     {
         public const string Connections = "Connections";
 
         public List<ConnectionDescriptor> ConnectionStrings { get; set; } = new();
-    }
 
-    public class ConnectionDescriptor
-    {
-        public string Name { get; set; }
-        public string ConnectionString { get; set; }
+        public ConnectionStringOptions() { }
+
+        public ConnectionStringOptions(ConnectionStringOptions options)
+        {
+            ConnectionStrings = options.ConnectionStrings;
+        }
     }
 }

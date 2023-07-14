@@ -1,23 +1,24 @@
-using System;
-using System.Threading.Tasks;
+using Interject.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Interject.Classes;
+using System;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Interject
+namespace Interject.Exceptions
 {
     /// <summary>
     /// Wraps the request in the request pipeline and intercepts errors.<br/>
-    /// All responses are returned as standard <see cref="InterjectResponse"/>
-    /// objects. <see cref="UserException"/> will pass the message as the
-    /// <see cref="InterjectResponse.ErrorMessage"/>. Any othe exceptions thrown
+    /// All responses are returned as standard <see cref="InterjectResponseDTO"/>
+    /// objects. <see cref="InterjectException"/> will pass the message as the
+    /// <see cref="InterjectResponseDTO.ErrorMessage"/>. Any othe exceptions thrown
     /// are obfuscated by hard coding the message to a generic response.
     /// </summary>
-    public class ErrorMiddleware
+    public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public ErrorMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -30,14 +31,14 @@ namespace Interject
             }
             catch (Exception error)
             {
-                InterjectResponse responseContent;
+                InterjectResponseDTO responseContent;
 
                 var response = context.Response;
                 response.ContentType = "application/json";
 
                 switch (error)
                 {
-                    case UserException e:
+                    case InterjectException e:
                         context.Response.StatusCode = e.StatusCode;
                         responseContent = new();
                         responseContent.ErrorMessage = e.Message;

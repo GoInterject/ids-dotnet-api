@@ -1,4 +1,4 @@
-namespace Interject.Classes
+namespace Interject.Enums
 {
     public enum CommandType
     {
