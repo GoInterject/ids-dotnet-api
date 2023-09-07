@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             "requireExactSource": false,
-            "program": "${workspaceFolder}/interject-dotnet-api/bin/Debug/net6.0/InterjectDotnetApi.dll",
+            "program": "${workspaceFolder}/interject.data.api/interject-dotnet-api/bin/Debug/net7.0/InterjectDotnetApi.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/interject-dotnet-api",
+            "cwd": "${workspaceFolder}/interject.data.api/interject-dotnet-api",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
