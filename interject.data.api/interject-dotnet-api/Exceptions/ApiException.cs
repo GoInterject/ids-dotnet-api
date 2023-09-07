@@ -1,6 +1,6 @@
 using System;
 
-namespace Interject.DataApi.ApiExceptions
+namespace Interject.DataApi
 {
     public class ApiException : Exception
     {

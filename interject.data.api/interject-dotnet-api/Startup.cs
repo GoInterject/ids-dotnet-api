@@ -1,5 +1,3 @@
-using Interject.DataApi.Config;
-using Interject.DataApi.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +8,7 @@ using System.Reflection;
 using System.IO;
 using System;
 
-namespace Interject
+namespace Interject.DataApi
 {
     public class Startup
     {

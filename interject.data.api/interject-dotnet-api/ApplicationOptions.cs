@@ -1,4 +1,4 @@
-namespace Interject
+namespace Interject.DataApi
 {
     public class ApplicationOptions
     {

@@ -1,4 +1,3 @@
-using Interject.DataApi.Config;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System;
