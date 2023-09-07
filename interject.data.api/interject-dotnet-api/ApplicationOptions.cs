@@ -6,6 +6,7 @@ namespace Interject.DataApi
 
         public string Name { get; set; }
         public string Version { get; set; }
+        public string Framework { get; set; }
 
         public ApplicationOptions() { }
 
@@ -13,6 +14,7 @@ namespace Interject.DataApi
         {
             this.Name = options.Name;
             this.Version = options.Version;
+            this.Framework = options.Framework;
         }
     }
 }

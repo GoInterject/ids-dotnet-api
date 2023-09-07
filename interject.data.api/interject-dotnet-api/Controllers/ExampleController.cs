@@ -37,8 +37,6 @@ namespace Interject.DataApi
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
-                //int? reportParam4 = interjectRequest.GetParameterValue<int?>("Param4");
-                //int reportParam5 = interjectRequest.GetParameterValue<int>("Param5");
 
                 // (Optional) Use data from the spreadsheet for your logic here.
                 //List<string> list = table.GetColumnValues("Notes");
@@ -56,6 +54,7 @@ namespace Interject.DataApi
             {
                 Console.WriteLine(e.Message);
                 Console.Write(e.StackTrace);
+                response.ErrorMessage = e.Message;
             }
 
             return response;
@@ -82,8 +81,6 @@ namespace Interject.DataApi
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
-                //int? reportParam4 = interjectRequest.GetParameterValue<int?>("Param4");
-                //int reportParam5 = interjectRequest.GetParameterValue<int>("Param5");
 
                 // Add the columns
                 IdsTable idsTable = new();
@@ -118,6 +115,7 @@ namespace Interject.DataApi
             {
                 Console.WriteLine(e.Message);
                 Console.Write(e.StackTrace);
+                response.ErrorMessage = e.Message;
             }
 
             return response;
@@ -144,9 +142,6 @@ namespace Interject.DataApi
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
-                //float rep = interjectRequest.GetParameterValue<float>("param1");
-                //int? reportParam4 = interjectRequest.GetParameterValue<int?>("Param2");
-                //int reportParam5 = interjectRequest.GetParameterValue<int>("Param3");
 
                 IdsTable idsTable = new();
 
@@ -162,8 +157,8 @@ namespace Interject.DataApi
                 List<InterjectRowDefItem> rowDefItems = interjectRequest.GetRowDefItems();
                 foreach (var item in rowDefItems)
                 {
-                    String div = item.GetValueString("Div");
-                    String acct = item.GetValueString("Acct");
+                    string div = item.GetValueString("Div");
+                    string acct = item.GetValueString("Acct");
 
                     List<string> newRow = new()
                     {
@@ -185,6 +180,7 @@ namespace Interject.DataApi
             {
                 Console.WriteLine(e.Message);
                 Console.Write(e.StackTrace);
+                response.ErrorMessage = e.Message;
             }
 
             return response;
@@ -214,8 +210,6 @@ namespace Interject.DataApi
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
-                //int? reportParam4 = interjectRequest.GetParameterValue<int?>("Param4");
-                //int reportParam5 = interjectRequest.GetParameterValue<int>("Param5");
 
                 // (Optional) Process Column Definition Items.
                 List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
@@ -235,7 +229,6 @@ namespace Interject.DataApi
                 foreach (InterjectColDefItem item in colDefItems)
                 {
                     Console.Write(item.ToString());
-                    //String period = item.Json["P"];
                 }
 
 
@@ -274,6 +267,7 @@ namespace Interject.DataApi
             {
                 Console.WriteLine(e.Message);
                 Console.Write(e.StackTrace);
+                response.ErrorMessage = e.Message;
             }
 
             return response;

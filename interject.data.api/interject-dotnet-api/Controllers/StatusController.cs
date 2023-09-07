@@ -28,9 +28,20 @@ namespace Interject.DataApi
         /// <summary>
         /// Provides a method to get application information.
         /// </summary>
-        /// <param name="opt">[name|version]</param>
+        /// <param name="opt">
+        /// Optional:
+        /// <br/>
+        /// If left out, the endpoint returns serialized <see cref="ApplicationOptions"/>
+        /// <br/>
+        /// If inclued, the options available are:
+        /// <list type="bullet">
+        /// <item>name, </item>
+        /// <item>version, </item>
+        /// <item>framework</item>
+        /// </list>
+        /// </param>
         /// <returns></returns>
-        [HttpGet("info")]
+        [HttpGet("options")]
         public string GetInfo([FromQuery] string opt = null)
         {
             var result = string.Empty;

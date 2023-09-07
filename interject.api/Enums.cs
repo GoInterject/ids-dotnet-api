@@ -1,7 +1,7 @@
 namespace Interject.Api
 {
     /// <summary>
-    /// The type of command from the InterjectRequest
+    /// The type of command from the <see cref="InterjectRequest"/>.
     /// </summary>
     public enum CommandType
     {
