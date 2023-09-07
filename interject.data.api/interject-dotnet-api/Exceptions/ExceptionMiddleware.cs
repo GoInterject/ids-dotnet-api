@@ -1,12 +1,10 @@
 using Interject.Api;
-using Interject.DataApi.ApiExceptions;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using System;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Interject.DataApi.Exceptions
+namespace Interject.DataApi
 {
     /// <summary>
     /// Wraps the request in the request pipeline and intercepts errors.<br/>
@@ -53,7 +51,7 @@ namespace Interject.DataApi.Exceptions
 
                 if (!context.Response.HasStarted)
                 {
-                    var result = JsonConvert.SerializeObject(responseContent);
+                    var result = JsonSerializer.Serialize(responseContent);
                     await response.WriteAsync(result);
                 }
             }
