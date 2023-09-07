@@ -1,5 +1,8 @@
 namespace Interject.Api
 {
+    /// <summary>
+    /// The type of command from the InterjectRequest
+    /// </summary>
     public enum CommandType
     {
         None = 0,
@@ -8,6 +11,9 @@ namespace Interject.Api
         Text = 3
     }
 
+    /// <summary>
+    /// The sql data type of the parameters from the InterjectRequest
+    /// </summary>
     public enum ParameterDataType
     {
         none = 0,

@@ -1,6 +1,6 @@
 # Working with the Interject Request Handler Pipeline
 
-The `InterjectRequesthandler` class is used as a pipeline to connect with a data in a flexible workflow. Data can be fetched, converted, and transferred back to Interject via this class.
+The `Requesthandler` class is used as a pipeline to connect with a data in a flexible workflow. Data can be fetched, converted, and transferred back to Interject via this class.
 
 ---
 - ### **[Working With the Pipeline](#request-pipeline)**
@@ -12,9 +12,9 @@ The `InterjectRequesthandler` class is used as a pipeline to connect with a data
 
 # <a name="request-pipeline">Working With the Pipeline</a>
 
-The `InterjectRequestHandler` creates a pipeline for processing the `InterjectRequest` object sent from the Interject Addin. This class contains a few properties that are intended for use as the request passes through the phases of the request pipeline. The pipeline uses Dependency Injection to consume classes derived from interfaces. It passes itself as a parameter to each of the interface's methods to expose access to the rest of the class. Those phases and interfaces are as follows:
+The `RequestHandler` creates a pipeline for processing the `InterjectRequest` object sent from the Interject Addin. This class contains a few properties that are intended for use as the request passes through the phases of the request pipeline. The pipeline uses Dependency Injection to consume classes derived from interfaces. It passes itself as a parameter to each of the interface's methods to expose access to the rest of the class. Those phases and interfaces are as follows:
 
-1. Initialize the `InterjectRequestHandler`
+1. Initialize the `RequestHandler`
 2. Convert the `RequestParameters` _(IParameterConverter)_
 3. Fetch the data _(IDataConnection)_
 4. Convert the data _(IResponseConverter)_
@@ -24,15 +24,15 @@ The `InterjectRequestHandler` creates a pipeline for processing the `InterjectRe
 
 # <a name="connection-strings">Connection Strings</a>
 
-For the purpose of the SqlController example, this API uses the `appsettings.json` to hold connections strings. On startup, the program will initialize these strings in Configurations. The connection strings are available via dependency injection by requiring a `ConnectionStringOptions` object in the controller's constructor. The `InterjectRequestDTO.PassThroughCommand` will contain the ConnectionStringName. The connection is established by initializing the `SqlDataConnectionAsync` object with the connection strings. 
+For the purpose of the SqlController example, this API uses the `appsettings.json` to hold connections strings. On startup, the program will initialize these strings in Configurations. The connection strings are available via dependency injection by requiring a `ConnectionStringOptions` object in the controller's constructor. The `InterjectRequest.PassThroughCommand` will contain the ConnectionStringName. The connection is established by initializing the `SqlDataConnectionAsync` object with the connection strings. 
 
 <br>
 
 # <a name="sql-controller">Sql Controller</a>
 
-The `SqlController` class is an example using the `InterjectRequestHandler` pipeline. The following outlines the pipeline flow used in this example:
+The `SqlController` class is an example using the `RequestHandler` pipeline. The following outlines the pipeline flow used in this example:
 
-1. Inits the `InterjectRequestHandler`
+1. Inits the `RequestHandler`
 2. Inits the Handler.`ParameterConverter`
 3. Inits the Handler.`DataConnectionAsync`
 4. Inits the Handler.`ResponseConverter`
@@ -53,15 +53,13 @@ There are 4 internal classes in this example:
 
 Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. Each endpoint should follow the basic pipeline flow for handling a request. See [Working with the request pipeline](#request-pipeline) for more details.
 
-Using the first example there is an SQLController included in this project already. Here is how to create a new controller template. This will create the controller with one endpoint, and four classes; one for each of the interfaces. Note that the **IDataConnectionAsync** and **IDataConnection** are interchangeable depending on your needs and only one can be used per endpoint.
+Using the first example there is an SQLController included in this project already. Here is how to create a new controller template. This will create the controller with one endpoint, and four classes; one for each of the interfaces. Note that the `IDataConnectionAsync` and `IDataConnection` are interchangeable depending on your needs and only one can be used per endpoint.
 
 1. Create a new file in the Controllers directory using the naming convention {Name}Controller.cs.
 2. Use code snippets in VS Code to scaffold the controller. The prefix is 'c-pipe'.
    > c-pipe > TAB
 3. Type the {Name} of the controller as prompted by the snippet and press TAB
 4. You can now begin to customize your Pipeline interface implementations.
-
-<br/>
 
 ## 1) **Instantiate the InterjectRequestHandler**
 

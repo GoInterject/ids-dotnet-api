@@ -1,17 +1,18 @@
-using Interject.Models;
+using Interject.Api;
+using Interject.DataApi.ApiExceptions;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Interject.Exceptions
+namespace Interject.DataApi.Exceptions
 {
     /// <summary>
     /// Wraps the request in the request pipeline and intercepts errors.<br/>
-    /// All responses are returned as standard <see cref="InterjectResponseDTO"/>
-    /// objects. <see cref="InterjectException"/> will pass the message as the
-    /// <see cref="InterjectResponseDTO.ErrorMessage"/>. Any othe exceptions thrown
+    /// All responses are returned as standard <see cref="InterjectResponse"/>
+    /// objects. <see cref="ApiException"/> will pass the message as the
+    /// <see cref="InterjectResponse.ErrorMessage"/>. Any othe exceptions thrown
     /// are obfuscated by hard coding the message to a generic response.
     /// </summary>
     public class ExceptionMiddleware
@@ -31,14 +32,14 @@ namespace Interject.Exceptions
             }
             catch (Exception error)
             {
-                InterjectResponseDTO responseContent;
+                InterjectResponse responseContent;
 
                 var response = context.Response;
                 response.ContentType = "application/json";
 
                 switch (error)
                 {
-                    case InterjectException e:
+                    case ApiException e:
                         context.Response.StatusCode = e.StatusCode;
                         responseContent = new();
                         responseContent.ErrorMessage = e.Message;

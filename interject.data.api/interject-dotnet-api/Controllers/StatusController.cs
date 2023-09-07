@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Interject.API
+namespace Interject.DataApi
 {
     [ApiController]
     [Route("api/v1/[controller]")]

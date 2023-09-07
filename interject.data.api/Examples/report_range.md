@@ -15,6 +15,7 @@ For directions on how to setup a Data Connection for an API, see: https://docs.g
 For directions on how to set up a Data Portal for an API, see: https://docs.gointerject.com/wPortal/Data-Portals.html
 
 ## 3) Configure the `ReportRange` Function in the Excel Report
+
 - Configure the target data range (TargetDataRange). This is a multi-row range that defines where the data will be placed in the report.
 - Configure the data range (RowDefRange). This is a single column that defines what column is used as a key to match incoming data with and what range of rows data should be populated on.
 - Configure the colum definitions (ColDefRange). This range defines what columns are sent to the data api.

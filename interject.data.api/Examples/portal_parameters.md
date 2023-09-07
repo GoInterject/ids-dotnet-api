@@ -22,8 +22,10 @@ To use them in the Excel Report, you must define the `Parameters` parameter in t
 Once the report functions are configured to use parameters, the data API code can get the values from those parameters through the `InterjectRequest` object.
 
 ```csharp
+using Interject.Api;
+
 // this request will come from the .NET Framework in the data api
-InterjectResponseDTO response = new(interjectRequest);
+InterjectResponse response = new(interjectRequest);
 
 // get formula parameter object from request
 RequestParameter param = interjectRequest.GetParameter("Param1")
@@ -34,10 +36,9 @@ int reportParam2 = interjectRequest.GetParameterValue<int>("Param2");
 float reportParam3 = interjectRequest.GetParameterValue<float>("param3");
 ```
 <br>
-<br>
 
 # System Paramaters
-System parameters are defined by Interject but can be included in any DataPortal and will be included in the `InterjectRequestDto.RequestParameterList`. Once configured on the [Interject Portal Site](https://portal.gointerject.com/), they will be passed to the data API or database from Excel and can be parsed out similar to formula parameters.
+System parameters are defined by Interject but can be included in any DataPortal and will be included in the `InterjectRequest.RequestParameterList`. Once configured on the [Interject Portal Site](https://portal.gointerject.com/), they will be passed to the data API or database from Excel and can be parsed out similar to formula parameters.
 
 <br>
 <img src="static/params-2-system.png" alt="drawing" width="64%"/>
@@ -63,9 +64,11 @@ String clientID = interjectRequest.GetParameterValue<string>("Interject_ClientID
 <br>
 The system parameter "Interject_RequestContext" will also bring a number of other objects with it that can be queried.
 
+<br>
+
 ```csharp
 // Currently handled getters for objects in the system parameter "Interject_RequestContext"
-InterjectTable table = interjectRequest.GetXmlDataToSave();
+IdsTable table = interjectRequest.GetXmlDataToSave();
 List<InterjectRowDefItem> rowDefItems = interjectRequest.GetRowDefItems();
 List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
 

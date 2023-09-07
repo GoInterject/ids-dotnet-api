@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Interject.Config
+namespace Interject.DataApi.Config
 {
     public class ConnectionStringOptions
     {

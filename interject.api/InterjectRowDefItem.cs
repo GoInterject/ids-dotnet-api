@@ -4,25 +4,59 @@ using System.Text;
 
 namespace Interject.Api
 {
+    /// <summary>
+    /// This class represents a single row definition item in the Excel report.
+    /// A RowDefRange is designated in the Interject formula.
+    /// </summary>
     public class InterjectRowDefItem
     {
-        public int Row { get; set; } // The row number index of this item from Excel Report
-        public int Column { get; set; } // The column number index of this item from Excel Report
-        public string RowDefName { get; set; } // The name of this item
-        public List<IdsColKey> ColKeyList { get; set; } // A list of the ColKeys along with their values
-        public string ColumnName { get; set; } // The name of the column of this item from Excel Report
+        /// <summary>
+        /// The row number index of this item from Excel Report
+        /// </summary>
+        public int Row { get; set; }
+
+        /// <summary>
+        /// The column number index of this item from Excel Report
+        /// </summary>
+        public int Column { get; set; }
+
+        /// <summary>
+        /// The name of this item
+        /// </summary>
+        public string RowDefName { get; set; }
+
+        /// <summary>
+        /// A list of the <see cref="IdsColKey">IdsColKeys/> along with their values
+        /// </summary>
+        public List<IdsColKey> ColKeyList { get; set; }
+
+        /// <summary>
+        /// The name of the column of this item from Excel Report
+        /// </summary>
+        public string ColumnName { get; set; }
+
+        /// <summary>
+        /// Json dictionary that holds the jColumnDef values from Excel Report
+        /// </summary>
         public Dictionary<string, string> Json { get; set; } = new();
 
+        /// <summary>
+        /// Adds a Json entry into this object's Json dictionary
+        /// </summary>
+        /// <param name="key">The key of this Json pair</param>
+        /// <param name="val">The value of this Json pairt</param>
         public void AddJsonEntry(string key, string val)
         {
             Json.Add(key, val);
         }
 
+        /// <param name="name">The name to look up in the list of IdsColKeys</param>
+        /// <returns>The value of this IdsColKey</returns>
         public string GetValueString(string name)
         {
             foreach (var key in ColKeyList)
             {
-                if(key.Name.Equals(name))
+                if (key.Name.Equals(name))
                 {
                     return key.Value;
                 }
@@ -30,6 +64,8 @@ namespace Interject.Api
             return "";
         }
 
+        /// <param name="name">The name to look up in the list of IdsColKeys</param>
+        /// <returns>The int value of this IdsColKey</returns>
         public int GetValueInt(string name)
         {
             foreach (var key in ColKeyList)
@@ -41,7 +77,7 @@ namespace Interject.Api
                         int num = int.Parse(key.Value);
                         return num;
                     }
-                    catch(FormatException ex)
+                    catch (FormatException ex)
                     {
                         Console.WriteLine(ex.Message);
                         return 0;
@@ -51,6 +87,13 @@ namespace Interject.Api
             return 0;
         }
 
+
+        /// <summary>
+        /// Parses a string as a Json and returns the value based on the type
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <returns>A string or an int</returns>
         public object GetJsonValue(string name, string type = "string")
         {
             if (type.Equals("string", StringComparison.OrdinalIgnoreCase))

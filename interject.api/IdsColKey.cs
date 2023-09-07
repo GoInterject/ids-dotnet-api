@@ -3,18 +3,37 @@ using System.Text;
 
 namespace Interject.Api
 {
+    /// <summary>
+    /// A ColKey represents a column in the <see cref="InterjectRowDefItem"/> range
+    /// </summary>
     public class IdsColKey
     {
-        public int Order { get; set; } // The order of this ColKey in the list
-        public int Column { get; set; } // The column number index of this item from Excel Report
-        public string Value { get; set; } // The value of this ColKey
-        public string Name { get; set; } // The name of this ColKey
-        public Dictionary<string, string> Json { get; set; }
+        /// <summary>
+        /// The order of this ColKey in a list of IdsColKeys
+        /// </summary>
+        public int Order { get; set; }
 
         /// <summary>
-        /// Returns the string representation of this item in XML form
+        /// The column number index of this item from Excel Report
         /// </summary>
-        /// <returns></returns>
+        public int Column { get; set; }
+
+        /// <summary>
+        /// The value of this ColKey
+        /// </summary>
+        public string Value { get; set; }
+
+        /// <summary>
+        /// The name of this ColKey
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// A Dictionary pair of strings representing the Json object of the Col
+        /// </summary>
+        public Dictionary<string, string> Json { get; set; }
+
+        /// <returns>The string representation of this item in XML form</returns>
         public string ToXML()
         {
             StringBuilder sb = new();

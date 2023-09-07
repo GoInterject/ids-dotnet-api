@@ -15,7 +15,7 @@ With the report configured, now we need to make sure the dataportal on the [Inte
 <br>
 
 # The Data API
-From the data API side, Column Definition Items can be accessed from the request object with the _GetColDefItems_ method of the `InterjectRequestDTO` object. This will return a list of `InterjectColDefItems` that represent each column of the report.
+From the data API side, Column Definition Items can be accessed from the request object with the _GetColDefItems_ method of the `InterjectRequest` object. This will return a list of `InterjectColDefItems` that represent each column of the report.
 
 To access the column attributes from the `jColumnDef` formula, access variables in the `InterjectColDefItem.Json` hashmap as shown below with `item.Json["<KEY>"]`. All available keys are show below in the json object.
 

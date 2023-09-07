@@ -2,11 +2,13 @@
 There are numerous ways to return messages to users both at the data row level and the application level. 
 
 ## User Messages
-User Messages can be configured on the response object by setting the `UserMessage` property of the `InterjectResponseDto` object before returning the response. This provides a popup in the addin to the user.
+User Messages can be configured on the response object by setting the `UserMessage` property of the `InterjectResponse` object before returning the response. This provides a popup in the addin to the user.
 
 ```csharp
+using Interject.Api;
+
 // construct a response
-InterjectResponseDTO response = new(interjectRequest);
+InterjectResponse response = new(interjectRequest);
 
 // set a user message
 response.UserMessage ="Please use a different input!!!";
@@ -20,11 +22,13 @@ return response;
 <br>
 
 ## Error Messages
-Error Messages can be configured on the response object by setting the `ErrorMessage` property of the `InterjectResponseDto` object before returning the response. This describes an error in the formula details field of the pull\save window.
+Error Messages can be configured on the response object by setting the `ErrorMessage` property of the `InterjectResponse` object before returning the response. This describes an error in the formula details field of the pull\save window.
 
 ```csharp
+using Interject.Api;
+
 // construct a response
-InterjectResponseDTO response = new(interjectRequest);
+InterjectResponse response = new(interjectRequest);
 
 // set a user message
 response.ErrorMessage ="A critical error occured during the query!";
@@ -41,11 +45,13 @@ return response;
 Error Messages can also be specified for specific parameters by setting the validation attribute seen below. 
 
 ```csharp
+using Interject.Api;
+
 // set a error message for a specific parameter
 interjectRequest.GetParameter("Param1").UserValidationMessage = "Param1 requires a better input!";
 
 // construct a response
-InterjectResponseDTO response = new(interjectRequest);
+InterjectResponse response = new(interjectRequest);
 
 // return response
 return response;
@@ -74,8 +80,10 @@ TableName:  Table1
 <br>
 
 ```csharp
-// this adds a column for status, then updates a      row with a status message for the user
-InterjectTable table = requestContext.XmlDataToSave;
+using Interject.Api;
+
+// this adds a column for status, then updates a row with a status message for the user
+IdsTable table = requestContext.XmlDataToSave;
 table.AddColumn(new("status"));
 table.Update("status", 1, "Updated!");
 ```

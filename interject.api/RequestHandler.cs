@@ -184,7 +184,7 @@ namespace Interject.Api
             {
                 this.IdsResponse.ReturnedDataList.ForEach((returnData) =>
                 {
-                    string json = JsonSerializer.Serialize(returnData);
+                    string json = JsonSerializer.Serialize(returnData.Data);
                     returnData.Data = json;
                 });
                 return this.IdsResponse;

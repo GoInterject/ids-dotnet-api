@@ -1,11 +1,11 @@
-using Interject.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks.Dataflow;
+using Interject.Api;
 
-namespace Interject.API
+namespace Interject.DataApi
 {
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -17,37 +17,23 @@ namespace Interject.API
         /// Test endpoint for a ReportSave function.
         /// </summary>
         /// <param name="interjectRequest">
-        /// The <see cref="InterjectRequestDTO"/> object to process.
+        /// The <see cref="InterjectRequest"/> object to process.
         /// </param>
         [HttpPost("ReportSave")]
-        [ProducesResponseType(typeof(InterjectResponseDTO), 200)]
-        public InterjectResponseDTO TestReportSave([FromBody] InterjectRequestDTO interjectRequest)
+        [ProducesResponseType(typeof(InterjectResponse), 200)]
+        public InterjectResponse TestReportSave([FromBody] InterjectRequest interjectRequest)
         {
-            // Create an instance of the InterjectResponseDTO to return by passing in the
-            // InterjectRequestDTO from the request. This copies the parameter list from
+            // Create an instance of the InterjectResponse to return by passing in the
+            // InterjectRequest from the request. This copies the parameter list from
             // the request into the response.
-            InterjectResponseDTO response = new(interjectRequest);
+            InterjectResponse response = new(interjectRequest);
 
             try
             {
                 // Get the data from the spreadsheet.
                 var requestContext = interjectRequest.GetRequestContext();
 
-                InterjectTable table = requestContext.XmlDataToSave;
-
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_NTLogin"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_ExcelVersion"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_ReturnError"));
-                Console.WriteLine(interjectRequest.GetParameterValue<float>("Interject_LocalTimeZoneOffset"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_ColDefItems"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_RowDefItems"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_SourceFileAndPath"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_SourceFilePathAndTab"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_UserID"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_LoginName"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_UserRoles"));
-                Console.WriteLine(interjectRequest.GetParameterValue<string>("Interject_ClientID"));
-
+                IdsTable table = requestContext.XmlDataToSave;
 
                 // (Optional) Get DataPortal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
@@ -81,16 +67,16 @@ namespace Interject.API
         /// Test endpoint for a ReportFixed function.
         /// </summary>
         /// <param name="interjectRequest">
-        /// The <see cref="InterjectRequestDTO"/> object to process.
+        /// The <see cref="InterjectRequest"/> object to process.
         /// </param>
         [HttpPost("ReportRange")]
-        [ProducesResponseType(typeof(InterjectResponseDTO), 200)]
-        public InterjectResponseDTO TestReportRange([FromBody] InterjectRequestDTO interjectRequest)
+        [ProducesResponseType(typeof(InterjectResponse), 200)]
+        public InterjectResponse TestReportRange([FromBody] InterjectRequest interjectRequest)
         {
-            // Create an instance of the InterjectResponseDTO to return by passing in the
-            // InterjectRequestDTO from the request. This copies the parameter list from
+            // Create an instance of the InterjectResponse to return by passing in the
+            // InterjectRequest from the request. This copies the parameter list from
             // the request into the response.
-            InterjectResponseDTO response = new(interjectRequest);
+            InterjectResponse response = new(interjectRequest);
 
             try
             {
@@ -102,12 +88,12 @@ namespace Interject.API
                 //int reportParam5 = interjectRequest.GetParameterValue<int>("Param5");
 
                 // Add the columns
-                InterjectTable idsTable = new();
-                idsTable.AddColumn(new InterjectColumn("div"));
-                idsTable.AddColumn(new InterjectColumn("acct"));
-                idsTable.AddColumn(new InterjectColumn("MTD"));
-                idsTable.AddColumn(new InterjectColumn("QTD"));
-                idsTable.AddColumn(new InterjectColumn("YTD"));
+                IdsTable idsTable = new();
+                idsTable.AddColumn(new IdsColumn("div"));
+                idsTable.AddColumn(new IdsColumn("acct"));
+                idsTable.AddColumn(new IdsColumn("MTD"));
+                idsTable.AddColumn(new IdsColumn("QTD"));
+                idsTable.AddColumn(new IdsColumn("YTD"));
 
                 // Add the rows
                 List<List<string>> rows = new();
@@ -120,9 +106,9 @@ namespace Interject.API
                     rows.Add(newRow);
                 }
 
-                for(int i = 0; i < 10; i++)
+                for (int i = 0; i < 10; i++)
                 {
-                        idsTable.AddRow(rows[i]);
+                    idsTable.AddRow(rows[i]);
                 }
 
                 idsTable.Print();
@@ -143,16 +129,16 @@ namespace Interject.API
         /// Test endpoint for a ReportFixed function.
         /// </summary>
         /// <param name="interjectRequest">
-        /// The <see cref="InterjectRequestDTO"/> object to process.
+        /// The <see cref="InterjectRequest"/> object to process.
         /// </param>
         [HttpPost("ReportFixed")]
-        [ProducesResponseType(typeof(InterjectResponseDTO), 200)]
-        public InterjectResponseDTO TestReportFixed([FromBody] InterjectRequestDTO interjectRequest)
+        [ProducesResponseType(typeof(InterjectResponse), 200)]
+        public InterjectResponse TestReportFixed([FromBody] InterjectRequest interjectRequest)
         {
-            // Create an instance of the InterjectResponseDTO to return by passing in the
-            // InterjectRequestDTO from the request. This copies the parameter list from
+            // Create an instance of the InterjectResponse to return by passing in the
+            // InterjectRequest from the request. This copies the parameter list from
             // the request into the response.
-            InterjectResponseDTO response = new(interjectRequest);
+            InterjectResponse response = new(interjectRequest);
 
             try
             {
@@ -160,17 +146,17 @@ namespace Interject.API
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
-                float rep = interjectRequest.GetParameterValue<float>("param1");
-                //int? reportParam4 = interjectRequest.GetParameterValue<int?>("Param4");
-                //int reportParam5 = interjectRequest.GetParameterValue<int>("Param5");
+                //float rep = interjectRequest.GetParameterValue<float>("param1");
+                //int? reportParam4 = interjectRequest.GetParameterValue<int?>("Param2");
+                //int reportParam5 = interjectRequest.GetParameterValue<int>("Param3");
 
-                InterjectTable idsTable = new();
+                IdsTable idsTable = new();
 
                 // (Optional) Process Column Definition Items.
                 List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
                 foreach (var item in colDefItems)
                 {
-                    InterjectColumn ic = new(item.ColumnName);
+                    IdsColumn ic = new(item.ColumnName);
                     idsTable.AddColumn(ic);
                 }
 
@@ -210,16 +196,18 @@ namespace Interject.API
         /// Test endpoint for a ReportVariable function.
         /// </summary>
         /// <param name="interjectRequest">
-        /// The <see cref="InterjectRequestDTO"/> object to process.
+        /// The <see cref="InterjectRequest"/> object to process.
         /// </param>
         [HttpPost("ReportVariable")]
-        [ProducesResponseType(typeof(InterjectResponseDTO), 200)]
-        public InterjectResponseDTO TestReportVariable([FromBody] InterjectRequestDTO interjectRequest)
+        [ProducesResponseType(typeof(InterjectResponse), 200)]
+        public InterjectResponse TestReportVariable([FromBody] InterjectRequest interjectRequest)
         {
-            // Create an instance of the InterjectResponseDTO to return by passing in the
-            // InterjectRequestDTO from the request. This copies the parameter list from
+            // Create an instance of the InterjectResponse to return by passing in the
+            // InterjectRequest from the request. This copies the parameter list from
             // the request into the response.
-            InterjectResponseDTO response = new(interjectRequest);
+            InterjectResponse response = new(interjectRequest);
+
+            var requestContext = interjectRequest.GetRequestContext();
 
             try
             {
@@ -245,16 +233,16 @@ namespace Interject.API
                     Console.WriteLine(item.ToXML());
                 });
 
-                
+
                 foreach (InterjectColDefItem item in colDefItems)
                 {
                     Console.Write(item.ToString());
-                    String period = item.Json["P"];
+                    //String period = item.Json["P"];
                 }
 
 
                 // Assemble data to return to Interject to be populated on the spreadsheet.
-                InterjectTable table = new();
+                IdsTable table = new();
                 table.AddColumn(new("RowDefName"));
                 table.AddColumn(new("Div"));
                 table.AddColumn(new("Acct"));

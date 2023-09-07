@@ -5,7 +5,7 @@ using System.Linq;
 namespace Interject.Api
 {
     /// <summary>
-    /// All requests to the Data API must use the<see cref="InterjectRequest"/>class as the body of the request.
+    /// All requests to the Data API must use the <see cref="InterjectRequest"/>class as the body of the request.
     /// </summary>
     public class InterjectRequest
     {
@@ -124,7 +124,6 @@ namespace Interject.Api
             return result;
         }
 
-
         /// <summary>
         /// Searches the<see cref="InterjectRequest.RequestParameterList"/>
         /// collection for a <see cref="RequestParameter"/> with a matching name.
@@ -195,6 +194,6 @@ namespace Interject.Api
             return (T)result;
         }
 
-        
+
     }
 }

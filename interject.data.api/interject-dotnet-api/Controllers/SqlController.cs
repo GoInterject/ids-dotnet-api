@@ -1,18 +1,14 @@
-using Interject.Classes;
-using Interject.Config;
-using Interject.Enums;
-using Interject.Exceptions;
-using Interject.Models;
+using Interject.DataApi.Config;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Interject.Api;
 
-namespace Interject.API
+namespace Interject.DataApi
 {
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -25,15 +21,15 @@ namespace Interject.API
         }
 
         /// <summary>
-        /// Assumes all incomming paramters in the <see cref="InterjectRequestDTO.RequestParameterList"/> are
+        /// Assumes all incomming paramters in the <see cref="InterjectRequest.RequestParameterList"/> are
         /// intended to be passed to a stored procedure.
         /// </summary>
         /// <param name="interjectRequest">
-        /// The <see cref="InterjectRequestDTO"/> object to process.
+        /// The <see cref="InterjectRequest"/> object to process.
         /// </param>
         [HttpPost]
-        [ProducesResponseType(typeof(InterjectResponseDTO), 200)]
-        public async Task<InterjectResponseDTO> Post([FromBody] InterjectRequestDTO interjectRequest)
+        [ProducesResponseType(typeof(InterjectResponse), 200)]
+        public async Task<InterjectResponse> Post([FromBody] InterjectRequest interjectRequest)
         {
             InterjectRequestHandler handler = new(interjectRequest);
             handler.IParameterConverter = new SQLParameterConverter();
@@ -226,9 +222,9 @@ namespace Interject.API
             /// <summary>
             /// Create an instance of <see cref="SqlDataConnectionAsync"/>
             /// </summary>
-            /// <param name="request">The <see cref="InterjectRequestDTO"/> from the http request.</param>
+            /// <param name="request">The <see cref="InterjectRequest"/> from the http request.</param>
             /// <param name="connectionStringOptions">The <see cref="ConnectionStringOptions"/></param>
-            public SqlDataConnectionAsync(InterjectRequestDTO request, ConnectionStringOptions connectionStringOptions)
+            public SqlDataConnectionAsync(InterjectRequest request, ConnectionStringOptions connectionStringOptions)
             {
                 CleanConnectionStringOptions(connectionStringOptions);
                 ResolveConnectionString(request, connectionStringOptions.ConnectionStrings);
@@ -253,7 +249,7 @@ namespace Interject.API
             /// Sets the PassThroughCommand and the connection string. Fetches the connection string in configurations matching its name 
             /// from the PassThroughCommand.ConnectionStringName.
             /// </summary>
-            private void ResolveConnectionString(InterjectRequestDTO request, List<ConnectionDescriptor> connectionStrings)
+            private void ResolveConnectionString(InterjectRequest request, List<ConnectionDescriptor> connectionStrings)
             {
                 request.PassThroughCommand = request.PassThroughCommand == null ? new() : request.PassThroughCommand;
                 var conStrDesc = connectionStrings.FirstOrDefault(cs => cs.Name == request.PassThroughCommand.ConnectionStringName);
@@ -274,7 +270,7 @@ namespace Interject.API
             /// </summary>
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
-                if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new InterjectException("PassThroughCommand.ConnectionStringName is required.");
+                if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new Exception("PassThroughCommand.ConnectionStringName is required.");
                 this._connection = new Microsoft.Data.SqlClient.SqlConnection(this._connectionString);
                 ConfigureCommand(handler);
                 AttachParameters(handler.ConvertedParameters);
@@ -364,18 +360,18 @@ namespace Interject.API
                 var ds = handler.ReturnData as DataSet;
                 foreach (DataTable dt in ds.Tables)
                 {
-                    InterjectTable it = InterjectTableFromDataTable(dt);
+                    IdsTable it = InterjectTableFromDataTable(dt);
                     ReturnedData rd = new(it);
                     handler.IdsResponse.ReturnedDataList.Add(rd);
                 }
             }
 
-            private InterjectTable InterjectTableFromDataTable(DataTable table)
+            private IdsTable InterjectTableFromDataTable(DataTable table)
             {
-                InterjectTable result = new(table.TableName);
+                IdsTable result = new(table.TableName);
                 foreach (DataColumn dc in table.Columns)
                 {
-                    InterjectColumn col = InterjectColumnFromDataColumn(dc);
+                    IdsColumn col = InterjectColumnFromDataColumn(dc);
                     result.AddColumn(col);
                 }
                 foreach (DataRow row in table.Rows)
@@ -393,9 +389,9 @@ namespace Interject.API
                 return result;
             }
 
-            private InterjectColumn InterjectColumnFromDataColumn(DataColumn column)
+            private IdsColumn InterjectColumnFromDataColumn(DataColumn column)
             {
-                InterjectColumn result = new();
+                IdsColumn result = new();
                 result.AllowDBNull = column.AllowDBNull;
                 result.AutoIncrement = column.AutoIncrement;
                 result.AutoIncrementSeed = column.AutoIncrementSeed;

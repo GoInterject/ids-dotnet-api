@@ -7,8 +7,19 @@ namespace Interject.Api
 {
     public class IdsTable
     {
+        /// <summary>
+        /// The name of this table
+        /// </summary>
         public string TableName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// A list of columns for this table
+        /// </summary>
         public List<IdsColumn> Columns { get; private set; } = new();
+
+        /// <summary>
+        /// A list of rows for this table
+        /// </summary>
         public List<List<string>> Rows { get; set; } = new();
 
         public IdsTable() { }
@@ -19,7 +30,7 @@ namespace Interject.Api
         }
 
         /// <summary>
-        /// Sets the <see cref="IdsColumn.Ordinal"/> with respect to the collection it is being added to.
+        /// Sets the <see cref="IdsColumn.Ordinal"/> with respect to the collection it is being added to
         /// </summary>
         /// <param name="column"></param>
         public void AddColumn(IdsColumn column)
@@ -128,13 +139,13 @@ namespace Interject.Api
         public List<string> GetColumnValues(string columnName)
         {
             int colIndex = GetColumnIndex(columnName);
-            if(colIndex < 0)
+            if (colIndex < 0)
             {
                 return null;
             }
             List<string> list = new();
 
-            foreach(var row in this.Rows)
+            foreach (var row in this.Rows)
             {
                 list.Add(row[colIndex]);
             }
@@ -166,6 +177,10 @@ namespace Interject.Api
             }
         }
 
+        /// <summary>
+        /// Converts this table to a formatted string
+        /// </summary>
+        /// <returns>Json formatted string</returns>
         public override string ToString()
         {
             StringBuilder tableSb = new();

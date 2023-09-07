@@ -7,14 +7,29 @@ namespace Interject.Api
     /// </summary>
     public class InterjectResponse
     {
+        /// <summary>
+        /// A message of the results of the request
+        /// </summary>
         public string UserMessage { get; set; } = string.Empty;
 
+        /// <summary>
+        /// A message of the error result of the request (if applicable)
+        /// </summary>
         public string ErrorMessage { get; set; } = string.Empty;
 
+        /// <summary>
+        /// A list of the original <see cref="RequestParameter">Request Parameters</see>
+        /// </summary>
         public List<RequestParameter> RequestParameterList { get; set; } = new();
 
+        /// <summary>
+        /// A list of the data returned from the api
+        /// </summary>
         public List<ReturnedData> ReturnedDataList { get; set; } = new();
 
+        /// <summary>
+        /// A dictionary list of supplemental data returned from the api
+        /// </summary>
         public Dictionary<string, string> SupplementalData { get; set; } = new();
 
         public InterjectResponse() { }

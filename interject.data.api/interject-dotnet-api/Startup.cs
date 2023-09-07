@@ -1,5 +1,5 @@
-using Interject.Config;
-using Interject.Exceptions;
+using Interject.DataApi.Config;
+using Interject.DataApi.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

@@ -8,12 +8,10 @@ namespace Interject.Api
     internal static class ParameterParser
     {
         /// <summary>
-        /// Parses the string parameter "Interject_RequestContext"
+        /// Parses the xml formatted string
         /// </summary>
-        /// <param name="xml"></param>
-        /// <returns>
-        /// InterjectRequestContext object
-        /// </returns>
+        /// <param name="xml">The xml string of the Interject_RequestContext parmaeter</param>
+        /// <returns><see cref="InterjecRequestContext"/> object</returns>
         public static InterjectRequestContext ParseRequestContext(string xml)
         {
             InterjectRequestContext requestContext = new();
@@ -69,6 +67,11 @@ namespace Interject.Api
             return requestContext;
         }
 
+        /// <summary>
+        /// Parses the xml into a List
+        /// </summary>
+        /// <param name="navigator"></param>
+        /// <returns>A List of <see cref="InterjectColDefItem"/></returns>
         private static List<InterjectColDefItem> ParseColDefItems(XPathNavigator navigator)
         {
             List<InterjectColDefItem> result = new();
@@ -90,7 +93,12 @@ namespace Interject.Api
             return result;
         }
 
-         private static List<InterjectRowDefItem> ParseRowDefItems(XPathNavigator navigator)
+        /// <summary>
+        /// Parses the xml into a List
+        /// </summary>
+        /// <param name="navigator"></param>
+        /// <returns>A List of <see cref="InterjectRowDefItem"/></returns>
+        private static List<InterjectRowDefItem> ParseRowDefItems(XPathNavigator navigator)
         {
             List<InterjectRowDefItem> result = new();
             XPathNodeIterator iterator = navigator.Select("Value");
@@ -112,6 +120,11 @@ namespace Interject.Api
             return result;
         }
 
+        /// <summary>
+        /// Parses the xml into a List
+        /// </summary>
+        /// <param name="navigator"></param>
+        /// <returns>A List of <see cref="IdsColKey"/></returns>
         private static List<IdsColKey> ParseColKeys(XPathNavigator navigator)
         {
             List<IdsColKey> result = new();
@@ -132,6 +145,11 @@ namespace Interject.Api
             return result;
         }
 
+        /// <summary>
+        /// Parses the xml into a List
+        /// </summary>
+        /// <param name="navigator"></param>
+        /// <returns>A List of <see cref="IdsUserContext"/></returns>
         private static IdsUserContext ParseUserContext(XPathNavigator navigator)
         {
             IdsUserContext userContext = new();
@@ -177,6 +195,11 @@ namespace Interject.Api
             return userContext;
         }
 
+        /// <summary>
+        /// Parses the xml into a Table
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns>An <see cref="IdsTable"/></returns>
         public static IdsTable ParseXmlDataToSave(string xml)
         {
             XPathNodeIterator iterator = GetNodeIterator(xml, "XmlDataToSave");

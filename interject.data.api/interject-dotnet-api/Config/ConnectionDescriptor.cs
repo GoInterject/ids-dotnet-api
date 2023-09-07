@@ -1,4 +1,4 @@
-namespace Interject.Config
+namespace Interject.DataApi.Config
 {
     public class ConnectionDescriptor
     {

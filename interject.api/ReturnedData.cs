@@ -3,9 +3,10 @@ namespace Interject.Api
     public class ReturnedData
     {
         /// <summary>
-        /// Serialized instance of <see cref="IdsTable"/>.
+        /// Serialized instance of <see cref="IdsTable"/>
         /// </summary>
-        public object Data { get; set; } = new IdsTable();
+        public object Data { get; set; }
+        // = new IdsTable();
 
         /// <summary>
         /// Hard coded for reverse compatibility (DataFormat.JsonTableWithSchema)
@@ -19,6 +20,9 @@ namespace Interject.Api
         /// <value>1</value>
         public int SchemaFormat { get; set; } = 1;
 
+        /// <summary>
+        /// The schema design for the returned data
+        /// </summary>
         public object Schema { get; set; }
 
         public ReturnedData() { }
