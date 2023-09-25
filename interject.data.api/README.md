@@ -41,7 +41,7 @@ As an additional tool for testing and to assist in future troubleshooting of cli
 
    - Returns "true"
 
-- {base url}/api/v1/status/info
+- {base url}/api/v1/status/options
    - Returns information stored in the class `ApplicationOptions` as configured in "Applications" section of the `appsettings.json`.
 
 # <a name="new-controller">How To Add A New Controller</a>

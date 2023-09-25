@@ -41,7 +41,7 @@ namespace Interject.DataApi
         /// </list>
         /// </param>
         /// <returns></returns>
-        [HttpGet("options")]
+        [HttpGet("Options")]
         public string GetInfo([FromQuery] string opt = null)
         {
             var result = string.Empty;
