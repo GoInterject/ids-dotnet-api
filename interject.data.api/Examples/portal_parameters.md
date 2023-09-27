@@ -38,6 +38,7 @@ float reportParam3 = interjectRequest.GetParameterValue<float>("param3");
 <br>
 
 # System Paramaters
+
 System parameters are defined by Interject but can be included in any DataPortal and will be included in the `InterjectRequest.RequestParameterList`. Once configured on the [Interject Portal Site](https://portal.gointerject.com/), they will be passed to the data API or database from Excel and can be parsed out similar to formula parameters.
 
 <br>
@@ -61,6 +62,7 @@ String loginName = interjectRequest.GetParameterValue<string>("Interject_LoginNa
 String userRoles = interjectRequest.GetParameterValue<string>("Interject_UserRoles");
 String clientID = interjectRequest.GetParameterValue<string>("Interject_ClientID");
 ```
+
 <br>
 The system parameter "Interject_RequestContext" will also bring a number of other objects with it that can be queried.
 
