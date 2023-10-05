@@ -64,6 +64,7 @@ namespace Interject.DataApi
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                    result = $"error: {e.Message}";
                 }
             }
             return result;

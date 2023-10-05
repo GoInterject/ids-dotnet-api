@@ -31,11 +31,24 @@ namespace Interject.DataApi
         [ProducesResponseType(typeof(InterjectResponse), 200)]
         public async Task<InterjectResponse> Post([FromBody] InterjectRequest interjectRequest)
         {
-            InterjectRequestHandler handler = new(interjectRequest);
-            handler.IParameterConverter = new SQLParameterConverter();
-            handler.IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStringOptions);
-            handler.IResponseConverter = new SqlResponseConverter();
-            return await handler.ReturnResponseAsync();
+            InterjectResponse response = new();
+            try
+            {
+                InterjectRequestHandler handler = new(interjectRequest)
+                {
+                    IParameterConverter = new SQLParameterConverter(),
+                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStringOptions),
+                    IResponseConverter = new SqlResponseConverter()
+                };
+                response = await handler.ReturnResponseAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.Write(e.StackTrace);
+                response.ErrorMessage = e.Message;
+            }
+            return response;
         }
 
         internal class SQLParameterConverter : IParameterConverter
@@ -226,23 +239,9 @@ namespace Interject.DataApi
             /// <param name="connectionStringOptions">The <see cref="ConnectionStringOptions"/></param>
             public SqlDataConnectionAsync(InterjectRequest request, ConnectionStringOptions connectionStringOptions)
             {
-                CleanConnectionStringOptions(connectionStringOptions);
+                connectionStringOptions ??= new();
+                connectionStringOptions.ConnectionStrings ??= new();
                 ResolveConnectionString(request, connectionStringOptions.ConnectionStrings);
-            }
-
-            /// <summary>
-            /// Inits the connection string if it is not currently initialized.
-            /// </summary>
-            private void CleanConnectionStringOptions(ConnectionStringOptions connectionStringOptions)
-            {
-                if (connectionStringOptions == null)
-                {
-                    connectionStringOptions = new();
-                }
-                else if (connectionStringOptions.ConnectionStrings == null)
-                {
-                    connectionStringOptions = new();
-                }
             }
 
             /// <summary>
