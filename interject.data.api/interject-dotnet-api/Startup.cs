@@ -19,8 +19,10 @@ namespace Interject.DataApi
 
         public IConfiguration Configuration { get; }
 
+
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -30,17 +32,26 @@ namespace Interject.DataApi
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
-            // Uncomment this to add security
+            // // Uncomment this to add security
             // services.AddAuthentication(options =>
             // {
             //     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             //     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             // })
             // .AddJwtBearer(options =>
             // {
-            //     options.Authority = "https://interject-authapi.azurewebsites.net"; //Interject's auth provider
-            //     options.Audience = ""; //TODO Add audience
+            //     options.Authority = Configuration["Authority"];//Interject's auth provider
+            //     options.Audience = $"{Configuration["Authority"]}/resources"; //Interject's auth provider
             //     options.RequireHttpsMetadata = false;
+            //     options.TokenValidationParameters = new TokenValidationParameters
+            //     {
+            //         ValidIssuer = Configuration["Authority"],//Interject's auth provider
+            //         ValidAudience = $"{Configuration["Authority"]}/resources", //Interject's auth provider
+            //         ValidateIssuer = true,
+            //         ValidateAudience = true,
+            //         ValidateLifetime = false
+            //     };
             // });
 
             services.AddAuthorization();

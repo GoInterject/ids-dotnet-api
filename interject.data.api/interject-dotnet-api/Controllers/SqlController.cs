@@ -10,6 +10,7 @@ using Interject.Api;
 namespace Interject.DataApi
 {
     [ApiController]
+    // [Authorize]
     [Route("api/v1/[controller]")]
     public class SQLController : ControllerBase
     {
