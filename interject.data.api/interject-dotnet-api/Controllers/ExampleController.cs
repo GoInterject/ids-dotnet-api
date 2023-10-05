@@ -43,7 +43,7 @@ namespace Interject.DataApi
 
                 // (Optional) Add columns and row data for ReportSave's 'ResultsRange'
                 table.AddColumn(new("Status"));
-                table.Update("status", 1, "Updated!");
+                table.Update("Status", 1, "Updated!");
 
                 response.AddReturnedData(table);
 

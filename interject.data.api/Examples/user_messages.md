@@ -42,16 +42,17 @@ return response;
 <br>
 
 ## Dataportal Formula Parameter Error Messages
+
 Error Messages can also be specified for specific parameters by setting the validation attribute seen below. 
 
 ```csharp
 using Interject.Api;
 
-// set a error message for a specific parameter
-interjectRequest.GetParameter("Param1").UserValidationMessage = "Param1 requires a better input!";
-
 // construct a response
 InterjectResponse response = new(interjectRequest);
+
+// set a error message for a specific parameter
+interjectRequest.GetParameter("Param1").UserValidationMessage = "Param1 requires a better input!";
 
 // return response
 return response;
@@ -76,6 +77,7 @@ TableName:  Table1
             12,   55,   null,
             13,   12,   another,
 ```
+
 **Add A Status Column and Set the Data**
 <br>
 
@@ -84,9 +86,10 @@ using Interject.Api;
 
 // this adds a column for status, then updates a row with a status message for the user
 IdsTable table = requestContext.XmlDataToSave;
-table.AddColumn(new("status"));
-table.Update("status", 1, "Updated!");
+table.AddColumn(new("Status"));
+table.Update("Status", 1, "Updated!");
 ```
+
 **Example Data Sent Back To Interject From the API**
 <br>
 
@@ -99,6 +102,7 @@ TableName:  Table1
             12,   55,   null,     updated!,
             13,   12,   another,  null,
 ```
+
 **What Is Displayed in the Report**
 <br>
 
