@@ -23,7 +23,7 @@ namespace Interject.Api
         public List<RequestParameter> RequestParameterList { get; set; } = new();
 
         /// <summary>
-        /// The command arguments configured in the Datat Portal.
+        /// The command arguments configured in the Data Portal.
         /// </summary>
         public PassThroughCommand PassThroughCommand { get; set; } = new();
 
@@ -32,6 +32,7 @@ namespace Interject.Api
         public InterjectRequest() { }
 
         private InterjectRequestContext _requestContext { get; set; }
+
         /// <summary>
         /// The <see cref="InterjectRequestContext"/>.
         /// </summary>
@@ -105,7 +106,7 @@ namespace Interject.Api
         }
 
         /// <summary>
-        /// Looks for a parameter in the<see cref="InterjectRequest.RequestParameterList"/>
+        /// Looks for a parameter in the <see cref="InterjectRequest.RequestParameterList"/>
         /// matching the name.
         /// </summary>
         /// <remarks>

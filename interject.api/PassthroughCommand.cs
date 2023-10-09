@@ -3,7 +3,7 @@ namespace Interject.Api
     public class PassThroughCommand
     {
         /// <summary>
-        /// The connection string
+        /// The name of the connection string in Configurations
         /// </summary>
         public string ConnectionStringName { get; set; }
 

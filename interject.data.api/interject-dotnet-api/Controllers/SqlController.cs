@@ -21,7 +21,7 @@ namespace Interject.DataApi
         }
 
         /// <summary>
-        /// Assumes all incomming paramters in the <see cref="InterjectRequest.RequestParameterList"/> are
+        /// Assumes all incoming parameters in the <see cref="InterjectRequest.RequestParameterList"/> are
         /// intended to be passed to a stored procedure.
         /// </summary>
         /// <param name="interjectRequest">
