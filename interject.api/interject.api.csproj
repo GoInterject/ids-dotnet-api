@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <PackageId>Interject.07.14.23</PackageId>
+    <Version>1.0.1</Version>
+    <Company>Interject</Company>
+  </PropertyGroup>
+
+</Project>

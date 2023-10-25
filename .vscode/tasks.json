@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/interject-dotnet-api/InterjectDotnetApi.csproj",
+                "${workspaceFolder}/interject.data.api/interject-dotnet-api/InterjectDotnetApi.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
