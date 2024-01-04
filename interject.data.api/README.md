@@ -16,7 +16,8 @@ The Interject Data API for .Net. This API fetches data from custom sources allow
 Steps: _using Visual Studio Code_
 
 1. Clone the [repository](https://github.com/GoInterject/ids-dotnet-api) from Github.
-2. You will need to install the [.Net 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
+2. You will need to install the Framework [.Net 7](https://dotnet.microsoft.com/en-us/download/dotnet) or greater.
+3. You will need the [.Net SDK](https://dotnet.microsoft.com/download) for developing.
 3. You will also need the [C# Dev Kit](https://code.visualstudio.com/docs/languages/csharp) extension for VSCode.
 4. Navigate to the interject-dotnet-api directory and execute the restore command.
    > dotnet restore
