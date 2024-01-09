@@ -4,28 +4,34 @@ The Interject Data API for .Net. This API fetches data from custom sources allow
 
 ---
 
-- ### **[How To Set Up the API for Development](#setup-for-dev)**
-- ### **[Status controller](#status-controller)**
-- ### **[How To Add A New Controller](#new-controller)**
-- ### **[Settings & Configurations](#app-settings)**
+- ### **[How to Set Up the API for Development](#how-to-setup-the-api-for-development)**
+- ### **[Status Controller](#status-controller)**
+- ### **[How to Add a New Controller](#how-to-add-a-new-controller)**
+- ### **[Settings & Configurations](#settings--configurations)**
 
 <br>
 
-# <a name="setup-for-dev">How To Setup the API for Development</a>
+# How to Set Up the API for Development
 
 Steps: _using Visual Studio Code_
 
 1. Clone the [repository](https://github.com/GoInterject/ids-dotnet-api) from Github.
-2. You will need to install the [.Net 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
+2. You will need to install the Framework [.Net 7](https://dotnet.microsoft.com/en-us/download/dotnet) or greater.
+3. You will need the [.Net SDK](https://dotnet.microsoft.com/download) for developing.
 3. You will also need the [C# Dev Kit](https://code.visualstudio.com/docs/languages/csharp) extension for VSCode.
 4. Navigate to the interject-dotnet-api directory and execute the restore command.
-   > dotnet restore
+```csharp
+dotnet restore
+```
 5. You should now be able to now run the application. Press (Ctrl+Shift+D) or use the run and debug menu.
 
    <img src="./ReadmeSrc/VSCodeDebug.png">
 
-   - To run Without debugging Pres F5 or enter the command:
-     > dotnet run
+   >Note: To run without debugging press F5 or enter the command:
+
+```csharp
+dotnet run
+```
 
 6. This API uses Kestrel to serve the application locally at the default base URL of http://localhost:5000. You can configure the starting port by modifying the file: `interject.data.api\interject-dotnet-api\Properties\launchSettings.json`
 
@@ -33,7 +39,7 @@ Steps: _using Visual Studio Code_
 
 <br>
 
-# <a name="status-controller">Status Controller</a>
+# Status Controller
 
 As an additional tool for testing and to assist in future troubleshooting of client APIs, a status controller is available. There are two endpoints:
 
@@ -44,7 +50,7 @@ As an additional tool for testing and to assist in future troubleshooting of cli
 - {base url}/api/v1/status/options
    - Returns information stored in the class `ApplicationOptions` as configured in "Applications" section of the `appsettings.json`.
 
-# <a name="new-controller">How To Add A New Controller</a>
+# How to Add a New Controller
 
 Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. 
 
@@ -56,13 +62,13 @@ Each controller will likely represent either a connection to a particular type o
 
 ## 1) Initialize the Interject_ResponseDTO & Interject_Table
 
-The `InterjectResponse` is initialized using the `InterjectRequest` so that all the Request Parameters can be compied to the Response object.
+The `InterjectResponse` is initialized using the `InterjectRequest` so that all the Request Parameters can be copied to the Response object.
 
 The `IdsTable` is initialized as well. You may initialize it with a table name if you wish. This object will hold all the columns and rows you will add in following steps.
 
 ## 2) (Optional) Get the Request Parameters
 
-If your Interject Request contains parameters, you can get them and store them as local objects in order to use them in your logic for fetching the data. If your Inteject Request is including data to save to your data source, you will need to get this data via the `Interject_XMLDataToSave` parameter.
+If your Interject Request contains parameters, you can get them and store them as local objects in order to use them in your logic for fetching the data. If your Interject Request is including data to save to your data source, you will need to get this data via the `Interject_XMLDataToSave` parameter.
 
 To see a complete guide to Request Parameters, see the readme `portal_parameters` in the interject.data.api\Examples folder.
 
@@ -78,13 +84,13 @@ Likewise, each row of data needs to be added to the table. Interject expects the
 
 ## 5) Add the IdsTable To the Response
 
-When all the data is processed and added to the InterjectTable, simply add the table to the Reponse using te `AddReturnedObject` method. This will serialize the table in order for Interject to consume it.
+When all the data is processed and added to the InterjectTable, simply add the table to the Response using te `AddReturnedObject` method. This will serialize the table in order for Interject to consume it.
 
-All that is left is to return the Reponse.
+All that is left is to return the Response.
 
 <br>
 
-# <a name="app-settings">Settings & Configurations</a>
+# Settings & Configurations
 
 This API uses a number of classes and json files to configure and apply settings:
 
