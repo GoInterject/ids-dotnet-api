@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
 using System;
+using System.Collections.Generic;
 
 namespace Interject.DataApi
 {
@@ -62,9 +63,8 @@ namespace Interject.DataApi
             Configuration.GetSection(ApplicationOptions.Application).Bind(appOptions);
             services.AddSingleton<ApplicationOptions>(_ => new(appOptions));
 
-            ConnectionStringOptions connections = new();
-            Configuration.GetSection(ConnectionStringOptions.Connections).Bind(connections);
-            services.AddSingleton<ConnectionStringOptions>(_ => new(connections));
+            var connectionStrings = Configuration.GetSection("ConnectionStrings").Get<Dictionary<string, string>>();
+            services.AddSingleton<Dictionary<string, string>>(_ => connectionStrings);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

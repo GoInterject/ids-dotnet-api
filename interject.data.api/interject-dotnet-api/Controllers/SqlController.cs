@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Interject.Api;
+using System.Security.Cryptography;
 
 namespace Interject.DataApi
 {
@@ -14,10 +15,10 @@ namespace Interject.DataApi
     [Route("api/v1/[controller]")]
     public class SQLController : ControllerBase
     {
-        private readonly ConnectionStringOptions _connectionStringOptions;
-        public SQLController(ConnectionStringOptions options)
+        private readonly Dictionary<string, string> _connectionStrings = new();
+        public SQLController(Dictionary<string, string> connectionStrings)
         {
-            _connectionStringOptions = options;
+            _connectionStrings = connectionStrings;
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace Interject.DataApi
                 InterjectRequestHandler handler = new(interjectRequest)
                 {
                     IParameterConverter = new SQLParameterConverter(),
-                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStringOptions),
+                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings),
                     IResponseConverter = new SqlResponseConverter()
                 };
                 response = await handler.ReturnResponseAsync();
@@ -236,31 +237,31 @@ namespace Interject.DataApi
             /// Create an instance of <see cref="SqlDataConnectionAsync"/>
             /// </summary>
             /// <param name="request">The <see cref="InterjectRequest"/> from the http request.</param>
-            /// <param name="connectionStringOptions">The <see cref="ConnectionStringOptions"/></param>
-            public SqlDataConnectionAsync(InterjectRequest request, ConnectionStringOptions connectionStringOptions)
+            /// <param name="connectionStrings">A dictionary of key value pairs.</param>
+            public SqlDataConnectionAsync(InterjectRequest request, Dictionary<string, string> connectionStrings)
             {
-                connectionStringOptions ??= new();
-                connectionStringOptions.ConnectionStrings ??= new();
-                ResolveConnectionString(request, connectionStringOptions.ConnectionStrings);
+                connectionStrings ??= new();
+                ResolveConnectionString(request, connectionStrings);
             }
 
             /// <summary>
             /// Sets the PassThroughCommand and the connection string. Fetches the connection string in configurations matching its name 
             /// from the PassThroughCommand.ConnectionStringName.
             /// </summary>
-            private void ResolveConnectionString(InterjectRequest request, List<ConnectionDescriptor> connectionStrings)
+            private void ResolveConnectionString(InterjectRequest request, Dictionary<string, string> connectionStrings)
             {
-                request.PassThroughCommand = request.PassThroughCommand == null ? new() : request.PassThroughCommand;
-                var conStrDesc = connectionStrings.FirstOrDefault(cs => cs.Name == request.PassThroughCommand.ConnectionStringName);
+                request.PassThroughCommand = request.PassThroughCommand ?? new();
+                var connectionString = string.Empty;
+                connectionStrings.TryGetValue(request.PassThroughCommand.ConnectionStringName, out connectionString);
 
-                if (conStrDesc == null)
+                if (string.IsNullOrEmpty(connectionString))
                 {
                     // IdsRequest.PassThroughCommand.ConnectionStringName may be the connection string itself.
                     this._connectionString = request.PassThroughCommand.ConnectionStringName;
                 }
                 else
                 {
-                    this._connectionString = conStrDesc.ConnectionString;
+                    this._connectionString = connectionString;
                 }
             }
 
