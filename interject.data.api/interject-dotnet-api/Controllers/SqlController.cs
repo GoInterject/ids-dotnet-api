@@ -19,7 +19,7 @@ namespace Interject.DataApi
         public SQLController(Dictionary<string, string> connectionStrings)
         {
             string useClientIdAsConnectionName = string.Empty;
-            connectionStrings.TryGetValue("UseClientIdAsConnectionString", out useClientIdAsConnectionName);
+            connectionStrings.TryGetValue("UseClientIdAsConnectionName", out useClientIdAsConnectionName);
             if (!string.IsNullOrEmpty(useClientIdAsConnectionName) && useClientIdAsConnectionName.Equals("true", StringComparison.OrdinalIgnoreCase)) _useClientIdAsConnectionName = true;
             _connectionStrings = connectionStrings;
         }
