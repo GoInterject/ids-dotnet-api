@@ -1,12 +1,10 @@
+using Interject.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
-using Interject.Api;
-using System.Security.Cryptography;
 
 namespace Interject.DataApi
 {
@@ -16,8 +14,13 @@ namespace Interject.DataApi
     public class SQLController : ControllerBase
     {
         private readonly Dictionary<string, string> _connectionStrings = new();
+        private readonly bool _useClientIdAsConnectionName = false;
+
         public SQLController(Dictionary<string, string> connectionStrings)
         {
+            string useClientIdAsConnectionName = string.Empty;
+            connectionStrings.TryGetValue("UseClientIdAsConnectionString", out useClientIdAsConnectionName);
+            if (!string.IsNullOrEmpty(useClientIdAsConnectionName) && useClientIdAsConnectionName.Equals("true", StringComparison.OrdinalIgnoreCase)) _useClientIdAsConnectionName = true;
             _connectionStrings = connectionStrings;
         }
 
@@ -35,10 +38,13 @@ namespace Interject.DataApi
             InterjectResponse response = new();
             try
             {
+                string clientId = string.Empty;
+                if (_useClientIdAsConnectionName) clientId = interjectRequest.UserContext().ClientId;
+
                 InterjectRequestHandler handler = new(interjectRequest)
                 {
                     IParameterConverter = new SQLParameterConverter(),
-                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings),
+                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings, clientId),
                     IResponseConverter = new SqlResponseConverter()
                 };
                 response = await handler.ReturnResponseAsync();
@@ -238,23 +244,27 @@ namespace Interject.DataApi
             /// </summary>
             /// <param name="request">The <see cref="InterjectRequest"/> from the http request.</param>
             /// <param name="connectionStrings">A dictionary of key value pairs.</param>
-            public SqlDataConnectionAsync(InterjectRequest request, Dictionary<string, string> connectionStrings)
+            /// <param name="connectionName">The name of the connection string to use.</param>
+            public SqlDataConnectionAsync(InterjectRequest request, Dictionary<string, string> connectionStrings, string connectionName = "")
             {
                 connectionStrings ??= new();
-                ResolveConnectionString(request, connectionStrings);
+                ResolveConnectionString(request, connectionStrings, connectionName);
             }
 
             /// <summary>
             /// Sets the PassThroughCommand and the connection string. Fetches the connection string in configurations matching its name 
             /// from the PassThroughCommand.ConnectionStringName.
             /// </summary>
-            private void ResolveConnectionString(InterjectRequest request, Dictionary<string, string> connectionStrings)
+            private void ResolveConnectionString(InterjectRequest request, Dictionary<string, string> connectionStrings, string connectionName)
             {
                 request.PassThroughCommand = request.PassThroughCommand ?? new();
                 var connectionString = string.Empty;
-                connectionStrings.TryGetValue(request.PassThroughCommand.ConnectionStringName, out connectionString);
 
-                if (string.IsNullOrEmpty(connectionString))
+                if (!connectionStrings.TryGetValue(connectionName, out connectionString))
+                {
+                    connectionStrings.TryGetValue(request.PassThroughCommand.ConnectionStringName, out connectionString);
+                }
+                else if (string.IsNullOrEmpty(connectionString))
                 {
                     // IdsRequest.PassThroughCommand.ConnectionStringName may be the connection string itself.
                     this._connectionString = request.PassThroughCommand.ConnectionStringName;
