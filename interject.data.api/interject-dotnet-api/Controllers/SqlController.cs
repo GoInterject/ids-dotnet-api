@@ -5,22 +5,22 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Interject.DataApi
 {
     [ApiController]
-    // [Authorize]
+    [Authorize]
     [Route("api/v1/[controller]")]
     public class SQLController : ControllerBase
     {
+        private readonly ApplicationOptions _options;
         private readonly Dictionary<string, string> _connectionStrings = new();
-        private readonly bool _useClientIdAsConnectionName = false;
 
-        public SQLController(Dictionary<string, string> connectionStrings)
+        public SQLController(ApplicationOptions options, Dictionary<string, string> connectionStrings)
         {
-            string useClientIdAsConnectionName = string.Empty;
-            connectionStrings.TryGetValue("UseClientIdAsConnectionName", out useClientIdAsConnectionName);
-            if (!string.IsNullOrEmpty(useClientIdAsConnectionName) && useClientIdAsConnectionName.Equals("true", StringComparison.OrdinalIgnoreCase)) _useClientIdAsConnectionName = true;
+            _options = options;
             _connectionStrings = connectionStrings;
         }
 
@@ -39,7 +39,11 @@ namespace Interject.DataApi
             try
             {
                 string clientId = string.Empty;
-                if (_useClientIdAsConnectionName) clientId = interjectRequest.UserContext().ClientId;
+                if (_options.UseClientIdAsConnectionName)
+                {
+                    EnforceClientIdSecurity();
+                    clientId = User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value;
+                }
 
                 InterjectRequestHandler handler = new(interjectRequest)
                 {
@@ -416,6 +420,22 @@ namespace Interject.DataApi
                 result.ReadOnly = column.ReadOnly;
                 result.Unique = column.Unique;
                 return result;
+            }
+        }
+
+        private void EnforceClientIdSecurity()
+        {
+            if (_options.UseClientIdAsConnectionName)
+            {
+                var clientId = User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value;
+                if (string.IsNullOrEmpty(clientId))
+                {
+                    throw new UnauthorizedAccessException("Unauthorized.");
+                }
+                if (!_connectionStrings.ContainsKey(clientId))
+                {
+                    throw new UnauthorizedAccessException("Unauthorized.");
+                }
             }
         }
     }

@@ -1,3 +1,6 @@
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,27 +36,25 @@ namespace Interject.DataApi
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
-            // // Uncomment this to add security
-            // services.AddAuthentication(options =>
-            // {
-            //     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            // })
-            // .AddJwtBearer(options =>
-            // {
-            //     options.Authority = Configuration["Authority"];//Interject's auth provider
-            //     options.Audience = $"{Configuration["Authority"]}/resources"; //Interject's auth provider
-            //     options.RequireHttpsMetadata = false;
-            //     options.TokenValidationParameters = new TokenValidationParameters
-            //     {
-            //         ValidIssuer = Configuration["Authority"],//Interject's auth provider
-            //         ValidAudience = $"{Configuration["Authority"]}/resources", //Interject's auth provider
-            //         ValidateIssuer = true,
-            //         ValidateAudience = true,
-            //         ValidateLifetime = false
-            //     };
-            // });
+
+            // Uncomment this to add security
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = Configuration["Authority"];//Interject's auth provider
+                // options.Audience = $"{Configuration["Authority"]}/resources"; //Interject's auth provider
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = Configuration["Authority"],//Interject's auth provider
+                    // ValidAudience = $"{Configuration["Authority"]}/resources" //Interject's auth provider
+                    ValidateAudience = false
+                };
+            });
 
             services.AddAuthorization();
 
@@ -61,10 +62,10 @@ namespace Interject.DataApi
 
             ApplicationOptions appOptions = new();
             Configuration.GetSection(ApplicationOptions.Application).Bind(appOptions);
-            services.AddSingleton<ApplicationOptions>(_ => new(appOptions));
+            services.AddSingleton(appOptions);
 
             var connectionStrings = Configuration.GetSection("ConnectionStrings").Get<Dictionary<string, string>>();
-            services.AddSingleton<Dictionary<string, string>>(_ => connectionStrings);
+            services.AddSingleton(connectionStrings);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -96,6 +97,8 @@ namespace Interject.DataApi
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ClaimsUpdateMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
