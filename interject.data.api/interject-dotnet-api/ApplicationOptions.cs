@@ -4,9 +4,10 @@ namespace Interject.DataApi
     {
         public const string Application = "Application";
 
-        public string Name { get; set; }
-        public string Version { get; set; }
-        public string Framework { get; set; }
+        public string Name { get; set; } = "Interject Data Api";
+        public string Version { get; set; } = "1.1.0";
+        public string Framework { get; set; } = "net7.0";
+        public bool UseClientIdAsConnectionName { get; set; } = false;
 
         public ApplicationOptions() { }
 
@@ -15,6 +16,7 @@ namespace Interject.DataApi
             this.Name = options.Name;
             this.Version = options.Version;
             this.Framework = options.Framework;
+            this.UseClientIdAsConnectionName = options.UseClientIdAsConnectionName;
         }
     }
 }

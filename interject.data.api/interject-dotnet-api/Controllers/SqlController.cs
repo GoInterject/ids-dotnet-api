@@ -1,23 +1,27 @@
+using Interject.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
-using Interject.Api;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Interject.DataApi
 {
     [ApiController]
-    // [Authorize]
+    [Authorize]
     [Route("api/v1/[controller]")]
     public class SQLController : ControllerBase
     {
-        private readonly ConnectionStringOptions _connectionStringOptions;
-        public SQLController(ConnectionStringOptions options)
+        private readonly ApplicationOptions _options;
+        private readonly Dictionary<string, string> _connectionStrings = new();
+
+        public SQLController(ApplicationOptions options, Dictionary<string, string> connectionStrings)
         {
-            _connectionStringOptions = options;
+            _options = options;
+            _connectionStrings = connectionStrings;
         }
 
         /// <summary>
@@ -34,10 +38,17 @@ namespace Interject.DataApi
             InterjectResponse response = new();
             try
             {
+                string clientId = string.Empty;
+                if (_options.UseClientIdAsConnectionName)
+                {
+                    EnforceClientIdSecurity();
+                    clientId = User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value;
+                }
+
                 InterjectRequestHandler handler = new(interjectRequest)
                 {
                     IParameterConverter = new SQLParameterConverter(),
-                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStringOptions),
+                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings, clientId),
                     IResponseConverter = new SqlResponseConverter()
                 };
                 response = await handler.ReturnResponseAsync();
@@ -236,31 +247,35 @@ namespace Interject.DataApi
             /// Create an instance of <see cref="SqlDataConnectionAsync"/>
             /// </summary>
             /// <param name="request">The <see cref="InterjectRequest"/> from the http request.</param>
-            /// <param name="connectionStringOptions">The <see cref="ConnectionStringOptions"/></param>
-            public SqlDataConnectionAsync(InterjectRequest request, ConnectionStringOptions connectionStringOptions)
+            /// <param name="connectionStrings">A dictionary of key value pairs.</param>
+            /// <param name="connectionName">The name of the connection string to use.</param>
+            public SqlDataConnectionAsync(InterjectRequest request, Dictionary<string, string> connectionStrings, string connectionName = "")
             {
-                connectionStringOptions ??= new();
-                connectionStringOptions.ConnectionStrings ??= new();
-                ResolveConnectionString(request, connectionStringOptions.ConnectionStrings);
+                connectionStrings ??= new();
+                ResolveConnectionString(request, connectionStrings, connectionName);
             }
 
             /// <summary>
             /// Sets the PassThroughCommand and the connection string. Fetches the connection string in configurations matching its name 
             /// from the PassThroughCommand.ConnectionStringName.
             /// </summary>
-            private void ResolveConnectionString(InterjectRequest request, List<ConnectionDescriptor> connectionStrings)
+            private void ResolveConnectionString(InterjectRequest request, Dictionary<string, string> connectionStrings, string connectionName)
             {
-                request.PassThroughCommand = request.PassThroughCommand == null ? new() : request.PassThroughCommand;
-                var conStrDesc = connectionStrings.FirstOrDefault(cs => cs.Name == request.PassThroughCommand.ConnectionStringName);
+                request.PassThroughCommand = request.PassThroughCommand ?? new();
+                var connectionString = string.Empty;
 
-                if (conStrDesc == null)
+                if (!connectionStrings.TryGetValue(connectionName, out connectionString))
+                {
+                    connectionStrings.TryGetValue(request.PassThroughCommand.ConnectionStringName, out connectionString);
+                }
+                else if (string.IsNullOrEmpty(connectionString))
                 {
                     // IdsRequest.PassThroughCommand.ConnectionStringName may be the connection string itself.
                     this._connectionString = request.PassThroughCommand.ConnectionStringName;
                 }
                 else
                 {
-                    this._connectionString = conStrDesc.ConnectionString;
+                    this._connectionString = connectionString;
                 }
             }
 
@@ -405,6 +420,22 @@ namespace Interject.DataApi
                 result.ReadOnly = column.ReadOnly;
                 result.Unique = column.Unique;
                 return result;
+            }
+        }
+
+        private void EnforceClientIdSecurity()
+        {
+            if (_options.UseClientIdAsConnectionName)
+            {
+                var clientId = User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value;
+                if (string.IsNullOrEmpty(clientId))
+                {
+                    throw new UnauthorizedAccessException("Unauthorized.");
+                }
+                if (!_connectionStrings.ContainsKey(clientId))
+                {
+                    throw new UnauthorizedAccessException("Unauthorized.");
+                }
             }
         }
     }
