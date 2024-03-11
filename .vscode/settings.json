@@ -1,6 +1,5 @@
 {
     "zenMode.hideLineNumbers": false,
-    "zenMode.hideTabs": false,
     "[csharp]": {
         "editor.defaultFormatter": "ms-dotnettools.csharp"
     },
