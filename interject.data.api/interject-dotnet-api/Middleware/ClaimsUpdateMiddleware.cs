@@ -32,6 +32,9 @@ public class ClaimsUpdateMiddleware
         var user = System.Text.Json.JsonSerializer.Deserialize<UserIdentityClaim>(identity.Value);
         // add the "ids_client_id" claim
         jwt.Payload["ids_client_id"] = user.ClientIdPublic;
+        jwt.Payload["ids_user_id"] = user.UserIdPublic;
+        jwt.Payload["ids_lic_exp"] = "";
+        jwt.Payload["ids_user_client_roles"] = "";
         // remove the "user_identity" claim
         jwt.Payload.Remove("user_identity");
         // convert the token back to a string
