@@ -3,6 +3,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <RuntimeIdentifiers>win7-x86</RuntimeIdentifiers>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Interject.07.14.23" Version="1.0.1" />
@@ -12,5 +13,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.0" />
+    <!-- <ProjectReference Include="..\..\interject.api\interject.api.csproj" /> -->
   </ItemGroup>
 </Project>

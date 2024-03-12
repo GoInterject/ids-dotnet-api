@@ -6,6 +6,7 @@ The Interject Data API for .Net. This API fetches data from custom sources allow
 
 - ### **[How to Set Up the API for Development](#how-to-setup-the-api-for-development)**
 - ### **[Status Controller](#status-controller)**
+- ### **[SQL Controller](@sql-controller)**
 - ### **[How to Add a New Controller](#how-to-add-a-new-controller)**
 - ### **[Settings & Configurations](#settings--configurations)**
 
@@ -23,7 +24,7 @@ Steps: _using Visual Studio Code_
 ```csharp
 dotnet restore
 ```
-5. You should now be able to now run the application. Press (Ctrl+Shift+D) or use the run and debug menu.
+5. You should now be able to run the application. Press (Ctrl+Shift+D) or use the run and debug menu.
 
    <img src="./ReadmeSrc/VSCodeDebug.png">
 
@@ -49,6 +50,10 @@ As an additional tool for testing and to assist in future troubleshooting of cli
 
 - {base url}/api/v1/status/options
    - Returns information stored in the class `ApplicationOptions` as configured in "Applications" section of the `appsettings.json`.
+
+# SQL Controller
+
+The SQL Controller is meant as a single endpoint to pass request parameters to a stored procedure. All the RequestParameter objects in the InterjectRequest object are converted to SqlParameters then are sent to the Stored Procedure named in the DataPortal.
 
 # How to Add a New Controller
 
