@@ -5,7 +5,7 @@ namespace Interject.DataApi
         public const string Application = "Application";
 
         public string Name { get; set; } = "Interject Data Api";
-        public string Version { get; set; } = "1.1.0";
+        public string Version { get; set; } = "1.1.2";
         public string Framework { get; set; } = "net7.0";
         public bool UseClientIdAsConnectionName { get; set; } = false;
 

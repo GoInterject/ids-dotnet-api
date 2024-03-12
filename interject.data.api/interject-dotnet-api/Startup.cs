@@ -98,8 +98,6 @@ namespace Interject.DataApi
 
             app.UseAuthorization();
 
-            app.UseMiddleware<ClaimsUpdateMiddleware>();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

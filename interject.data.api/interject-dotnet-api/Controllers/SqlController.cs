@@ -44,7 +44,7 @@ namespace Interject.DataApi
                 string clientId = string.Empty;
                 if (_options.UseClientIdAsConnectionName)
                 {
-                    clientId = User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value ?? string.Empty;
+                    clientId = GetClientIdClaim();
                     IActionResult? r = EnforceClientIdSecurity(clientId);
                     if (r != null) return r;
                 }
@@ -424,6 +424,20 @@ namespace Interject.DataApi
                 result.ReadOnly = column.ReadOnly;
                 result.Unique = column.Unique;
                 return result;
+            }
+        }
+
+        private string GetClientIdClaim()
+        {
+            string userIdentity = User.Claims.FirstOrDefault(c => c.Type == "user_identity")?.Value ?? string.Empty;
+            if (string.IsNullOrEmpty(userIdentity))
+            {
+                return User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value ?? string.Empty;
+            }
+            else
+            {
+                UserIdentityClaim claim = System.Text.Json.JsonSerializer.Deserialize<UserIdentityClaim>(userIdentity);
+                return claim.ClientIdPublic;
             }
         }
 
