@@ -61,14 +61,7 @@ namespace Interject.DataApi
             {
                 Console.WriteLine(e.Message);
                 Console.Write(e.StackTrace);
-                if (e.Message.StartsWith("UserNotice:", StringComparison.OrdinalIgnoreCase))
-                {
-                    response.UserMessage = e.Message;
-                }
-                else
-                {
-                    response.ErrorMessage = e.Message;
-                }
+                response.ErrorMessage = e.Message;
             }
             return Ok(response);
         }
@@ -299,8 +292,26 @@ namespace Interject.DataApi
                 this._connection = new Microsoft.Data.SqlClient.SqlConnection(this._connectionString);
                 ConfigureCommand(handler);
                 AttachParameters(handler.ConvertedParameters);
-                handler.ReturnData = await CallStoredProcedure();
-                UpdateOutputParameters(handler.ConvertedParameters, handler.IdsResponse.RequestParameterList);
+                try
+                {
+                    handler.ReturnData = await CallStoredProcedure();
+                }
+                catch (Exception e)
+                {
+                    if (e.Message.StartsWith("UserNotice:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        handler.IdsResponse.UserMessage = e.Message;
+                    }
+                    else
+                    {
+                        handler.IdsResponse.ErrorMessage = e.Message;
+                    }
+                }
+                finally
+                {
+                    UpdateOutputParameters(handler.ConvertedParameters, handler.IdsResponse.RequestParameterList);
+                    _connection.Close();
+                }
             }
 
             private Microsoft.Data.SqlClient.SqlCommand _command { get; set; }
