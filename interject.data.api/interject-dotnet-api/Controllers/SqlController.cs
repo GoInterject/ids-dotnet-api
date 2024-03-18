@@ -61,7 +61,14 @@ namespace Interject.DataApi
             {
                 Console.WriteLine(e.Message);
                 Console.Write(e.StackTrace);
-                response.ErrorMessage = e.Message;
+                if (e.Message.StartsWith("UserNotice:", StringComparison.OrdinalIgnoreCase))
+                {
+                    response.UserMessage = e.Message;
+                }
+                else
+                {
+                    response.ErrorMessage = e.Message;
+                }
             }
             return Ok(response);
         }
