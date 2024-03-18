@@ -310,7 +310,6 @@ namespace Interject.DataApi
                 finally
                 {
                     UpdateOutputParameters(handler.ConvertedParameters, handler.IdsResponse.RequestParameterList);
-                    _connection.Close();
                 }
             }
 
@@ -345,10 +344,35 @@ namespace Interject.DataApi
                 {
                     _command.Connection = _connection;
                     await _connection.OpenAsync();
-                    var adapter = new Microsoft.Data.SqlClient.SqlDataAdapter(_command);
-                    adapter.Fill(result);
+
+                    try
+                    {
+                        using (var reader = await _command.ExecuteReaderAsync())
+                        {
+                            do
+                            {
+                                var dataTable = new DataTable();
+                                dataTable.Load(reader);
+                                result.Tables.Add(dataTable);
+                            }
+                            while (!reader.IsClosed && await reader.NextResultAsync());
+                        }
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Handle the error here...
+                    }
                 }
                 return result;
+                //     DataSet result = new();
+                //     using (_connection)
+                //     {
+                //         _command.Connection = _connection;
+                //         await _connection.OpenAsync();
+                //         var adapter = new Microsoft.Data.SqlClient.SqlDataAdapter(_command);
+                //         adapter.Fill(result);
+                //     }
+                //     return result;
             }
 
             private void UpdateOutputParameters(List<object> convertedParameters, List<RequestParameter> returnParameters)
