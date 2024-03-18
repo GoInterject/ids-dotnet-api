@@ -294,7 +294,7 @@ namespace Interject.DataApi
                 AttachParameters(handler.ConvertedParameters);
                 try
                 {
-                    handler.ReturnData = await CallStoredProcedure();
+                    handler.ReturnData = await CallStoredProcedure(handler);
                 }
                 catch (Exception e)
                 {
@@ -337,42 +337,31 @@ namespace Interject.DataApi
                 });
             }
 
-            private async Task<DataSet> CallStoredProcedure()
+            private async Task<DataSet> CallStoredProcedure(InterjectRequestHandler handler)
             {
                 DataSet result = new();
                 using (_connection)
                 {
                     _command.Connection = _connection;
                     await _connection.OpenAsync();
-
+                    var adapter = new SqlDataAdapter(_command);
                     try
                     {
-                        using (var reader = await _command.ExecuteReaderAsync())
-                        {
-                            do
-                            {
-                                var dataTable = new DataTable();
-                                dataTable.Load(reader);
-                                result.Tables.Add(dataTable);
-                            }
-                            while (!reader.IsClosed && await reader.NextResultAsync());
-                        }
+                        adapter.Fill(result);
                     }
-                    catch (SqlException ex)
+                    catch (SqlException e)
                     {
-                        // Handle the error here...
+                        if (e.Message.StartsWith("UserNotice:", StringComparison.OrdinalIgnoreCase))
+                        {
+                            handler.IdsResponse.UserMessage = e.Message;
+                        }
+                        else
+                        {
+                            handler.IdsResponse.ErrorMessage = e.Message;
+                        }
                     }
                 }
                 return result;
-                //     DataSet result = new();
-                //     using (_connection)
-                //     {
-                //         _command.Connection = _connection;
-                //         await _connection.OpenAsync();
-                //         var adapter = new Microsoft.Data.SqlClient.SqlDataAdapter(_command);
-                //         adapter.Fill(result);
-                //     }
-                //     return result;
             }
 
             private void UpdateOutputParameters(List<object> convertedParameters, List<RequestParameter> returnParameters)
