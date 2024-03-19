@@ -289,28 +289,11 @@ namespace Interject.DataApi
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
                 if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new Exception("PassThroughCommand.ConnectionStringName is required.");
-                this._connection = new Microsoft.Data.SqlClient.SqlConnection(this._connectionString);
+                this._connection = new SqlConnection(_connectionString);
                 ConfigureCommand(handler);
                 AttachParameters(handler.ConvertedParameters);
-                try
-                {
-                    handler.ReturnData = await CallStoredProcedure(handler);
-                }
-                catch (Exception e)
-                {
-                    if (e.Message.StartsWith("UserNotice:", StringComparison.OrdinalIgnoreCase))
-                    {
-                        handler.IdsResponse.UserMessage = e.Message;
-                    }
-                    else
-                    {
-                        handler.IdsResponse.ErrorMessage = e.Message;
-                    }
-                }
-                finally
-                {
-                    UpdateOutputParameters(handler.ConvertedParameters, handler.IdsResponse.RequestParameterList);
-                }
+                await CallStoredProcedure(handler);
+                UpdateOutputParameters(handler.ConvertedParameters, handler.IdsResponse.RequestParameterList);
             }
 
             private Microsoft.Data.SqlClient.SqlCommand _command { get; set; }
@@ -337,7 +320,7 @@ namespace Interject.DataApi
                 });
             }
 
-            private async Task<DataSet> CallStoredProcedure(InterjectRequestHandler handler)
+            private async Task CallStoredProcedure(InterjectRequestHandler handler)
             {
                 DataSet result = new();
                 using (_connection)
@@ -361,7 +344,7 @@ namespace Interject.DataApi
                         }
                     }
                 }
-                return result;
+                handler.ReturnData = result;
             }
 
             private void UpdateOutputParameters(List<object> convertedParameters, List<RequestParameter> returnParameters)
