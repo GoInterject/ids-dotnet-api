@@ -296,10 +296,10 @@ namespace Interject.DataApi
             public async Task FetchDataAsync(InterjectRequestHandler handler)
             {
                 if (string.IsNullOrEmpty(handler.IdsRequest.PassThroughCommand.ConnectionStringName)) throw new Exception("PassThroughCommand.ConnectionStringName is required.");
-                this._connection = new Microsoft.Data.SqlClient.SqlConnection(this._connectionString);
+                this._connection = new SqlConnection(_connectionString);
                 ConfigureCommand(handler);
                 AttachParameters(handler.ConvertedParameters);
-                handler.ReturnData = await CallStoredProcedure();
+                await CallStoredProcedure(handler);
                 UpdateOutputParameters(handler.ConvertedParameters, handler.IdsResponse.RequestParameterList);
             }
 
@@ -327,17 +327,31 @@ namespace Interject.DataApi
                 });
             }
 
-            private async Task<DataSet> CallStoredProcedure()
+            private async Task CallStoredProcedure(InterjectRequestHandler handler)
             {
                 DataSet result = new();
                 using (_connection)
                 {
                     _command.Connection = _connection;
                     await _connection.OpenAsync();
-                    var adapter = new Microsoft.Data.SqlClient.SqlDataAdapter(_command);
-                    adapter.Fill(result);
+                    var adapter = new SqlDataAdapter(_command);
+                    try
+                    {
+                        adapter.Fill(result);
+                    }
+                    catch (SqlException e)
+                    {
+                        if (e.Message.StartsWith("UserNotice:", StringComparison.OrdinalIgnoreCase))
+                        {
+                            handler.IdsResponse.UserMessage = e.Message;
+                        }
+                        else
+                        {
+                            handler.IdsResponse.ErrorMessage = e.Message;
+                        }
+                    }
                 }
-                return result;
+                handler.ReturnData = result;
             }
 
             private void UpdateOutputParameters(List<object> convertedParameters, List<RequestParameter> returnParameters)
