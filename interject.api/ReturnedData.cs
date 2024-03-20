@@ -6,7 +6,6 @@ namespace Interject.Api
         /// Serialized instance of <see cref="IdsTable"/>
         /// </summary>
         public object Data { get; set; }
-        // = new IdsTable();
 
         /// <summary>
         /// Hard coded for reverse compatibility (DataFormat.JsonTableWithSchema)
