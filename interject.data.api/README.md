@@ -6,13 +6,13 @@ The Interject Data API for .Net. This API fetches data from custom sources allow
 
 - ### **[How to Set Up the API for Development](#how-to-setup-the-api-for-development)**
 - ### **[Status Controller](#status-controller)**
-- ### **[SQL Controller](@sql-controller)**
+- ### **[SQL Controller](#sql-controller)**
 - ### **[How to Add a New Controller](#how-to-add-a-new-controller)**
 - ### **[Settings & Configurations](#settings--configurations)**
 
 <br>
 
-# How to Set Up the API for Development
+# How to Set Up the API for Development {#how-to-setup-the-api-for-development}
 
 Steps: _using Visual Studio Code_
 
@@ -40,7 +40,7 @@ dotnet run
 
 <br>
 
-# Status Controller
+# Status Controller {#status-controller}
 
 As an additional tool for testing and to assist in future troubleshooting of client APIs, a status controller is available. There are two endpoints:
 
@@ -51,11 +51,11 @@ As an additional tool for testing and to assist in future troubleshooting of cli
 - {base url}/api/v1/status/options
    - Returns information stored in the class `ApplicationOptions` as configured in "Applications" section of the `appsettings.json`.
 
-# SQL Controller
+# SQL Controller {#sql-controller}
 
 The SQL Controller is meant as a single endpoint to pass request parameters to a stored procedure. All the RequestParameter objects in the InterjectRequest object are converted to SqlParameters then are sent to the Stored Procedure named in the DataPortal.
 
-# How to Add a New Controller
+# How to Add a New Controller {#how-to-add-a-new-controller}
 
 Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. 
 
@@ -95,7 +95,7 @@ All that is left is to return the Response.
 
 <br>
 
-# Settings & Configurations
+# Settings & Configurations {#settings--configurations}
 
 This API uses a number of classes and json files to configure and apply settings:
 
