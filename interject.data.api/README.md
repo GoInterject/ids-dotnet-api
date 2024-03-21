@@ -4,15 +4,15 @@ The Interject Data API for .Net. This API fetches data from custom sources allow
 
 ---
 
-- ### **[How to Set Up the API for Development](#how-to-setup-the-api-for-development)**
-- ### **[Status Controller](#status-controller)**
-- ### **[SQL Controller](@sql-controller)**
-- ### **[How to Add a New Controller](#how-to-add-a-new-controller)**
-- ### **[Settings & Configurations](#settings--configurations)**
+- ### **<a href="#how-to-setup-the-api-for-development">How to Set Up the API for Development</a>**
+- ### **<a href="#status-controller">Status Controller</a>**
+- ### **<a href="#sql-controller">SQL Controller</a>**
+- ### **<a href="#how-to-add-a-new-controller">How to Add a New Controller</a>**
+- ### **<a href="#settings-configurations">Settings & Configurations</a>**
 
 <br>
 
-# How to Set Up the API for Development
+<h1 id="how-to-setup-the-api-for-development">How to Set Up the API for Development</h1>
 
 Steps: _using Visual Studio Code_
 
@@ -40,7 +40,7 @@ dotnet run
 
 <br>
 
-# Status Controller
+<h1 id="status-controller">Status Controller</h1>
 
 As an additional tool for testing and to assist in future troubleshooting of client APIs, a status controller is available. There are two endpoints:
 
@@ -51,11 +51,11 @@ As an additional tool for testing and to assist in future troubleshooting of cli
 - {base url}/api/v1/status/options
    - Returns information stored in the class `ApplicationOptions` as configured in "Applications" section of the `appsettings.json`.
 
-# SQL Controller
+<h1 id="sql-controller">SQL Controller</h1>
 
 The SQL Controller is meant as a single endpoint to pass request parameters to a stored procedure. All the RequestParameter objects in the InterjectRequest object are converted to SqlParameters then are sent to the Stored Procedure named in the DataPortal.
 
-# How to Add a New Controller
+<h1 id="how-to-add-a-new-controller">How to Add a New Controller</h1>
 
 Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. 
 
@@ -95,7 +95,7 @@ All that is left is to return the Response.
 
 <br>
 
-# Settings & Configurations
+<h1 id="settings-configurations"> Settings & Configurations </h1>
 
 This API uses a number of classes and json files to configure and apply settings:
 
