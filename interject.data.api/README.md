@@ -5,6 +5,7 @@ The Interject Data API for .Net. This API fetches data from custom sources allow
 ---
 
 - ### **<a href="#how-to-setup-the-api-for-development">How to Set Up the API for Development</a>**
+- ### **<a href="#configure-auth">Configuring Auth</a>**
 - ### **<a href="#status-controller">Status Controller</a>**
 - ### **<a href="#sql-controller">SQL Controller</a>**
 - ### **<a href="#how-to-add-a-new-controller">How to Add a New Controller</a>**
@@ -39,6 +40,18 @@ dotnet run
 7. You can test by sending a request to the status controller http://localhost:5000/api/v1/status
 
 <br>
+
+<h1 id="configuring-auth">Configuring Auth</h1>
+
+Out of the box, Interject.Data.Api supports OIDC. It is preconfigured to use Interject's identity provider. However, you can configure it to use another OIDC compliant identity provider. 
+
+If you are using federated logins to access Interject, your provider's access token will be sent with the request. Update the appsettings.json
+
+``` JSON
+{
+   "Authority": "<your identity providers url>"
+}
+```
 
 <h1 id="status-controller">Status Controller</h1>
 
