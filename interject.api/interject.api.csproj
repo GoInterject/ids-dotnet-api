@@ -2,14 +2,17 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <PackageId>Interject.Api</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.1.4</Version>
     <Company>Interject</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackRelease>true</PackRelease>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Description></Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="LICENSE" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>
