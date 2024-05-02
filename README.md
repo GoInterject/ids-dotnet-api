@@ -16,7 +16,7 @@ using Interject.Api;
 
 ## Interject.data.api
 
-This package example controllers that use the Interject.api to send data from a custom source to the Interject Addin.
+This package contains example controllers that use the Interject.api to send data from a custom source to the Interject Addin.
 
 For more information, consult the [readme files](https://github.com/GoInterject/ids-dotnet-api/tree/main/interject.data.api/Examples).
 
