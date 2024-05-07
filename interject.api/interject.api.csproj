@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <PackageId>Interject.Api</PackageId>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
     <Company>Interject</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackRelease>true</PackRelease>
