@@ -9,7 +9,6 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 namespace Interject.DataApi
 {
@@ -41,18 +40,12 @@ namespace Interject.DataApi
             InterjectResponse response = new();
             try
             {
-                string clientId = string.Empty;
-                if (_options.UseClientIdAsConnectionName)
-                {
-                    clientId = GetClientIdClaim();
-                    IActionResult? r = EnforceClientIdSecurity(clientId);
-                    if (r != null) return r;
-                }
+                string connectionString = GetConnectionString(interjectRequest);
 
                 InterjectRequestHandler handler = new(interjectRequest)
                 {
                     IParameterConverter = new SQLParameterConverter(),
-                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings, clientId),
+                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings, connectionString),
                     IResponseConverter = new SqlResponseConverter()
                 };
                 response = await handler.ReturnResponseAsync();
@@ -71,6 +64,53 @@ namespace Interject.DataApi
                 }
             }
             return Ok(response);
+        }
+
+        private string GetConnectionString(InterjectRequest interjectRequest)
+        {
+            string clientId = string.Empty;
+            if (_options.UseClientIdAsConnectionName)
+            {
+                clientId = GetClientIdClaim();
+                IActionResult? r = EnforceClientIdSecurity(clientId);
+                if (r != null) return r;
+            }
+
+            string connectionString = interjectRequest.PassThroughCommand.ConnectionStringName;
+            connectionString = $"{connectionString}_{clientId}";
+            if (string.IsNullOrEmpty(connectionString) || !_connectionStrings.ContainsKey(connectionString))
+            {
+                throw new Exception($"Connection string '{connectionString}' not found in configuration.");
+            }
+
+            return connectionString;
+        }
+
+        private string GetClientIdClaim()
+        {
+            string userIdentity = User.Claims.FirstOrDefault(c => c.Type == "user_identity")?.Value ?? string.Empty;
+            if (string.IsNullOrEmpty(userIdentity))
+            {
+                return User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value ?? string.Empty;
+            }
+            else
+            {
+                UserIdentityClaim claim = System.Text.Json.JsonSerializer.Deserialize<UserIdentityClaim>(userIdentity);
+                return claim.ClientIdPublic;
+            }
+        }
+
+        private IActionResult? EnforceClientIdSecurity(string clientId)
+        {
+            IActionResult? result = null;
+            if (_options.UseClientIdAsConnectionName)
+            {
+                if (string.IsNullOrEmpty(clientId) || !_connectionStrings.ContainsKey(clientId))
+                {
+                    result = new UnauthorizedResult();
+                }
+            }
+            return result;
         }
 
         internal class SQLParameterConverter : IParameterConverter
@@ -430,6 +470,7 @@ namespace Interject.DataApi
 
             private IdsColumn InterjectColumnFromDataColumn(DataColumn column)
             {
+                var i = (int)column.DateTimeMode;
                 IdsColumn result = new();
                 result.AllowDBNull = column.AllowDBNull;
                 result.AutoIncrement = column.AutoIncrement;
@@ -437,7 +478,6 @@ namespace Interject.DataApi
                 result.Caption = column.Caption;
                 result.ColumnName = column.ColumnName;
                 //result.DataType = column.DataType.Name; // Commented out - Interject works with strings
-                var i = (int)column.DateTimeMode;
                 result.DateTimeMode = i.ToString();
                 result.DefaultValue = column.DefaultValue.ToString();
                 result.MaxLength = column.MaxLength;
@@ -446,33 +486,6 @@ namespace Interject.DataApi
                 result.Unique = column.Unique;
                 return result;
             }
-        }
-
-        private string GetClientIdClaim()
-        {
-            string userIdentity = User.Claims.FirstOrDefault(c => c.Type == "user_identity")?.Value ?? string.Empty;
-            if (string.IsNullOrEmpty(userIdentity))
-            {
-                return User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value ?? string.Empty;
-            }
-            else
-            {
-                UserIdentityClaim claim = System.Text.Json.JsonSerializer.Deserialize<UserIdentityClaim>(userIdentity);
-                return claim.ClientIdPublic;
-            }
-        }
-
-        private IActionResult? EnforceClientIdSecurity(string clientId)
-        {
-            IActionResult? result = null;
-            if (_options.UseClientIdAsConnectionName)
-            {
-                if (string.IsNullOrEmpty(clientId) || !_connectionStrings.ContainsKey(clientId))
-                {
-                    result = new UnauthorizedResult();
-                }
-            }
-            return result;
         }
     }
 }
