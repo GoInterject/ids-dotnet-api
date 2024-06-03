@@ -68,16 +68,13 @@ namespace Interject.DataApi
 
         private string GetConnectionStringName(InterjectRequest interjectRequest)
         {
-            string clientId = string.Empty;
-            if (_options.UseClientIdAsConnectionName)
-            {
-                clientId = GetClientIdClaim();
-                string r = EnforceClientIdSecurity(clientId);
-                if (r != "") return r;
-            }
-
+            string clientId = GetClientIdClaim();
             string connectionStringName = interjectRequest.PassThroughCommand.ConnectionStringName;
             connectionStringName = $"{connectionStringName}_{clientId}";
+
+            string r = EnforceClientIdSecurity(connectionStringName);
+            if (r != "") return r;
+
             if (string.IsNullOrEmpty(connectionStringName) || !_connectionStrings.ContainsKey(connectionStringName))
             {
                 throw new Exception($"Connection string '{connectionStringName}' not found in configuration.");
@@ -100,12 +97,12 @@ namespace Interject.DataApi
             }
         }
 
-        private string EnforceClientIdSecurity(string clientId)
+        private string EnforceClientIdSecurity(string connectionStringName)
         {
             string result = string.Empty;
             if (_options.UseClientIdAsConnectionName)
             {
-                if (string.IsNullOrEmpty(clientId) || !_connectionStrings.Any(v => v.Key.Contains(clientId)))
+                if (string.IsNullOrEmpty(connectionStringName) || !_connectionStrings.Any(v => v.Key.Contains(connectionStringName)))
                 {
                     throw new Exception("Unauthorized, Connection(s) not setup for current client in API!");
                 }
