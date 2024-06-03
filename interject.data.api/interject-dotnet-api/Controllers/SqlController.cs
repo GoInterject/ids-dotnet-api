@@ -73,7 +73,7 @@ namespace Interject.DataApi
             {
                 clientId = GetClientIdClaim();
                 string r = EnforceClientIdSecurity(clientId);
-                if (r != null) return r;
+                if (r != "") return r;
             }
 
             string connectionStringName = interjectRequest.PassThroughCommand.ConnectionStringName;
@@ -105,9 +105,9 @@ namespace Interject.DataApi
             string result = string.Empty;
             if (_options.UseClientIdAsConnectionName)
             {
-                if (string.IsNullOrEmpty(clientId) || !_connectionStrings.ContainsKey(clientId))
+                if (string.IsNullOrEmpty(clientId) || !_connectionStrings.Any(v => v.Key.Contains(clientId)))
                 {
-                    throw new Exception("Unauthorized.");
+                    throw new Exception("Unauthorized, Connection(s) not setup for current client in API!");
                 }
             }
             return result;
