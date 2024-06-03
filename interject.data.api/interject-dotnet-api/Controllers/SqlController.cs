@@ -40,12 +40,20 @@ namespace Interject.DataApi
             InterjectResponse response = new();
             try
             {
+<<<<<<< passthrough-connectionstring
+                string connectionStringName = GetConnectionStringName(interjectRequest);
+=======
                 string connectionString = GetConnectionString(interjectRequest);
+>>>>>>> develop
 
                 InterjectRequestHandler handler = new(interjectRequest)
                 {
                     IParameterConverter = new SQLParameterConverter(),
+<<<<<<< passthrough-connectionstring
+                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings, connectionStringName),
+=======
                     IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings, connectionString),
+>>>>>>> develop
                     IResponseConverter = new SqlResponseConverter()
                 };
                 response = await handler.ReturnResponseAsync();
@@ -66,12 +74,30 @@ namespace Interject.DataApi
             return Ok(response);
         }
 
+<<<<<<< passthrough-connectionstring
+        private string GetConnectionStringName(InterjectRequest interjectRequest)
+=======
         private string GetConnectionString(InterjectRequest interjectRequest)
+>>>>>>> develop
         {
             string clientId = string.Empty;
             if (_options.UseClientIdAsConnectionName)
             {
                 clientId = GetClientIdClaim();
+<<<<<<< passthrough-connectionstring
+                string r = EnforceClientIdSecurity(clientId);
+                if (r != null) return r;
+            }
+
+            string connectionStringName = interjectRequest.PassThroughCommand.ConnectionStringName;
+            connectionStringName = $"{connectionStringName}_{clientId}";
+            if (string.IsNullOrEmpty(connectionStringName) || !_connectionStrings.ContainsKey(connectionStringName))
+            {
+                throw new Exception($"Connection string '{connectionStringName}' not found in configuration.");
+            }
+
+            return connectionStringName;
+=======
                 IActionResult? r = EnforceClientIdSecurity(clientId);
                 if (r != null) return r;
             }
@@ -84,6 +110,7 @@ namespace Interject.DataApi
             }
 
             return connectionString;
+>>>>>>> develop
         }
 
         private string GetClientIdClaim()
@@ -100,14 +127,24 @@ namespace Interject.DataApi
             }
         }
 
+<<<<<<< passthrough-connectionstring
+        private string EnforceClientIdSecurity(string clientId)
+        {
+            string result = string.Empty;
+=======
         private IActionResult? EnforceClientIdSecurity(string clientId)
         {
             IActionResult? result = null;
+>>>>>>> develop
             if (_options.UseClientIdAsConnectionName)
             {
                 if (string.IsNullOrEmpty(clientId) || !_connectionStrings.ContainsKey(clientId))
                 {
+<<<<<<< passthrough-connectionstring
+                    throw new Exception("Unauthorized.");
+=======
                     result = new UnauthorizedResult();
+>>>>>>> develop
                 }
             }
             return result;
