@@ -2,14 +2,17 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <PackageId>Interject.Api</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.1.5</Version>
     <Company>Interject</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackRelease>true</PackRelease>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Description>Interject.Api provides the classes used by Interject. Use this api to extract data coming from Interject and to package responses.</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="LICENSE" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>
