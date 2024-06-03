@@ -40,12 +40,12 @@ namespace Interject.DataApi
             InterjectResponse response = new();
             try
             {
-                string connectionString = GetConnectionString(interjectRequest);
+                string connectionStringName = GetConnectionStringName(interjectRequest);
 
                 InterjectRequestHandler handler = new(interjectRequest)
                 {
                     IParameterConverter = new SQLParameterConverter(),
-                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings, connectionString),
+                    IDataConnectionAsync = new SqlDataConnectionAsync(interjectRequest, _connectionStrings, connectionStringName),
                     IResponseConverter = new SqlResponseConverter()
                 };
                 response = await handler.ReturnResponseAsync();
@@ -66,24 +66,24 @@ namespace Interject.DataApi
             return Ok(response);
         }
 
-        private string GetConnectionString(InterjectRequest interjectRequest)
+        private string GetConnectionStringName(InterjectRequest interjectRequest)
         {
             string clientId = string.Empty;
             if (_options.UseClientIdAsConnectionName)
             {
                 clientId = GetClientIdClaim();
-                IActionResult? r = EnforceClientIdSecurity(clientId);
+                string r = EnforceClientIdSecurity(clientId);
                 if (r != null) return r;
             }
 
-            string connectionString = interjectRequest.PassThroughCommand.ConnectionStringName;
-            connectionString = $"{connectionString}_{clientId}";
-            if (string.IsNullOrEmpty(connectionString) || !_connectionStrings.ContainsKey(connectionString))
+            string connectionStringName = interjectRequest.PassThroughCommand.ConnectionStringName;
+            connectionStringName = $"{connectionStringName}_{clientId}";
+            if (string.IsNullOrEmpty(connectionStringName) || !_connectionStrings.ContainsKey(connectionStringName))
             {
-                throw new Exception($"Connection string '{connectionString}' not found in configuration.");
+                throw new Exception($"Connection string '{connectionStringName}' not found in configuration.");
             }
 
-            return connectionString;
+            return connectionStringName;
         }
 
         private string GetClientIdClaim()
@@ -100,14 +100,14 @@ namespace Interject.DataApi
             }
         }
 
-        private IActionResult? EnforceClientIdSecurity(string clientId)
+        private string EnforceClientIdSecurity(string clientId)
         {
-            IActionResult? result = null;
+            string result = string.Empty;
             if (_options.UseClientIdAsConnectionName)
             {
                 if (string.IsNullOrEmpty(clientId) || !_connectionStrings.ContainsKey(clientId))
                 {
-                    result = new UnauthorizedResult();
+                    throw new Exception("Unauthorized.");
                 }
             }
             return result;
