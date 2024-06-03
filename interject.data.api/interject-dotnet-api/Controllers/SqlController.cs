@@ -75,7 +75,7 @@ namespace Interject.DataApi
             string r = EnforceClientIdSecurity(connectionStringName);
             if (r != "") return r;
 
-            if (string.IsNullOrEmpty(connectionStringName) || !_connectionStrings.ContainsKey(connectionStringName))
+            if (string.IsNullOrEmpty(connectionStringName) || !_connectionStrings.Any(v => v.Key.Contains(connectionStringName)))
             {
                 throw new Exception($"Connection string '{connectionStringName}' not found in configuration.");
             }
