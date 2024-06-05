@@ -439,11 +439,14 @@ namespace Interject.DataApi
             public void Convert(InterjectRequestHandler handler)
             {
                 var ds = handler.ReturnData as DataSet;
-                foreach (DataTable dt in ds.Tables)
+                if (ds != null)
                 {
-                    IdsTable it = InterjectTableFromDataTable(dt);
-                    ReturnedData rd = new(it);
-                    handler.IdsResponse.ReturnedDataList.Add(rd);
+                    foreach (DataTable dt in ds.Tables)
+                    {
+                        IdsTable it = InterjectTableFromDataTable(dt);
+                        ReturnedData rd = new(it);
+                        handler.IdsResponse.ReturnedDataList.Add(rd);
+                    }
                 }
             }
 
@@ -460,11 +463,11 @@ namespace Interject.DataApi
                     if (row.RowState != DataRowState.Deleted && row.RowState != DataRowState.Detached)
                     {
                         List<string> r = new();
-                        foreach (object o in row.ItemArray)
+                        foreach (object? o in row.ItemArray)
                         {
                             if (o != null)
                             {
-                                r.Add(o.ToString());
+                                r.Add(o.ToString()!);
                             }
                         }
                         result.Rows.Add(r);
