@@ -22,7 +22,7 @@ namespace Interject.DataApi
 
         #region Client.EnterpriseLogin
 
-        public string? EnterpriseLoginCode { get; set; }
+        public string EnterpriseLoginCode { get; set; } = string.Empty;
 
         #endregion
 

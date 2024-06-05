@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
@@ -92,8 +93,12 @@ namespace Interject.DataApi
             }
             else
             {
-                UserIdentityClaim claim = System.Text.Json.JsonSerializer.Deserialize<UserIdentityClaim>(userIdentity);
-                return claim.ClientIdPublic;
+                UserIdentityClaim? claim = null;
+                if (!string.IsNullOrEmpty(userIdentity))
+                {
+                    claim = JsonSerializer.Deserialize<UserIdentityClaim>(userIdentity);
+                }
+                return claim?.ClientIdPublic ?? string.Empty;
             }
         }
 
@@ -289,7 +294,7 @@ namespace Interject.DataApi
             /// A backward compatiblity feature for supporting a passthrough of a connection string
             /// name for lookup in the appsettings.json or the connection string itself.
             /// </summary>
-            private string _connectionString { get; set; }
+            private string _connectionString { get; set; } = string.Empty;
 
             /// <summary>
             /// Create an instance of <see cref="SqlDataConnectionAsync"/>
@@ -340,8 +345,8 @@ namespace Interject.DataApi
                 UpdateOutputParameters(handler.ConvertedParameters, handler.IdsResponse.RequestParameterList);
             }
 
-            private Microsoft.Data.SqlClient.SqlCommand _command { get; set; }
-            private SqlConnection _connection { get; set; }
+            private SqlCommand _command { get; set; } = new();
+            private SqlConnection _connection { get; set; } = new();
 
             /// <summary>
             /// Sets this handler's command parameters using the Interject Request.
@@ -408,7 +413,7 @@ namespace Interject.DataApi
         internal class ParamPair
         {
             public SqlParameter SqlParam { get; set; }
-            private RequestParameter _baseParam { get; set; }
+            private RequestParameter _baseParam { get; set; } = new();
             public RequestParameter RequestParameter
             {
                 get
@@ -457,7 +462,10 @@ namespace Interject.DataApi
                         List<string> r = new();
                         foreach (object o in row.ItemArray)
                         {
-                            r.Add(o.ToString());
+                            if (o != null)
+                            {
+                                r.Add(o.ToString());
+                            }
                         }
                         result.Rows.Add(r);
                     }
