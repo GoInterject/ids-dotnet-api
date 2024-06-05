@@ -136,6 +136,9 @@ namespace Interject.DataApi
             // the request into the response.
             InterjectResponse response = new(interjectRequest);
 
+            IdsUserContext userContext = interjectRequest.UserContext();
+            string roles = userContext.UserRoles;
+
             try
             {
                 // (Optional) Get DataPortal formula parameter values.

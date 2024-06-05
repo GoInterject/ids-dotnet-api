@@ -15,6 +15,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Xml.XPath;
 
@@ -200,7 +201,7 @@ namespace Interject.Api
                     case "UserRoles":
                         XPathNodeIterator rolesIterator = navigator.Select("UserRoles");
                         rolesIterator.MoveNext();
-                        userContext.UserRoles = rolesIterator.Current.GetChildValueString("Role");
+                        userContext.UserRoles = rolesIterator.Current.GetChildValueCSV("Role");
                         break;
                     default:
                         break;
@@ -289,6 +290,21 @@ namespace Interject.Api
             if (string.IsNullOrEmpty(value)) return null;
             bool.TryParse(value, out bool result);
             return result;
+        }
+
+        private static string GetChildValueCSV(this XPathNavigator navigator, string name)
+        {
+            var result = new StringBuilder();
+            XPathNodeIterator iterator = navigator.Select(name);
+            while (iterator.MoveNext())
+            {
+                if (result.Length > 0)
+                {
+                    result.Append(",");
+                }
+                result.Append(iterator.Current.Value);
+            }
+            return result.ToString();
         }
 
         private static string GetChildValueString(this XPathNavigator navigator, string name)
