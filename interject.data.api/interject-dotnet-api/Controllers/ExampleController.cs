@@ -268,172 +268,171 @@ namespace Interject.DataApi
 
             return response;
         }
-    }
 
-    /// <summary>
-    /// Test endpoint for a ReportVariable function with a RowDefName column.
-    /// </summary>
-    /// <param name="interjectRequest">
-    /// The <see cref="InterjectRequest"/> object to process.
-    /// </param>
-    [HttpPost("ReportRowDef")]
-    [ProducesResponseType(typeof(InterjectResponse), 200)]
-    public InterjectResponse TestRowDef([FromBody] InterjectRequest interjectRequest)
-    {
-        // Create an instance of the InterjectResponse to return by passing in the
-        // InterjectRequest from the request. This copies the parameter list from
-        // the request into the response.
-        InterjectResponse response = new(interjectRequest);
 
-        var requestContext = interjectRequest.GetRequestContext();
-
-        try
+        /// <summary>
+        /// Test endpoint for a ReportVariable function with a RowDefName column.
+        /// </summary>
+        /// <param name="interjectRequest">
+        /// The <see cref="InterjectRequest"/> object to process.
+        /// </param>
+        [HttpPost("RowDef")]
+        [ProducesResponseType(typeof(InterjectResponse), 200)]
+        public InterjectResponse TestRowDef([FromBody] InterjectRequest interjectRequest)
         {
-            // (Optional) Get DataPortal formula parameter values.
-            string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
-            string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
-            string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+            // Create an instance of the InterjectResponse to return by passing in the
+            // InterjectRequest from the request. This copies the parameter list from
+            // the request into the response.
+            InterjectResponse response = new(interjectRequest);
 
-            // (Optional) Process Column Definition Items.
-            List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
-            colDefItems.ForEach(item =>
-            {
-                Console.WriteLine(item.ToXML());
-            });
+            var requestContext = interjectRequest.GetRequestContext();
 
-            // (Optional) Process Row Definition Items.
-            List<InterjectRowDefItem> rowDefItems = interjectRequest.GetRowDefItems();
-            rowDefItems.ForEach(item =>
+            try
             {
-                Console.WriteLine(item.ToXML());
-            });
+                // (Optional) Get DataPortal formula parameter values.
+                string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
+                string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
+                string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
 
-            foreach (InterjectColDefItem item in colDefItems)
+                // (Optional) Process Column Definition Items.
+                List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
+                colDefItems.ForEach(item =>
+                {
+                    Console.WriteLine(item.ToXML());
+                });
+
+                // (Optional) Process Row Definition Items.
+                List<InterjectRowDefItem> rowDefItems = interjectRequest.GetRowDefItems();
+                rowDefItems.ForEach(item =>
+                {
+                    Console.WriteLine(item.ToXML());
+                });
+
+                foreach (InterjectColDefItem item in colDefItems)
+                {
+                    Console.Write(item.ToString());
+                }
+
+                // Assemble data to return to Interject to be populated on the spreadsheet.
+                IdsTable table = new();
+                table.AddColumn(new("RowDefName"));
+                table.AddColumn(new("div"));
+                table.AddColumn(new("loc"));
+                table.AddColumn(new("acct"));
+                table.AddColumn(new("MTD"));
+                table.AddColumn(new("QTD"));
+                table.AddColumn(new("YTD"));
+                table.AddRow(new() { "701", "701", "123", "3333", "94.30", "904.34", "9804.34" });
+                table.AddRow(new() { "701", "701", "123", "3334", "94.31", "904.34", "9804.34" });
+                table.AddRow(new() { "701", "701", "124", "3334", "94.32", "904.34", "9804.34" });
+                table.AddRow(new() { "701", "701", "124", "3334", "94.33", "904.34", "9804.34" });
+                table.AddRow(new() { "701", "701", "124", "3335", "94.34", "904.34", "9804.34" });
+                table.AddRow(new() { "702", "702", "223", "3333", "94.35", "904.34", "9804.34" });
+                table.AddRow(new() { "702", "702", "224", "3334", "94.36", "904.34", "9804.34" });
+                table.AddRow(new() { "702", "702", "225", "3333", "94.37", "904.34", "9804.34" });
+                table.AddRow(new() { "702", "702", "225", "3334", "94.38", "904.34", "9804.34" });
+                table.AddRow(new() { "702", "702", "225", "3335", "94.39", "904.34", "9804.34" });
+
+                // (Optional) Show contents of Interject Table object.
+                Console.Write(table.ToString());
+
+                // (Required) Add the table to the InterjectResponse object.
+                response.AddReturnedData(table);
+            }
+            catch (Exception e)
             {
-                Console.Write(item.ToString());
+                Console.WriteLine(e.Message);
+                Console.Write(e.StackTrace);
+                response.ErrorMessage = e.Message;
             }
 
-            // Assemble data to return to Interject to be populated on the spreadsheet.
-            IdsTable table = new();
-            table.AddColumn(new("RowDefName"));
-            table.AddColumn(new("div"));
-            table.AddColumn(new("loc"));
-            table.AddColumn(new("acct"));
-            table.AddColumn(new("MTD"));
-            table.AddColumn(new("QTD"));
-            table.AddColumn(new("YTD"));
-            table.AddRow(new() { "701", "701", "123", "3333", "94.30", "904.34", "9804.34" });
-            table.AddRow(new() { "701", "701", "123", "3334", "94.31", "904.34", "9804.34" });
-            table.AddRow(new() { "701", "701", "124", "3334", "94.32", "904.34", "9804.34" });
-            table.AddRow(new() { "701", "701", "124", "3334", "94.33", "904.34", "9804.34" });
-            table.AddRow(new() { "701", "701", "124", "3335", "94.34", "904.34", "9804.34" });
-            table.AddRow(new() { "702", "702", "223", "3333", "94.35", "904.34", "9804.34" });
-            table.AddRow(new() { "702", "702", "224", "3334", "94.36", "904.34", "9804.34" });
-            table.AddRow(new() { "702", "702", "225", "3333", "94.37", "904.34", "9804.34" });
-            table.AddRow(new() { "702", "702", "225", "3334", "94.38", "904.34", "9804.34" });
-            table.AddRow(new() { "702", "702", "225", "3335", "94.39", "904.34", "9804.34" });
-
-            // (Optional) Show contents of Interject Table object.
-            Console.Write(table.ToString());
-
-            // (Required) Add the table to the InterjectResponse object.
-            response.AddReturnedData(table);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            Console.Write(e.StackTrace);
-            response.ErrorMessage = e.Message;
+            return response;
         }
 
-        return response;
-    }
-}
 
-/// <summary>
-/// Test endpoint for a ReportVariable function with a RowDefName column with R0000x values.
-/// </summary>
-/// <param name="interjectRequest">
-/// The <see cref="InterjectRequest"/> object to process.
-/// </param>
-[HttpPost("ReportRowDefName")]
-[ProducesResponseType(typeof(InterjectResponse), 200)]
-public InterjectResponse TestRowDefName([FromBody] InterjectRequest interjectRequest)
-{
-    // Create an instance of the InterjectResponse to return by passing in the
-    // InterjectRequest from the request. This copies the parameter list from
-    // the request into the response.
-    InterjectResponse response = new(interjectRequest);
-
-    var requestContext = interjectRequest.GetRequestContext();
-
-    try
-    {
-        // (Optional) Get DataPortal formula parameter values.
-        string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
-        string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
-        string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
-
-        // (Optional) Process Column Definition Items.
-        List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
-        colDefItems.ForEach(item =>
+        /// <summary>
+        /// Test endpoint for a ReportVariable function with a RowDefName column with R0000x values.
+        /// </summary>
+        /// <param name="interjectRequest">
+        /// The <see cref="InterjectRequest"/> object to process.
+        /// </param>
+        [HttpPost("RowDefName")]
+        [ProducesResponseType(typeof(InterjectResponse), 200)]
+        public InterjectResponse TestRowDefName([FromBody] InterjectRequest interjectRequest)
         {
-            Console.WriteLine(item.ToXML());
-        });
+            // Create an instance of the InterjectResponse to return by passing in the
+            // InterjectRequest from the request. This copies the parameter list from
+            // the request into the response.
+            InterjectResponse response = new(interjectRequest);
 
-        // (Optional) Process Row Definition Items.
-        List<InterjectRowDefItem> rowDefItems = interjectRequest.GetRowDefItems();
-        rowDefItems.ForEach(item =>
-        {
-            Console.WriteLine(item.ToXML());
-        });
+            var requestContext = interjectRequest.GetRequestContext();
+
+            try
+            {
+                // (Optional) Get DataPortal formula parameter values.
+                string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
+                string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
+                string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+
+                // (Optional) Process Column Definition Items.
+                List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
+                colDefItems.ForEach(item =>
+                {
+                    Console.WriteLine(item.ToXML());
+                });
+
+                // (Optional) Process Row Definition Items.
+                List<InterjectRowDefItem> rowDefItems = interjectRequest.GetRowDefItems();
+                rowDefItems.ForEach(item =>
+                {
+                    Console.WriteLine(item.ToXML());
+                });
 
 
-        foreach (InterjectColDefItem item in colDefItems)
-        {
-            Console.Write(item.ToString());
+                foreach (InterjectColDefItem item in colDefItems)
+                {
+                    Console.Write(item.ToString());
+                }
+
+                // Assemble data to return to Interject to be populated on the spreadsheet.
+                IdsTable table = new();
+                table.AddColumn(new("RowDefName"));
+                table.AddColumn(new("div"));
+                table.AddColumn(new("loc"));
+                table.AddColumn(new("acct"));
+                table.AddColumn(new("MTD"));
+                table.AddColumn(new("QTD"));
+                table.AddColumn(new("YTD"));
+                table.AddRow(new() { "R00001", "701", "123", "3333", "94.30", "904.34", "9804.34" });
+                table.AddRow(new() { "R00001", "701", "123", "3334", "94.31", "904.34", "9804.34" });
+                table.AddRow(new() { "R00001", "701", "124", "3334", "94.32", "904.34", "9804.34" });
+                table.AddRow(new() { "R00001", "701", "124", "3334", "94.33", "904.34", "9804.34" });
+                table.AddRow(new() { "R00001", "701", "124", "3335", "94.34", "904.34", "9804.34" });
+                table.AddRow(new() { "R00002", "702", "223", "3333", "94.35", "904.34", "9804.34" });
+                table.AddRow(new() { "R00002", "702", "224", "3334", "94.36", "904.34", "9804.34" });
+                table.AddRow(new() { "R00002", "702", "225", "3333", "94.37", "904.34", "9804.34" });
+                table.AddRow(new() { "R00002", "702", "225", "3334", "94.38", "904.34", "9804.34" });
+                table.AddRow(new() { "R00002", "702", "225", "3335", "94.39", "904.34", "9804.34" });
+                table.AddRow(new() { "R00003", "703", "320", "3335", "94.35", "904.34", "9804.34" });
+                table.AddRow(new() { "R00003", "703", "321", "3335", "94.36", "904.34", "9804.34" });
+                table.AddRow(new() { "R00003", "703", "322", "3333", "94.37", "904.34", "9804.34" });
+                table.AddRow(new() { "R00003", "703", "322", "3334", "94.38", "904.34", "9804.34" });
+                table.AddRow(new() { "R00003", "703", "322", "3335", "94.39", "904.34", "9804.34" });
+
+                // (Optional) Show contents of Interject Table object.
+                Console.Write(table.ToString());
+
+                // (Required) Add the table to the InterjectResponse object.
+                response.AddReturnedData(table);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.Write(e.StackTrace);
+                response.ErrorMessage = e.Message;
+            }
+
+            return response;
         }
-
-        // Assemble data to return to Interject to be populated on the spreadsheet.
-        IdsTable table = new();
-        table.AddColumn(new("RowDefName"));
-        table.AddColumn(new("div"));
-        table.AddColumn(new("loc"));
-        table.AddColumn(new("acct"));
-        table.AddColumn(new("MTD"));
-        table.AddColumn(new("QTD"));
-        table.AddColumn(new("YTD"));
-        table.AddRow(new() { "R00001", "701", "123", "3333", "94.30", "904.34", "9804.34" });
-        table.AddRow(new() { "R00001", "701", "123", "3334", "94.31", "904.34", "9804.34" });
-        table.AddRow(new() { "R00001", "701", "124", "3334", "94.32", "904.34", "9804.34" });
-        table.AddRow(new() { "R00001", "701", "124", "3334", "94.33", "904.34", "9804.34" });
-        table.AddRow(new() { "R00001", "701", "124", "3335", "94.34", "904.34", "9804.34" });
-        table.AddRow(new() { "R00002", "702", "223", "3333", "94.35", "904.34", "9804.34" });
-        table.AddRow(new() { "R00002", "702", "224", "3334", "94.36", "904.34", "9804.34" });
-        table.AddRow(new() { "R00002", "702", "225", "3333", "94.37", "904.34", "9804.34" });
-        table.AddRow(new() { "R00002", "702", "225", "3334", "94.38", "904.34", "9804.34" });
-        table.AddRow(new() { "R00002", "702", "225", "3335", "94.39", "904.34", "9804.34" });
-        table.AddRow(new() { "R00003", "703", "320", "3335", "94.35", "904.34", "9804.34" });
-        table.AddRow(new() { "R00003", "703", "321", "3335", "94.36", "904.34", "9804.34" });
-        table.AddRow(new() { "R00003", "703", "322", "3333", "94.37", "904.34", "9804.34" });
-        table.AddRow(new() { "R00003", "703", "322", "3334", "94.38", "904.34", "9804.34" });
-        table.AddRow(new() { "R00003", "703", "322", "3335", "94.39", "904.34", "9804.34" });
-
-        // (Optional) Show contents of Interject Table object.
-        Console.Write(table.ToString());
-
-        // (Required) Add the table to the InterjectResponse object.
-        response.AddReturnedData(table);
     }
-    catch (Exception e)
-    {
-        Console.WriteLine(e.Message);
-        Console.Write(e.StackTrace);
-        response.ErrorMessage = e.Message;
-    }
-
-    return response;
-}
-    }
-
 }
