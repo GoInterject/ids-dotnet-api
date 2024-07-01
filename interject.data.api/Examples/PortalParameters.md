@@ -1,7 +1,9 @@
 # Dataportal Parameters
+
 Dataportal parameters allow you to get specific data inputs from the spreadsheet through Interject. There are two types of parameters: Formula and System.
 
 ## Formula Parameters
+
 Formula parameters are defined and customized by the developers and users of Interject. They must first be set up on the [Interject Portal Site](https://portal.gointerject.com/).
 
 <img src="static/params-1-formula.png" alt="drawing" width="60%"/>
@@ -35,6 +37,7 @@ string reportParam1 = interjectRequest.GetParameterValue<string>("Param1");
 int reportParam2 = interjectRequest.GetParameterValue<int>("Param2");
 float reportParam3 = interjectRequest.GetParameterValue<float>("param3");
 ```
+
 <br>
 
 # System Paramaters
@@ -82,7 +85,7 @@ String machineLoginName = interjectRequest.GetRequestContext().UserContext.Machi
 String machineName = interjectRequest.GetRequestContext().UserContext.MachineName;
 String fullName = interjectRequest.GetRequestContext().UserContext.FullName;
 String loginDateUtc = interjectRequest.GetRequestContext().UserContext.LoginDateUtc;
-List<String> userRoles = interjectRequest.GetRequestContext().UserContext.UserRoles;
+String userRoles = interjectRequest.GetRequestContext().UserContext.UserRoles;
 String idsVersion = interjectRequest.GetRequestContext().IdsVersion;
 String fileName = interjectRequest.GetRequestContext().FileName;
 String filePath = interjectRequest.GetRequestContext().FilePath;
