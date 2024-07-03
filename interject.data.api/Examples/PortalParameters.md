@@ -1,6 +1,6 @@
-# Dataportal Parameters
+# Data Portal Parameters
 
-Dataportal parameters allow you to get specific data inputs from the spreadsheet through Interject. There are two types of parameters: Formula and System.
+Data portal parameters allow you to get specific data inputs from the spreadsheet through Interject. There are two types of parameters: Formula and System.
 
 ## Formula Parameters
 
@@ -14,6 +14,7 @@ To use them in the Excel Report, you must define the `Parameters` parameter in t
 - [ReportRange](https://docs.gointerject.com/wIndex/ReportRange.html)
 - [ReportFixed](https://docs.gointerject.com/wIndex/ReportFixed.html)
 - [ReportVariable](https://docs.gointerject.com/wIndex/ReportVariable.html)
+- [ReportLookup](https://docs.gointerject.com/wIndex/ReportLookup.html)
 - [ReportSave](https://docs.gointerject.com/wIndex/ReportSave.html)
 
 <br>
@@ -27,7 +28,7 @@ Once the report functions are configured to use parameters, the data API code ca
 using Interject.Api;
 
 // this request will come from the .NET Framework in the data api
-InterjectResponse response = new(interjectRequest);
+InterjectRequest interjectRequest
 
 // get formula parameter object from request
 RequestParameter param = interjectRequest.GetParameter("Param1")
@@ -42,7 +43,7 @@ float reportParam3 = interjectRequest.GetParameterValue<float>("param3");
 
 # System Paramaters
 
-System parameters are defined by Interject but can be included in any DataPortal and will be included in the `InterjectRequest.RequestParameterList`. Once configured on the [Interject Portal Site](https://portal.gointerject.com/), they will be passed to the data API or database from Excel and can be parsed out similar to formula parameters.
+System parameters are defined by Interject but can be included in any Data Portal and will be included in the `InterjectRequest.RequestParameterList`. Once configured on the [Interject Portal Site](https://portal.gointerject.com/), they will be passed to the data API or database from Excel and can be parsed out similar to formula parameters.
 
 <br>
 <img src="static/params-2-system.png" alt="drawing" width="64%"/>

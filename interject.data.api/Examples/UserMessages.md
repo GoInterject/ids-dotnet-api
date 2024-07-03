@@ -1,7 +1,9 @@
 # Responding with Messages
-There are numerous ways to return messages to users both at the data row level and the application level. 
+
+There are numerous ways to return messages to users both at the data row level and the application level.
 
 ## User Messages
+
 User Messages can be configured on the response object by setting the `UserMessage` property of the `InterjectResponse` object before returning the response. This provides a popup in the addin to the user.
 
 ```csharp
@@ -16,12 +18,14 @@ response.UserMessage ="Please use a different input!!!";
 // return response
 return response;
 ```
+
 <br>
 <img src="static/msg-2-usermessage.png" alt="drawing" width="50%"/>
 <br>
 <br>
 
 ## Error Messages
+
 Error Messages can be configured on the response object by setting the `ErrorMessage` property of the `InterjectResponse` object before returning the response. This describes an error in the formula details field of the pull\save window.
 
 ```csharp
@@ -36,14 +40,15 @@ response.ErrorMessage ="A critical error occured during the query!";
 // return response
 return response;
 ```
+
 <br>
 <img src="static/msg-3-errormessage.png" alt="drawing" width="75%"/>
 <br>
 <br>
 
-## Dataportal Formula Parameter Error Messages
+## Data Portal Formula Parameter Error Messages
 
-Error Messages can also be specified for specific parameters by setting the validation attribute seen below. 
+Error Messages can also be specified for specific parameters by setting the validation attribute seen below.
 
 ```csharp
 using Interject.Api;
@@ -57,13 +62,15 @@ interjectRequest.GetParameter("Param1").UserValidationMessage = "Param1 requires
 // return response
 return response;
 ```
+
 <br>
 <img src="static/msg-4-paramvalidation.png" alt="drawing" width="75%"/>
 <br>
 <br>
 
 ## ReportSave Result Columns
-The `ReportSave` function has the ability to send data from the sheet to a data api or database. In addition, this function also can populate the spreadsheet with data returned from the data api or database via the `ResultsRange`. When this paramter is defined in the Excel report, the columns included in this range will be populated with the corresponding columns in the data returned to interject.
+
+The `ReportSave` function has the ability to send data from the sheet to a data api or database. In addition, this function also can populate the spreadsheet with data returned from the data api or database via the `ResultsRange`. When this parameter is defined in the Excel report, the columns included in this range will be populated with the corresponding columns in the data returned to interject.
 
 **Example Data Sent To the API From Interject**
 <br>

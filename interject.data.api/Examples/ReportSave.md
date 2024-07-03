@@ -54,7 +54,7 @@ Here is a working example of a ReportSave endpoint:
 
                 IdsTable table = requestContext.XmlDataToSave;
 
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");

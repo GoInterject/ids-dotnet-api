@@ -34,13 +34,14 @@ namespace Interject.DataApi
 
                 IdsTable table = requestContext.XmlDataToSave;
 
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+                Console.Write("P1: " + reportParam1 + "P2: " + reportParam2 + "P3: " + reportParam3);
 
                 // (Optional) Use data from the spreadsheet for your logic here.
-                //List<string> list = table.GetColumnValues("Notes");
+                // List<string> notes_list = table.GetColumnValues("Notes");
 
                 // (Optional) Add columns and row data for ReportSave's 'ResultsRange'
                 table.AddColumn(new("Status"));
@@ -78,10 +79,11 @@ namespace Interject.DataApi
 
             try
             {
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+                Console.Write("P1: " + reportParam1 + "P2: " + reportParam2 + "P3: " + reportParam3);
 
                 // Add the columns
                 IdsTable idsTable = new();
@@ -106,6 +108,10 @@ namespace Interject.DataApi
                 {
                     idsTable.AddRow(rows[i]);
                 }
+
+                // (Optional) Filter the table
+                // string acctParam = interjectRequest.GetParameterValue<string>("account");
+                // idsTable.Filter("acct", acctParam);
 
                 idsTable.Print();
 
@@ -142,10 +148,11 @@ namespace Interject.DataApi
 
             try
             {
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+                Console.Write("P1: " + reportParam1 + "P2: " + reportParam2 + "P3: " + reportParam3);
 
                 IdsTable idsTable = new();
 
@@ -161,8 +168,8 @@ namespace Interject.DataApi
                 List<InterjectRowDefItem> rowDefItems = interjectRequest.GetRowDefItems();
                 foreach (var item in rowDefItems)
                 {
-                    string div = item.GetValueString("Div");
-                    string acct = item.GetValueString("Acct");
+                    string div = item.GetValueString("div");
+                    string acct = item.GetValueString("acct");
 
                     List<string> newRow = new()
                     {
@@ -209,10 +216,11 @@ namespace Interject.DataApi
 
             try
             {
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+                Console.Write("P1: " + reportParam1 + "P2: " + reportParam2 + "P3: " + reportParam3);
 
                 // (Optional) Process Column Definition Items.
                 List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
@@ -290,16 +298,20 @@ namespace Interject.DataApi
 
             try
             {
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+                Console.Write("P1: " + reportParam1 + "P2: " + reportParam2 + "P3: " + reportParam3);
 
-                // Add the columns
+                // (Optional) Use data from the spreadsheet for your logic here.
+
+                // Assemble data to return to Interject to be populated on the spreadsheet
                 IdsTable idsTable = new();
                 idsTable.AddColumn(new IdsColumn("ytd"));
                 idsTable.AddRow(new() { "123456.78" });
 
+                // (Optional) Show contents of Interject Table object.
                 idsTable.Print();
 
                 response.AddReturnedData(idsTable);
@@ -332,7 +344,7 @@ namespace Interject.DataApi
 
             try
             {
-                // Add the columns
+                // Assemble data to return to Interject to be populated on the spreadsheet
                 IdsTable idsTable = new();
                 idsTable.AddColumn(new IdsColumn("CompanyName"));
                 idsTable.AddRow(new() { "Northwind Data Company" });
@@ -341,6 +353,7 @@ namespace Interject.DataApi
                 idsTable.AddRow(new() { "Northwind Security" });
                 idsTable.AddRow(new() { "Northwind Research" });
 
+                // (Optional) Show contents of Interject Table object.
                 idsTable.Print();
 
                 response.AddReturnedData(idsTable);
@@ -373,12 +386,13 @@ namespace Interject.DataApi
 
             try
             {
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+                Console.Write("P1: " + reportParam1 + "P2: " + reportParam2 + "P3: " + reportParam3);
 
-                // Currently handled getters for system parameters
+                // Get Data Portal system parameter values.
                 InterjectRequestContext requestContext = interjectRequest.GetRequestContext();
                 String ntLogin = interjectRequest.GetParameterValue<string>("Interject_NTLogin");
                 String excelVersion = interjectRequest.GetParameterValue<string>("Interject_ExcelVersion");
@@ -391,11 +405,10 @@ namespace Interject.DataApi
                 String userRoles = interjectRequest.GetParameterValue<string>("Interject_UserRoles");
                 String clientID = interjectRequest.GetParameterValue<string>("Interject_ClientID");
 
-                // Currently handled getters for objects in the system parameter "Interject_RequestContext"
-                IdsTable table = interjectRequest.GetXmlDataToSave();
+                // Get Data Portal system parameter values from RequestContext parameter
+                IdsTable saveDataTable = interjectRequest.GetXmlDataToSave();
                 List<InterjectRowDefItem> rowDefItems = interjectRequest.GetRowDefItems();
                 List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
-
                 String excelVersion2 = interjectRequest.GetRequestContext().ExcelVersion;
                 String userID2 = interjectRequest.GetRequestContext().UserContext.UserId;
                 String clientID2 = interjectRequest.GetRequestContext().UserContext.ClientId;
@@ -428,6 +441,7 @@ namespace Interject.DataApi
                 }
                 string colDefItemsString = colDefItemsStringBuilder.ToString();
 
+                // Print the parameters
                 Console.WriteLine($"rowDefItems: {rowDefItemsString}");
                 Console.WriteLine($"colDefItems: {colDefItemsString}");
                 Console.WriteLine($"ntLogin: {ntLogin}");
@@ -457,12 +471,11 @@ namespace Interject.DataApi
                 Console.WriteLine($"sourceFunction: {sourceFunction}");
                 Console.WriteLine($"utcOffset: {utcOffset}");
 
-                // Add the columns
+                // Assemble a data table with the parameters to be populated on the spreadsheet
                 IdsTable idsTable = new();
-                idsTable.AddColumn(new IdsColumn("Property"));
+                idsTable.AddColumn(new IdsColumn("Parameter"));
                 idsTable.AddColumn(new IdsColumn("Value"));
 
-                // Add the rows
                 idsTable.AddRow(new() { "RowDefItems", rowDefItemsString });
                 idsTable.AddRow(new() { "ColDefItems", colDefItemsString });
                 idsTable.AddRow(new() { "ntLogin", ntLogin });
@@ -492,6 +505,7 @@ namespace Interject.DataApi
                 idsTable.AddRow(new() { "sourceFunction", sourceFunction });
                 idsTable.AddRow(new() { "utcOffset", utcOffset });
 
+                // (Optional) Show contents of Interject Table object.
                 idsTable.Print();
 
                 response.AddReturnedData(idsTable);
@@ -526,10 +540,11 @@ namespace Interject.DataApi
 
             try
             {
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+                Console.Write("P1: " + reportParam1 + "P2: " + reportParam2 + "P3: " + reportParam3);
 
                 // (Optional) Process Column Definition Items.
                 List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
@@ -606,10 +621,11 @@ namespace Interject.DataApi
 
             try
             {
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
+                Console.Write("P1: " + reportParam1 + "P2: " + reportParam2 + "P3: " + reportParam3);
 
                 // (Optional) Process Column Definition Items.
                 List<InterjectColDefItem> colDefItems = interjectRequest.GetColDefItems();
