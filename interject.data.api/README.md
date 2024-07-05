@@ -93,7 +93,7 @@ As an additional tool for testing and to assist in future troubleshooting of cli
 
 <h1 id="sql-controller">SQL Controller</h1>
 
-The SQL Controller is meant as a single endpoint to pass request parameters to a stored procedure. All the RequestParameter objects in the InterjectRequest object are converted to SqlParameters then are sent to the Stored Procedure named in the DataPortal.
+The SQL Controller is meant as a single endpoint to pass request parameters to a stored procedure. All the RequestParameter objects in the InterjectRequest object are converted to SqlParameters then are sent to the Stored Procedure named in the Data Portal.
 
 <h1 id="how-to-add-a-new-controller">How to Add a New Controller</h1>
 
