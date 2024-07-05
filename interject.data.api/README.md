@@ -1,16 +1,41 @@
-# Interject Data API (Dotnet Edition)
+<p align="center">
+    <img src="./banner.png" />
+    <br />
+    <br />
+    <i>
+    ⚒️ A Modular Toolkit for Creating Interject Data API's in .Net ⚒️
+    </i>
+    <br />
+    <br />
+    <img
+        src="https://img.shields.io/badge/v1.0.0-white?color=black&style=for-the-badge&logo=git"
+        alt="Current Version"
+    />
+    <img
+        src="https://img.shields.io/badge/LICENSE-Apache 2.0-black?color=black&style=for-the-badge"
+        alt="LICENSE"
+    />
+</p>
+
+<br>
+
+# Interject Data API (.Net Edition)
 
 The Interject Data API for .Net. This API fetches data from custom sources allowing Interject to integrate data from more locations.
 
----
+<br>
+<br>
 
-- ### **<a href="#how-to-setup-the-api-for-development">How to Set Up the API for Development</a>**
-- ### **<a href="#configure-auth">Configuring Auth</a>**
-- ### **<a href="#status-controller">Status Controller</a>**
-- ### **<a href="#sql-controller">SQL Controller</a>**
-- ### **<a href="#how-to-add-a-new-controller">How to Add a New Controller</a>**
-- ### **<a href="#settings-configurations">Settings & Configurations</a>**
+# Table of Contents
 
+- [How to Set Up the API for Development](#how-to-setup-the-api-for-development)
+- [Configuring Auth](configure-auth)
+- [Status Controller](#status-controller)
+- [SQL Controller](#sql-controller)
+- [How to Add a New Controller](#how-to-add-a-new-controller)
+- [Settings & Configurations](#settings-configurations)
+
+<br>
 <br>
 
 <h1 id="how-to-setup-the-api-for-development">How to Set Up the API for Development</h1>
@@ -20,16 +45,18 @@ Steps: _using Visual Studio Code_
 1. Clone the [repository](https://github.com/GoInterject/ids-dotnet-api) from Github.
 2. You will need to install the Framework [.Net 7](https://dotnet.microsoft.com/en-us/download/dotnet) or greater.
 3. You will need the [.Net SDK](https://dotnet.microsoft.com/download) for developing.
-3. You will also need the [C# Dev Kit](https://code.visualstudio.com/docs/languages/csharp) extension for VSCode.
-4. Navigate to the interject-dotnet-api directory and execute the restore command.
+4. You will also need the [C# Dev Kit](https://code.visualstudio.com/docs/languages/csharp) extension for VSCode.
+5. Navigate to the interject-dotnet-api directory and execute the restore command.
+
 ```csharp
 dotnet restore
 ```
+
 5. You should now be able to run the application. Press (Ctrl+Shift+D) or use the run and debug menu.
 
    <img src="./ReadmeSrc/VSCodeDebug.png">
 
-   >Note: To run without debugging press F5 or enter the command:
+   > Note: To run without debugging press F5 or enter the command:
 
 ```csharp
 dotnet run
@@ -43,11 +70,11 @@ dotnet run
 
 <h1 id="configuring-auth">Configuring Auth</h1>
 
-Out of the box, Interject.Data.Api supports OIDC. It is preconfigured to use Interject's identity provider. However, you can configure it to use another OIDC compliant identity provider. 
+Out of the box, Interject.Data.Api supports OIDC. It is preconfigured to use Interject's identity provider. However, you can configure it to use another OIDC compliant identity provider.
 
 If you are using federated logins to access Interject, your provider's access token will be sent with the request. Update the appsettings.json
 
-``` JSON
+```JSON
 {
    "Authority": "<your identity providers url>"
 }
@@ -57,20 +84,20 @@ If you are using federated logins to access Interject, your provider's access to
 
 As an additional tool for testing and to assist in future troubleshooting of client APIs, a status controller is available. There are two endpoints:
 
-- {base url}/api/v1/status 
+- {base url}/api/v1/status
 
-   - Returns "true"
+  - Returns "true"
 
 - {base url}/api/v1/status/options
-   - Returns information stored in the class `ApplicationOptions` as configured in "Applications" section of the `appsettings.json`.
+  - Returns information stored in the class `ApplicationOptions` as configured in "Applications" section of the `appsettings.json`.
 
 <h1 id="sql-controller">SQL Controller</h1>
 
-The SQL Controller is meant as a single endpoint to pass request parameters to a stored procedure. All the RequestParameter objects in the InterjectRequest object are converted to SqlParameters then are sent to the Stored Procedure named in the DataPortal.
+The SQL Controller is meant as a single endpoint to pass request parameters to a stored procedure. All the RequestParameter objects in the InterjectRequest object are converted to SqlParameters then are sent to the Stored Procedure named in the Data Portal.
 
 <h1 id="how-to-add-a-new-controller">How to Add a New Controller</h1>
 
-Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. 
+Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports.
 
 1. Initialize the `InterjectResponse` & `IdsTable`
 2. (Optional) Get the Request parameters
@@ -116,4 +143,4 @@ This API uses a number of classes and json files to configure and apply settings
 
 - `launchSettings.json` : Contains settings relating to launching the API, including web server settings and Swagger.
 
-- `appsettings.json` : Contains configurations for the app such as the name and version. Also contains connections strings to connect to a data source. 
+- `appsettings.json` : Contains configurations for the app such as the name and version. Also contains connections strings to connect to a data source.

@@ -193,6 +193,19 @@ namespace Interject.Api
         }
 
         /// <summary>
+        /// Filters the table on the column and value.
+        /// </summary>
+        /// <param name="columnName">The name of the column to filter on.</param>
+        /// <param name="filterValue">The value to filter the table on.</param>
+        public void Filter(string columnName, string filterValue)
+        {
+            int colIndex = GetColumnIndex(columnName);
+            if (colIndex < 0) return;
+
+            this.Rows = this.Rows.Where(row => row[colIndex] == filterValue).ToList();
+        }
+
+        /// <summary>
         /// Converts this table to a formatted string
         /// </summary>
         /// <returns>Json formatted string</returns>
