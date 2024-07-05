@@ -36,7 +36,7 @@ _\* This report can be found in the example.xlsx report in the `examples` folder
 
             try
             {
-                // (Optional) Get DataPortal formula parameter values.
+                // (Optional) Get Data Portal formula parameter values.
                 string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
                 string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
                 string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
@@ -130,7 +130,7 @@ _\* This report can be found in the example.xlsx report in the `examples` folder
 
         try
         {
-            // (Optional) Get DataPortal formula parameter values.
+            // (Optional) Get Data Portal formula parameter values.
             string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
             string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
             string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
@@ -220,7 +220,7 @@ public InterjectResponse TestRowDefName([FromBody] InterjectRequest interjectReq
 
     try
     {
-        // (Optional) Get DataPortal formula parameter values.
+        // (Optional) Get Data Portal formula parameter values.
         string reportParam1 = interjectRequest.GetParameterValue<string>("CompanyName");
         string reportParam2 = interjectRequest.GetParameterValue<string>("ContactName");
         string reportParam3 = interjectRequest.GetParameterValue<string>("CustomerID");
