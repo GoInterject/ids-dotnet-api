@@ -20,7 +20,7 @@ return response;
 ```
 
 <br>
-<img src="static/msg-2-usermessage.png" alt="drawing" width="50%"/>
+![](../../static/msg-2-usermessage.png)
 <br>
 <br>
 
@@ -42,7 +42,7 @@ return response;
 ```
 
 <br>
-<img src="static/msg-3-errormessage.png" alt="drawing" width="75%"/>
+![](../../static/msg-3-errormessage.png)
 <br>
 <br>
 
@@ -64,7 +64,7 @@ return response;
 ```
 
 <br>
-<img src="static/msg-4-paramvalidation.png" alt="drawing" width="75%"/>
+![](../../static/msg-4-paramvalidation.png)
 <br>
 <br>
 
@@ -113,4 +113,4 @@ TableName:  Table1
 **What Is Displayed in the Report**
 <br>
 
-![](static/msg-1-save.png)
+![](../../static/msg-1-save.png)

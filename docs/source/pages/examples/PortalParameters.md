@@ -6,7 +6,7 @@ Data portal parameters allow you to get specific data inputs from the spreadshee
 
 Formula parameters are defined and customized by the developers and users of Interject. They must first be set up on the [Interject Portal Site](https://portal.gointerject.com/).
 
-<img src="static/params-1-formula.png" alt="drawing" width="60%"/>
+![](../../static/params-1-formula.png)
 <br>
 
 To use them in the Excel Report, you must define the `Parameters` parameter in the report function:
@@ -18,7 +18,7 @@ To use them in the Excel Report, you must define the `Parameters` parameter in t
 - [ReportSave](https://docs.gointerject.com/wIndex/ReportSave.html)
 
 <br>
-<img src="static/params-3-reportparams.png" alt="drawing" width="62%"/>
+![](../../static/params-3-reportparams.png)
 <br>
 <br>
 
@@ -46,7 +46,7 @@ float reportParam3 = interjectRequest.GetParameterValue<float>("param3");
 System parameters are defined by Interject but can be included in any Data Portal and will be included in the `InterjectRequest.RequestParameterList`. Once configured on the [Interject Portal Site](https://portal.gointerject.com/), they will be passed to the data API or database from Excel and can be parsed out similar to formula parameters.
 
 <br>
-<img src="static/params-2-system.png" alt="drawing" width="64%"/>
+![](../../static/params-2-system.png)
 <br>
 <br>
 

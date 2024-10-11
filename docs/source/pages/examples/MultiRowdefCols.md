@@ -16,8 +16,7 @@ The following is an Excel report that shows multiple columns in the RowDefRange.
 
 _\* This report can be found in the example.xlsx report in the `examples` folder._
 
-<img src="static/report-variable.png" alt="drawing" width="100%"/>
-<br>
+![](../../static/report-variable.png)
 <br>
 
 ### Code
@@ -110,7 +109,7 @@ This example uses a single column for the RowDefRange but some of the entries co
 
 _\* This report can be found in the example.xlsx report in the `examples` folder._
 
-<img src="static/row-def.png" alt="drawing" width="100%"/>
+![](../../static/row-def.png)
 <br>
 <br>
 
@@ -200,8 +199,7 @@ This example uses multiple columns for the RowDefRange but each RowDefItem is ex
 
 _\* This report can be found in the example.xlsx report in the `examples` folder._
 
-<img src="static/row-def-name.png" alt="drawing" width="100%"/>
-<br>
+![](../../static/row-def-name.png)
 <br>
 
 ### Code

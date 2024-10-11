@@ -1,0 +1,42 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../interject.api",
+          "files": [
+            "interject.api.csproj"
+          ]
+        },
+        {
+          "src": "../interject.data.api/interject-dotnet-api",
+          "files": [
+            "InterjectDotnetApi.csproj"
+          ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "source/**.md",
+          "api/**.yml"
+        ],
+        "dest": "site"
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "source/static/**",
+          "source/images/**"
+        ],
+        "dest": "source/static"
+      }
+    ],
+    "dest": "site"
+  }
+}
