@@ -22,21 +22,44 @@
     "content": [
       {
         "files": [
-          "source/**.md",
-          "api/**.yml"
+          "source/pages/**.md",
+          "source/pages/**.yml",
+          "index.md",
+          "toc.yml"
         ],
-        "dest": "site"
+        "exclude": [
+          "obj/**",
+          "site/**"
+        ],
+        "flatten": true
       }
-    ],
+    ]
+    ,
     "resource": [
       {
         "files": [
-          "source/static/**",
-          "source/images/**"
+          "source/static/**"
         ],
-        "dest": "source/static"
+        "exclude": [
+          "obj/**",
+          "_site/**"
+        ],
+        "flatten": true 
       }
     ],
-    "dest": "site"
+    "dest": "site",
+    "globalMetadata": {
+      "_appTitle": "Your Project Title",
+      "_appFooter": "Your Footer Information",
+      "_enableSearch": true,
+      "_enableGitHub": true
+    },
+    "overwrite": [],
+    "template": [
+      "default"
+    ]
+  },
+  "serve": {
+    "port": 8080
   }
 }

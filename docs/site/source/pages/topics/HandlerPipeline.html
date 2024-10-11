@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Working with the Interject Request Handler Pipeline | Your Project Title </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Working with the Interject Request Handler Pipeline | Your Project Title ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="../../../toc.html">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    <meta property="docfx:rel" content="../../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="working-with-the-interject-request-handler-pipeline">Working with the Interject Request Handler Pipeline</h1>
+
+<p>The <code>Requesthandler</code> class is used as a pipeline to connect with a data in a flexible workflow. Data can be fetched, converted, and transferred back to Interject via this class.</p>
+<hr>
+<ul>
+<li>### <strong><a href="#request-pipeline">Working With the Pipeline</a></strong></li>
+<li>### <strong><a href="#connection-strings">Connection Strings</a></strong></li>
+<li>### <strong><a href="#sql-controller">SQL Controller</a></strong></li>
+<li>### <strong><a href="#new-controller-pipeline">How To Add A New Controller</a></strong></li>
+</ul>
+<p><br></p>
+<h1 id="a-namerequest-pipelineworking-with-the-pipelinea"><a name="request-pipeline">Working With the Pipeline</a></h1>
+<p>The <code>RequestHandler</code> creates a pipeline for processing the <code>InterjectRequest</code> object sent from the Interject Addin. This class contains a few properties that are intended for use as the request passes through the phases of the request pipeline. The pipeline uses Dependency Injection to consume classes derived from interfaces. It passes itself as a parameter to each of the interface&#39;s methods to expose access to the rest of the class. Those phases and interfaces are as follows:</p>
+<ol>
+<li>Initialize the <code>RequestHandler</code></li>
+<li>Convert the <code>RequestParameters</code> <em>(IParameterConverter)</em></li>
+<li>Fetch the data <em>(IDataConnection)</em></li>
+<li>Convert the data <em>(IResponseConverter)</em></li>
+<li>Return the <code>InterjectResponse</code> object</li>
+</ol>
+<p><br></p>
+<h1 id="a-nameconnection-stringsconnection-stringsa"><a name="connection-strings">Connection Strings</a></h1>
+<p>For the purpose of the SqlController example, this API uses the <code>appsettings.json</code> to hold connections strings. On startup, the program will initialize these strings in Configurations. The connection strings are available via dependency injection by requiring a <code>ConnectionStringOptions</code> object in the controller&#39;s constructor. The <code>InterjectRequest.PassThroughCommand</code> will contain the ConnectionStringName. The connection is established by initializing the <code>SqlDataConnectionAsync</code> object with the connection strings.</p>
+<p><br></p>
+<h1 id="a-namesql-controllersql-controllera"><a name="sql-controller">Sql Controller</a></h1>
+<p>The <code>SqlController</code> class is an example using the <code>RequestHandler</code> pipeline. The following outlines the pipeline flow used in this example:</p>
+<ol>
+<li>Inits the <code>RequestHandler</code></li>
+<li>Inits the Handler.<code>ParameterConverter</code></li>
+<li>Inits the Handler.<code>DataConnectionAsync</code></li>
+<li>Inits the Handler.<code>ResponseConverter</code></li>
+<li>Returns the Response by calling Handler.<code>ReturnResponseAsync</code></li>
+</ol>
+<p>There are 4 internal classes in this example:</p>
+<ul>
+<li><p><code>SqlParameterConverter</code> : Used to convert the data types of the parameters sent by Interject from the Excel Report to the API. Data types must be converted first to be used to fetch data.</p>
+</li>
+<li><p><code>SqlDataConnectionAsync</code> : Used to establish a connection with the data source. Establishes the connection string, parameters, and fetches data.</p>
+</li>
+<li><p><code>ParamPair</code> : Class for holding a pair of parameters, one from the Interject request and its converted SQL parameter.</p>
+</li>
+<li><p><code>SqlResponseConverter</code> : Class for converting the data fetched from the data source to a format Interject can consume.</p>
+</li>
+</ul>
+<h1 id="a-namenew-controller-pipelinehow-to-add-a-new-controllera"><a name="new-controller-pipeline">How to Add A New Controller</a></h1>
+<p>Each controller will likely represent either a connection to a particular type of data source or a logical collection of endpoints for a series of reports. Each endpoint should follow the basic pipeline flow for handling a request. See <a href="#request-pipeline">Working with the request pipeline</a> for more details.</p>
+<p>Using the first example there is an SQLController included in this project already. Here is how to create a new controller template. This will create the controller with one endpoint, and four classes; one for each of the interfaces. Note that the <code>IDataConnectionAsync</code> and <code>IDataConnection</code> are interchangeable depending on your needs and only one can be used per endpoint.</p>
+<ol>
+<li>Create a new file in the Controllers directory using the naming convention {Name}Controller.cs.</li>
+<li>Use code snippets in VS Code to scaffold the controller. The prefix is &#39;c-pipe&#39;.
+&gt; c-pipe &gt; TAB</li>
+<li>Type the {Name} of the controller as prompted by the snippet and press TAB</li>
+<li>You can now begin to customize your Pipeline interface implementations.</li>
+</ol>
+<h2 id="1-instantiate-the-interjectrequesthandler">1) <strong>Instantiate the InterjectRequestHandler</strong></h2>
+<p>Create an instance of the <strong>InterjectRequestHandler</strong> passing the InterjectRequest into the constructor. This will instantiate a new <code>InterjectResponse</code> object and store the <code>InterjectRequest</code>. The constructor will also instantiate a couple other data storage properties described below for use in the rest of the pipeline. The initial <code>InterjectRequest.RequestParameterList</code> is also transferred to the <code>InterjectResponse.RequestParameterList</code> to ensure the Interject add-in at least receives the original parameters in the response. It is also possible to replace or manipulate those returned parameters during the pipeline if needed.</p>
+<h2 id="2-convert-the-requestparameters-iparameterconverter">2) <strong>Convert the RequestParameters</strong> <em>(IParameterConverter)</em></h2>
+<p>The data source you are creating the controller for will likely need the parameters passed in the request to be either converted to another class type or to be otherwise processed before they can be used to fetch the data.</p>
+<p>The <code>InterjectRequestHandler.ConvertedParameters</code> property is a collection of generic object type intended for storing the processed parameters to be used in the next phase. Since the collection is a list of generic object you can place a collection of any type needed.</p>
+<h2 id="3-fetch-the-data-idataconnection-or-idataconnectionasync">3) <strong>Fetch the data</strong> <em>(IDataConnection)</em> OR <em>(IDataConnectionAsync)</em></h2>
+<p>The Interface can use an implementation of either a sync or async fetch method. However, only one implementation can be used per endpoint. Note that the <code>InterjectRequestHandler.ReturnResponse()</code> and <code>InterjectRequestHandler.ReturnResponseAsync()</code> use those implementations respectively.</p>
+<p>The data returned is intended to be stored in the <code>InterjectRequestHandler.ReturnData</code> property until the <code>IResponseConverter</code> derived class can transform it to the collection of <code>ReturnedData</code> in the <code>InterjectRequestHandler.InterjectResponse</code>.</p>
+<h2 id="4-convert-the-data-iresponseconverter">4) <strong>Convert the data</strong> <em>(IResponseConverter)</em></h2>
+<p>Once the data has been returned from the data source, it needs to be converted into the form the Interject Addin can consume. See the <code>InterjectResponse.ReturnedDataList</code> property for a definition of the required form.</p>
+<h2 id="5-return-the-interjectresponse-object">5) <strong>Return the InterjectResponse object</strong></h2>
+<p>Call the <code>InterjectRequestHandler.ReturnResponse()</code> or <code>InterjectRequestHandler.ReturnResponseAsync()</code> method depending on your implementation to complete the pipeline and return the <code>InterjectResponseDTO</code></p>
+<p>Note: For reverse compatibility reasons, the <code>ReturnedData.Data</code> property must be serialized prior to retuning the response to the caller. The <code>InterjectRequestHandler.PackagedResponse</code> property handles this to make it easier for development.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/GoInterject/ids-dotnet-api/blob/sr-lc527-updated_docs/docs/source/pages/topics/HandlerPipeline.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Your Footer Information
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>
