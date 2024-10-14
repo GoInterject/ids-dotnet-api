@@ -1,4 +1,4 @@
-### How to Deploy Project Using Visual Studio
+# How to Deploy Project Using Visual Studio
 
 1. Go to folder `./ids-dotnet-api/interject.data.api/interject.data.api/` and open project using Visual Studio `InterjectDotnetApi.csproj`
 
@@ -38,7 +38,7 @@
 https://{subUrl}.azurewebsites.net/api/v1/status
 ```
 
-### How to Set Up A Data Connection on the Interject Data Portal Site
+# How to Set Up A Data Connection on the Interject Data Portal Site
 
 1. Setup the connection in the portal site to match the config Connection String
 

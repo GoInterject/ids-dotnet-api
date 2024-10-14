@@ -23,9 +23,9 @@
       {
         "files": [
           "source/pages/**.md",
-          "source/pages/**.yml",
           "index.md",
           "toc.yml"
+          
         ],
         "exclude": [
           "obj/**",
@@ -38,6 +38,7 @@
     "resource": [
       {
         "files": [
+          "interject.png",
           "source/static/**"
         ],
         "exclude": [
@@ -49,14 +50,16 @@
     ],
     "dest": "site",
     "globalMetadata": {
-      "_appTitle": "Your Project Title",
-      "_appFooter": "Your Footer Information",
+      "_appTitle": "Interject .Net API",
+      "_appFooter": "Interject ®",
       "_enableSearch": true,
-      "_enableGitHub": true
+      "_enableGitHub": true,
+      "_appLogoPath": "interject.png"
     },
     "overwrite": [],
     "template": [
-      "default"
+      "default",
+      "modern"
     ]
   },
   "serve": {

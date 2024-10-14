@@ -2,8 +2,6 @@
 
 # Contributing
 
-## Dev Installation
-
 ## Pull Requests
 
 ### Setting Up A Local Environment
@@ -81,15 +79,22 @@ The doc site can be built with docfx:
 
 ```bash
 cd ids-dotnet-api/docs
-
+docfx build
 ```
 
-The html docs are then located in the `docs/build/html` folder. To open the doc site:
+To serve the site, run:
+
+```bash
+cd ids-dotnet-api/docs
+docfx serve site
+```
+
+The html docs are then located in the `docs/site` folder. To open the doc site:
 
 ```ps1
 # windows
-start "./docs/build/html/index.html"
+start "./docs/site/index.html"
 
 # mac \ linux
-open "./docs/build/html/index.html"
+open "./docs/site/index.html"
 ```

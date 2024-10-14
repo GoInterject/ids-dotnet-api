@@ -1,35 +1,9 @@
----
-- sectiontitle: 'Examples'
-  path: 'source/pages/examples'
-  section:
-  - title: 'jColumnDef'
-    path: 'source/pages/examples/jColumnDef.md'
-  - title: 'jDropdown'
-    path: 'source/pages/examples/jDropdown.md'
-  - title: 'MultiRowdefCols'
-    path: 'source/pages/examples/MultiRowdefCols.md'
-  - title: 'PortalParameters'
-    path: 'source/pages/examples/PortalParameters.md'
-  - title: 'ReportFixed'
-    path: 'source/pages/examples/ReportFixed.md'
-  - title: 'ReportLookup'
-    path: 'source/pages/examples/ReportLookup.md'
-  - title: 'ReportRange'
-    path: 'source/pages/examples/ReportRange.md'
-  - title: 'ReportSave'
-    path: 'source/pages/examples/ReportSave.md'
-  - title: 'ReportVariable'
-    path: 'source/pages/examples/ReportVariable.md'
-  - title: 'UserMessages'
-    path: 'source/pages/examples/UserMessages.md'
-- sectiontitle: 'Getting Started'
-  path: 'source/pages/getting_started'
-  section:
-  - title: 'DeployToAzure'
-    path: 'source/pages/getting_started/DeployToAzure.md'
-- sectiontitle: 'Topics'
-  path: 'source/pages/topics'
-  section:
-  - title: 'HandlerPipeline'
-    path: 'source/pages/topics/HandlerPipeline.md'
-
+items:
+  - name: HOME
+    href: index.md
+  - name: EXAMPLES
+    href: source/pages/examples/
+  - name: GETTING STARTED
+    href: source/pages/getting_started/
+  - name: TOPICS
+    href: source/pages/topics/
