@@ -6,14 +6,14 @@ The `jColumnDef` formula can be used to get extra details about a column such as
 
 # The Report
 
-![](./static/formula-1-jcolumndef_json.png)
+![](../../static/formula-1-jcolumndef_json.png)
 <br>
 
 # The Data Portal
 
 With the report configured, now we need to make sure the data portal on the [Interject customer portal site](https://portal.gointerject.com/DataPortals.html) includes either the system parameter, `Interject_ColDefItems` or `Interject_RequestContext`.
 
-![](static/formula-2-coldefitems.png)
+![](../../static/formula-2-coldefitems.png)
 <br>
 
 # The Data API

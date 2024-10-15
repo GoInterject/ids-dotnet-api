@@ -1,0 +1,68 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../interject.api",
+          "files": [
+            "interject.api.csproj"
+          ]
+        },
+        {
+          "src": "../interject.data.api/interject-dotnet-api",
+          "files": [
+            "InterjectDotnetApi.csproj"
+          ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "source/pages/**.md",
+          "index.md",
+          "toc.yml"
+          
+        ],
+        "exclude": [
+          "obj/**",
+          "site/**"
+        ],
+        "flatten": true
+      }
+    ]
+    ,
+    "resource": [
+      {
+        "files": [
+          "interject.png",
+          "source/static/**"
+        ],
+        "exclude": [
+          "obj/**",
+          "_site/**"
+        ],
+        "flatten": true 
+      }
+    ],
+    "dest": "site",
+    "globalMetadata": {
+      "_appTitle": "Interject .Net API",
+      "_appFooter": "Interject ®",
+      "_enableSearch": true,
+      "_enableGitHub": true,
+      "_appLogoPath": "interject.png"
+    },
+    "overwrite": [],
+    "template": [
+      "default",
+      "modern"
+    ]
+  },
+  "serve": {
+    "port": 8080
+  }
+}

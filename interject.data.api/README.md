@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./banner.png" />
+    ![](../.././banner.png" />
     <br />
     <br />
     <i>
@@ -54,7 +54,7 @@ dotnet restore
 
 5. You should now be able to run the application. Press (Ctrl+Shift+D) or use the run and debug menu.
 
-   <img src="./ReadmeSrc/VSCodeDebug.png">
+   ![](../.././ReadmeSrc/VSCodeDebug.png">
 
    > Note: To run without debugging press F5 or enter the command:
 

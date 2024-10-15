@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Data Portal Parameters | Interject .Net API </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Data Portal Parameters | Interject .Net API ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="../../../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../interject.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="data-portal-parameters">Data Portal Parameters</h1>
+
+<p>Data portal parameters allow you to get specific data inputs from the spreadsheet through Interject. There are two types of parameters: Formula and System.</p>
+<h2 id="formula-parameters">Formula Parameters</h2>
+<p>Formula parameters are defined and customized by the developers and users of Interject. They must first be set up on the <a href="https://portal.gointerject.com/">Interject Portal Site</a>.</p>
+<p><img src="../../static/params-1-formula.png" alt="">
+<br></p>
+<p>To use them in the Excel Report, you must define the <code>Parameters</code> parameter in the report function:</p>
+<ul>
+<li><a href="https://docs.gointerject.com/wIndex/ReportRange.html">ReportRange</a></li>
+<li><a href="https://docs.gointerject.com/wIndex/ReportFixed.html">ReportFixed</a></li>
+<li><a href="https://docs.gointerject.com/wIndex/ReportVariable.html">ReportVariable</a></li>
+<li><a href="https://docs.gointerject.com/wIndex/ReportLookup.html">ReportLookup</a></li>
+<li><a href="https://docs.gointerject.com/wIndex/ReportSave.html">ReportSave</a></li>
+</ul>
+<p><br>
+<img src="../../static/params-3-reportparams.png" alt="">
+<br>
+<br></p>
+<p>Once the report functions are configured to use parameters, the data API code can get the values from those parameters through the <code>InterjectRequest</code> object.</p>
+<pre><code class="lang-csharp">using Interject.Api;
+
+// this request will come from the .NET Framework in the data api
+InterjectRequest interjectRequest
+
+// get formula parameter object from request
+RequestParameter param = interjectRequest.GetParameter(&quot;Param1&quot;)
+
+// OR..... get formula parameter values from request
+string reportParam1 = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Param1&quot;);
+int reportParam2 = interjectRequest.GetParameterValue&lt;int&gt;(&quot;Param2&quot;);
+float reportParam3 = interjectRequest.GetParameterValue&lt;float&gt;(&quot;param3&quot;);
+</code></pre><p><br></p>
+<h1 id="system-paramaters">System Paramaters</h1>
+<p>System parameters are defined by Interject but can be included in any Data Portal and will be included in the <code>InterjectRequest.RequestParameterList</code>. Once configured on the <a href="https://portal.gointerject.com/">Interject Portal Site</a>, they will be passed to the data API or database from Excel and can be parsed out similar to formula parameters.</p>
+<p><br>
+<img src="../../static/params-2-system.png" alt="">
+<br>
+<br></p>
+<p>Below are the system parameters and objects currently handled:</p>
+<pre><code class="lang-csharp">// Currently handled getters for system parameters
+InterjectRequestContext requestContext = interjectRequest.GetRequestContext();
+String ntLogin = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_NTLogin&quot;);
+String excelVersion = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_ExcelVersion&quot;);
+String returnError = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_ReturnError&quot;);
+float localTimeZoneOffset = interjectRequest.GetParameterValue&lt;float&gt;(&quot;Interject_LocalTimeZoneOffset&quot;);
+String sourceFileAndPath = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_SourceFileAndPath&quot;);
+String sourceFilePathAndTab = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_SourceFilePathAndTab&quot;);
+String userID = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_UserID&quot;);
+String loginName = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_LoginName&quot;);
+String userRoles = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_UserRoles&quot;);
+String clientID = interjectRequest.GetParameterValue&lt;string&gt;(&quot;Interject_ClientID&quot;);
+</code></pre><p><br>
+The system parameter &quot;Interject_RequestContext&quot; will also bring a number of other objects with it that can be queried.</p>
+<p><br></p>
+<pre><code class="lang-csharp">// Currently handled getters for objects in the system parameter &quot;Interject_RequestContext&quot;
+IdsTable table = interjectRequest.GetXmlDataToSave();
+List&lt;InterjectRowDefItem&gt; rowDefItems = interjectRequest.GetRowDefItems();
+List&lt;InterjectColDefItem&gt; colDefItems = interjectRequest.GetColDefItems();
+
+String excelVersion = interjectRequest.GetRequestContext().ExcelVersion;
+String userID = interjectRequest.GetRequestContext().UserContext.UserId;
+String clientID = interjectRequest.GetRequestContext().UserContext.ClientId;
+String loginName = interjectRequest.GetRequestContext().UserContext.LoginName;
+String machineLoginName = interjectRequest.GetRequestContext().UserContext.MachineLoginName;
+String machineName = interjectRequest.GetRequestContext().UserContext.MachineName;
+String fullName = interjectRequest.GetRequestContext().UserContext.FullName;
+String loginDateUtc = interjectRequest.GetRequestContext().UserContext.LoginDateUtc;
+String userRoles = interjectRequest.GetRequestContext().UserContext.UserRoles;
+String idsVersion = interjectRequest.GetRequestContext().IdsVersion;
+String fileName = interjectRequest.GetRequestContext().FileName;
+String filePath = interjectRequest.GetRequestContext().FilePath;
+String tabName = interjectRequest.GetRequestContext().TabName;
+String cellRange = interjectRequest.GetRequestContext().CellRange;
+String sourceFunction = interjectRequest.GetRequestContext().SourceFunction;
+String utcOffset = interjectRequest.GetRequestContext().UtcOffset;
+</code></pre></article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/GoInterject/ids-dotnet-api/blob/sr-lc527-updated_docs/docs/source/pages/examples/PortalParameters.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Interject ®
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>
