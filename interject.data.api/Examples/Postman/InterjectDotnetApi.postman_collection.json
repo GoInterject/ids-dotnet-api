@@ -1,0 +1,86 @@
+{
+    "info": {
+        "name": "Interject .NET Data API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Health (public)",
+            "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/status"
+            }
+        },
+        {
+            "name": "Headers echo (public, GET)",
+            "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/status/headers"
+            }
+        },
+        {
+            "name": "Headers echo (public, POST)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{}"
+                },
+                "url": "{{baseUrl}}/api/v1/status/headers"
+            }
+        },
+        {
+            "name": "Protected sample (should 401)",
+            "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/v1/example/protected"
+            }
+        },
+        {
+            "name": "Protected sample (with Bearer → 200)",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{jwt}}"
+                    }
+                ],
+                "url": "{{baseUrl}}/api/v1/example/protected"
+            }
+        },
+        {
+            "name": "SQL (protected, should 401 without token)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{}"
+                },
+                "url": "{{baseUrl}}/api/v1/sql"
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:5000"
+        },
+        {
+            "key": "jwt",
+            "value": ""
+        }
+    ]
+}
