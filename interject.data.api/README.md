@@ -79,6 +79,7 @@ If you are using federated logins to access Interject, your provider's access to
    "Authority": "<your identity providers url>"
 }
 ```
+See **[Examples/AuthQuickstart.md](./Examples/AuthQuickstart.md)** for public vs protected examples and a Postman recipe.
 
 <h1 id="status-controller">Status Controller</h1>
 
