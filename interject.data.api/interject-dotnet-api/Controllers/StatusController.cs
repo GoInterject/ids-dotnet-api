@@ -3,6 +3,8 @@ using System.Reflection;
 using System.Text.Json;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+
 
 namespace Interject.DataApi
 {
@@ -70,13 +72,13 @@ namespace Interject.DataApi
             }
             return result;
         }
- 
+
         /// <summary>
         /// Echo selected request info (method, path, normalized headers) for debugging.
         /// </summary>
         [HttpGet("headers")]
         public IActionResult GetHeaders() => Ok(CollectHeaders());
- 
+
         /// <summary>
         /// Echo selected request info (method, path, normalized headers) for debugging.
         /// </summary>
@@ -111,5 +113,17 @@ namespace Interject.DataApi
             }
             return value;
         }
+
+        /// <summary>
+        /// Simple ping endpoint used for rate-limit examples.
+        /// Returns {"status":"pong","ts":"&lt;ISO-8601&lt;"}.
+        /// </summary>
+        [HttpGet("Ping")]
+        [EnableRateLimiting("ping")]
+        public IActionResult Ping()
+        {
+            return Ok(new { status = "pong", ts = DateTimeOffset.UtcNow.ToString("o") });
+        }
+
     }
 }
