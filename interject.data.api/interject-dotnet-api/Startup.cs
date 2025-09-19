@@ -1,17 +1,3 @@
-
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
-using System.IO;
-using System;
-using System.Collections.Generic;
-
 namespace Interject.DataApi
 {
     public class Startup
@@ -38,6 +24,7 @@ namespace Interject.DataApi
 
 
             // Uncomment this to add security
+            string authority = Configuration["Authority"];
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,12 +33,10 @@ namespace Interject.DataApi
             })
             .AddJwtBearer(options =>
             {
-                options.Authority = Configuration["Authority"];//Interject's auth provider
-                // options.Audience = $"{Configuration["Authority"]}/resources"; //Interject's auth provider
+                options.Authority = authority;//Interject's auth provider
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = Configuration["Authority"],//Interject's auth provider
-                    // ValidAudience = $"{Configuration["Authority"]}/resources" //Interject's auth provider
+                    ValidIssuer = authority,//Interject's auth provider
                     ValidateAudience = false
                 };
             });
@@ -83,7 +68,18 @@ namespace Interject.DataApi
 
             // app.UseHttpsRedirection();
 
+            app.UseMiddleware<CustomMiddleware>();
+
             app.UseRouting();
+
+            app.Use(async (context, next) =>
+            {
+                foreach (var header in context.Request.Headers)
+                {
+                    Console.WriteLine($"{header.Key}: {header.Value}");
+                }
+                await next.Invoke();
+            });
 
             app.UseCors(builder =>
             {
