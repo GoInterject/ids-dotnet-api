@@ -16,6 +16,11 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Logs
+interject.data.api/interject-dotnet-api/Logs/
+*.log
+*.json.log
+
 # Mono auto generated files
 mono_crash.*
 

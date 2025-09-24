@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 
 namespace Interject.DataApi
@@ -138,6 +139,14 @@ namespace Interject.DataApi
 
             app.UseRouting();
 
+            // -------------- Correlation Id (optional) --------------
+            // Adds/propagates X-Correlation-ID and enriches logs.
+            // app.UseMiddleware<CorrelationIdMiddleware>();
+
+            // -------------- Serilog HTTP request logging (optional) --------------
+            // Uncomment when "InterjectLogging:UseBuiltIn" is true to log request summaries.
+            // app.UseSerilogRequestLogging();
+
             app.UseCors(builder =>
             {
                 builder
@@ -152,6 +161,10 @@ namespace Interject.DataApi
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            // --------------Auth failure telemetry (optional) --------------
+            // Logs minimal structured data when responses are 401/403 (no secrets; no tokens).
+            // app.UseMiddleware<AuthFailureTelemetryMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
