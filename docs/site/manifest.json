@@ -1,0 +1,491 @@
+{
+  "homepages": [],
+  "source_base_path": "D:/Users/samuelr/Documents/Github/ids-dotnet-api/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      },
+      "is_incremental": false
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "GrpRuWWe0fIEV2LppXiWFuxQgUtUOk+UVFh8q5kycmw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "interject.png",
+      "output": {
+        "resource": {
+          "relative_path": "interject.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/MultiRowdefCols.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/MultiRowdefCols.html",
+          "hash": "+q3bMGJCAxl9I+2e/FV+7cQ0rv9LaqV7ef5N+XnbhoE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/PortalParameters.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/PortalParameters.html",
+          "hash": "EM6bSRq69+4FHJfVWE8lseNBa/E7wRy5OS2GAOkQDY4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/ReportFixed.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/ReportFixed.html",
+          "hash": "zsxMhVcvSrykKlSjdRKxkF0e44MxblXy/nhngXHox6o="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/ReportLookup.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/ReportLookup.html",
+          "hash": "GiobRnp9uV/lJrim1oOJMVVspyMIYVciYMs0bO0Ltxo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/ReportRange.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/ReportRange.html",
+          "hash": "NF++zmIXCc0G8/2o1rxfR/wsxGMfJoPo9CDOYLvSlY0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/ReportSave.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/ReportSave.html",
+          "hash": "i/BZyyt6XFwKxv7SyFwfohBbO1bxA6H8KGFn1Pk4Zok="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/ReportVariable.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/ReportVariable.html",
+          "hash": "3rPuK0Q7JATYqBOB2QiMi+Y/an0hKjcuvP2nmLtPNIo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/UserMessages.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/UserMessages.html",
+          "hash": "ejomeSyzkBOEVdXVu0DwheEcEG4xpYw8uU1APn4UOlE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/jColumnDef.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/jColumnDef.html",
+          "hash": "Rfp0qM0eHd4CR2sdk0RaaEeFk1NZnBjjcsPO0Q8cWw4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/examples/jDropdown.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/jDropdown.html",
+          "hash": "Du1tImtTylj9ZfyOsFIVxjzGxP3UQu35NfcYkR5cQT4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "source/pages/examples/toc.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/examples/toc.html",
+          "hash": "rQk7fsFt5wGyWi2RjDiSnBkcs8fxibWF1uac4HZgNp0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/getting_started/DeployToAzure.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/getting_started/DeployToAzure.html",
+          "hash": "HR/G7zmOSjEQUso310IOcnwsycIFqQBKIzBldVbpgX8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "source/pages/getting_started/toc.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/getting_started/toc.html",
+          "hash": "j1NdVrFMPXGwRQxS38oY/K3Q9aJt4cROmcGsZGZnFAc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "source/pages/topics/HandlerPipeline.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/topics/HandlerPipeline.html",
+          "hash": "aL8UkBARGu69lW+MQ2LSVxX2kA2AOhieINY0UKBQRQQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "source/pages/topics/toc.md",
+      "output": {
+        ".html": {
+          "relative_path": "source/pages/topics/toc.html",
+          "hash": "TphVXStqpJ985QymBUHLscCbzFvUT2fTEh8i6wxBFhk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/DeployAzure-AddConnectionString.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/DeployAzure-AddConnectionString.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/DeployAzure-AddDataportalExample.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/DeployAzure-AddDataportalExample.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/DeployAzure-AzureApplication.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/DeployAzure-AzureApplication.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/DeployAzure-VS-DeploytoAzure.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/DeployAzure-VS-DeploytoAzure.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/DeployAzure-VS-publish.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/DeployAzure-VS-publish.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/PortalSetup-Connection.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/PortalSetup-Connection.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/VSCodeDebug.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/VSCodeDebug.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/formula-1-jcolumndef_json.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/formula-1-jcolumndef_json.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/formula-2-coldefitems.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/formula-2-coldefitems.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/msg-1-save.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/msg-1-save.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/msg-2-usermessage.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/msg-2-usermessage.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/msg-3-errormessage.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/msg-3-errormessage.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/msg-4-paramvalidation.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/msg-4-paramvalidation.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/params-1-formula.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/params-1-formula.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/params-2-system.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/params-2-system.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/params-3-reportparams.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/params-3-reportparams.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/report-variable.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/report-variable.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/row-def-name.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/row-def-name.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "source/static/row-def.png",
+      "output": {
+        "resource": {
+          "relative_path": "source/static/row-def.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "gYFXJLfwa/hhTLkkCi6an+to+NY8lbjP88c+wNlW/1k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 13,
+          "skipped_file_count": 13
+        },
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: should not trace intermediate info.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
