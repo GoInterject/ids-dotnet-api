@@ -79,9 +79,6 @@ namespace Interject.DataApi
         [HttpGet("headers")]
         public IActionResult GetHeaders() => Ok(CollectHeaders());
 
-        /// <summary>
-        /// Echo selected request info (method, path, normalized headers) for debugging.
-        /// </summary>
         [HttpPost("headers")]
         public IActionResult PostHeaders() => Ok(CollectHeaders());
 
@@ -116,7 +113,7 @@ namespace Interject.DataApi
 
         /// <summary>
         /// Simple ping endpoint used for rate-limit examples.
-        /// Returns {"status":"pong","ts":"&lt;ISO-8601&lt;"}.
+        /// Returns {"status":"pong","ts":"&lt;ISO-8601&gt;"}.
         /// </summary>
         [HttpGet("Ping")]
         [EnableRateLimiting("ping")]
@@ -124,6 +121,5 @@ namespace Interject.DataApi
         {
             return Ok(new { status = "pong", ts = DateTimeOffset.UtcNow.ToString("o") });
         }
-
     }
 }

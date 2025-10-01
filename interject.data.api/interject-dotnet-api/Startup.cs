@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +15,7 @@ using System.Threading.RateLimiting;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Serilog;
+
 
 
 namespace Interject.DataApi
@@ -44,6 +44,7 @@ namespace Interject.DataApi
 
 
             // Uncomment this to add security
+            string authority = Configuration["Authority"];
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -52,12 +53,10 @@ namespace Interject.DataApi
             })
             .AddJwtBearer(options =>
             {
-                options.Authority = Configuration["Authority"];//Interject's auth provider
-                // options.Audience = $"{Configuration["Authority"]}/resources"; //Interject's auth provider
+                options.Authority = authority;//Interject's auth provider
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = Configuration["Authority"],//Interject's auth provider
-                    // ValidAudience = $"{Configuration["Authority"]}/resources" //Interject's auth provider
+                    ValidIssuer = authority,//Interject's auth provider
                     ValidateAudience = false
                 };
             });
@@ -139,14 +138,6 @@ namespace Interject.DataApi
 
             app.UseRouting();
 
-            // -------------- Correlation Id (optional) --------------
-            // Adds/propagates X-Correlation-ID and enriches logs.
-            // app.UseMiddleware<CorrelationIdMiddleware>();
-
-            // -------------- Serilog HTTP request logging (optional) --------------
-            // Uncomment when "InterjectLogging:UseBuiltIn" is true to log request summaries.
-            // app.UseSerilogRequestLogging();
-
             app.UseCors(builder =>
             {
                 builder
@@ -155,6 +146,24 @@ namespace Interject.DataApi
                 .SetIsOriginAllowed(origin => true)
                 .AllowCredentials();
             });
+          
+            // -------------- Correlation Id (optional) --------------
+            // Adds/propagates X-Correlation-ID and enriches logs.
+            // app.UseMiddleware<CorrelationIdMiddleware>();
+
+            // -------------- Serilog HTTP request logging (optional) --------------
+            // Uncomment when "InterjectLogging:UseBuiltIn" is true to log request summaries.
+            // app.UseSerilogRequestLogging();
+
+            // Uncomment this to log all incoming request headers
+            // app.Use(async (context, next) =>
+            // {
+            //     foreach (var header in context.Request.Headers)
+            //     {
+            //         Console.WriteLine($"{header.Key}: {header.Value}");
+            //     }
+            //     await next.Invoke();
+            // });
 
             app.UseRateLimiter();
 
