@@ -167,6 +167,8 @@ namespace Interject.DataApi
 
             app.UseRateLimiter();
 
+            app.UseRateLimiter();
+
             app.UseAuthentication();
 
             app.UseAuthorization();
