@@ -1,7 +1,10 @@
 using System;
 using System.Reflection;
 using System.Text.Json;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+
 
 namespace Interject.DataApi
 {
@@ -68,6 +71,55 @@ namespace Interject.DataApi
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// Echo selected request info (method, path, normalized headers) for debugging.
+        /// </summary>
+        [HttpGet("headers")]
+        public IActionResult GetHeaders() => Ok(CollectHeaders());
+
+        [HttpPost("headers")]
+        public IActionResult PostHeaders() => Ok(CollectHeaders());
+
+        private object CollectHeaders()
+        {
+            var headers = Request.Headers.ToDictionary(
+                kv => kv.Key,
+                kv => SanitizeHeader(kv.Key, string.Join(", ", kv.Value)),
+                StringComparer.OrdinalIgnoreCase
+                );
+
+            return new
+            {
+                method = Request.Method,
+                path = Request.Path.ToString(),
+                headers
+            };
+        }
+        private static string SanitizeHeader(string name, string value)
+        {
+            if (name.Equals("Authorization", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.IsNullOrWhiteSpace(value)) return value ?? string.Empty;
+                var parts = value.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                var scheme = parts.Length > 0 ? parts[0] : "Bearer";
+                var token = parts.Length > 1 ? parts[1] : string.Empty;
+                if (token.Length <= 10) return $"{scheme} ***";
+                return $"{scheme} {token.Substring(0, 4)}…{token.Substring(token.Length - 4)}";
+            }
+            return value;
+        }
+
+        /// <summary>
+        /// Simple ping endpoint used for rate-limit examples.
+        /// Returns {"status":"pong","ts":"&lt;ISO-8601&gt;"}.
+        /// </summary>
+        [HttpGet("Ping")]
+        [EnableRateLimiting("ping")]
+        public IActionResult Ping()
+        {
+            return Ok(new { status = "pong", ts = DateTimeOffset.UtcNow.ToString("o") });
         }
     }
 }

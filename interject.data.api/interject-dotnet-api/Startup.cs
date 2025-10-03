@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +10,13 @@ using System.Reflection;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using Serilog;
+
+
 
 namespace Interject.DataApi
 {
@@ -38,6 +44,7 @@ namespace Interject.DataApi
 
 
             // Uncomment this to add security
+            string authority = Configuration["Authority"];
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,12 +53,10 @@ namespace Interject.DataApi
             })
             .AddJwtBearer(options =>
             {
-                options.Authority = Configuration["Authority"];//Interject's auth provider
-                // options.Audience = $"{Configuration["Authority"]}/resources"; //Interject's auth provider
+                options.Authority = authority;//Interject's auth provider
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = Configuration["Authority"],//Interject's auth provider
-                    // ValidAudience = $"{Configuration["Authority"]}/resources" //Interject's auth provider
+                    ValidIssuer = authority,//Interject's auth provider
                     ValidateAudience = false
                 };
             });
@@ -66,6 +71,54 @@ namespace Interject.DataApi
 
             var connectionStrings = Configuration.GetSection("ConnectionStrings").Get<Dictionary<string, string>>();
             services.AddSingleton(connectionStrings);
+
+            services.AddRateLimiter(options =>
+            {
+                // Default rejection code for all policies
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+                // Partition by client IP address (string "unknown" fallback)
+                options.AddPolicy("ping", httpContext =>
+                {
+                    var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                    return RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: ip,
+                        factory: key => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 5,                     // 5 requests
+                            Window = TimeSpan.FromMinutes(1),    // per 60 seconds
+                            QueueLimit = 0,                      // do not queue
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            AutoReplenishment = true
+                        });
+                });
+
+                // Log and return a small JSON body on rejections
+                options.OnRejected = async (context, token) =>
+                {
+                    var logger = context.HttpContext.RequestServices
+                        .GetRequiredService<ILoggerFactory>()
+                        .CreateLogger("RateLimit");
+
+                    var ip = context.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                    var path = context.HttpContext.Request.Path.ToString();
+                    logger.LogWarning("Rate limit exceeded ip={ip} path={path}", ip, path);
+
+                    // Add Retry-After if provided by limiter
+                    if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                    {
+                        context.HttpContext.Response.Headers["Retry-After"] =
+                            Math.Ceiling(retryAfter.TotalSeconds).ToString();
+                    }
+
+                    context.HttpContext.Response.ContentType = "application/json";
+                    await context.HttpContext.Response.WriteAsync(
+                        "{\"error\":\"rate_limited\",\"message\":\"Too many requests (5/min). Try again later.\"}",
+                        token);
+                };
+
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,10 +146,36 @@ namespace Interject.DataApi
                 .SetIsOriginAllowed(origin => true)
                 .AllowCredentials();
             });
+          
+            // -------------- Correlation Id (optional) --------------
+            // Adds/propagates X-Correlation-ID and enriches logs.
+            // app.UseMiddleware<CorrelationIdMiddleware>();
+
+            // -------------- Serilog HTTP request logging (optional) --------------
+            // Uncomment when "InterjectLogging:UseBuiltIn" is true to log request summaries.
+            // app.UseSerilogRequestLogging();
+
+            // Uncomment this to log all incoming request headers
+            // app.Use(async (context, next) =>
+            // {
+            //     foreach (var header in context.Request.Headers)
+            //     {
+            //         Console.WriteLine($"{header.Key}: {header.Value}");
+            //     }
+            //     await next.Invoke();
+            // });
+
+            app.UseRateLimiter();
+
+            app.UseRateLimiter();
 
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            // --------------Auth failure telemetry (optional) --------------
+            // Logs minimal structured data when responses are 401/403 (no secrets; no tokens).
+            // app.UseMiddleware<AuthFailureTelemetryMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

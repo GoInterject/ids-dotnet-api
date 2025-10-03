@@ -3,6 +3,8 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 using Interject.Api;
+using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace Interject.DataApi
 {
@@ -687,5 +689,35 @@ namespace Interject.DataApi
 
             return response;
         }
+
+         /// <summary>
+         /// Minimal protected sample that returns a few JWT claim values.
+         /// Use to verify Authorization header and token contents.
+         /// </summary>
+         [HttpGet("Protected")]
+         [Authorize]
+         public IActionResult Protected()
+         {
+             // pull a few commonly useful claims if present
+             string sub = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value ?? "";
+             string iss = User.Claims.FirstOrDefault(c => c.Type == "iss")?.Value ?? "";
+             // aud can appear multiple times
+             var aud = User.Claims.Where(c => c.Type == "aud").Select(c => c.Value).ToArray();
+             string clientId = User.Claims.FirstOrDefault(c => c.Type == "ids_client_id")?.Value ?? "";
+             string userIdentityRaw = User.Claims.FirstOrDefault(c => c.Type == "user_identity")?.Value ?? "";
+ 
+             return Ok(new
+             {
+                 message = "ok (protected)",
+                 claims = new
+                 {
+                     sub,
+                     iss,
+                     aud,
+                     ids_client_id = clientId,
+                     user_identity = string.IsNullOrWhiteSpace(userIdentityRaw) ? null : "(present)"
+                 }
+             });
+         }
     }
 }
